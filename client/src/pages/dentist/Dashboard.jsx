@@ -1,0 +1,60 @@
+import { useEffect, useState } from 'react';
+import StatCard from '../../components/dashboard/StatCard';
+import StatusBadge from '../../components/common/StatusBadge';
+import Loader from '../../components/common/Loader';
+import { appointmentService } from '../../services';
+import { useAuth } from '../../context/AuthContext';
+import { formatDateTime } from '../../utils/format';
+
+const DentistDashboard = () => {
+  const { user } = useAuth();
+  const [appts, setAppts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    appointmentService.list().then(setAppts).finally(() => setLoading(false));
+  }, []);
+
+  const today = new Date().toDateString();
+  const todays = appts.filter((a) => new Date(a.appointmentDate).toDateString() === today);
+  const upcoming = appts.filter((a) => ['pending', 'confirmed'].includes(a.status) && new Date(a.appointmentDate) >= new Date());
+  const completed = appts.filter((a) => a.status === 'completed').length;
+
+  if (loading) return <Loader />;
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold">Selamat datang, drg. {user.name.replace(/^drg\.\s*/, '')}</h2>
+        <p className="text-slate-600">Ringkasan praktik Anda hari ini.</p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <StatCard label="Pasien Hari Ini" value={todays.length} icon="🗓️" />
+        <StatCard label="Upcoming" value={upcoming.length} icon="⏳" />
+        <StatCard label="Selesai (total)" value={completed} icon="✅" />
+      </div>
+
+      <div className="card p-6">
+        <h3 className="text-lg font-semibold mb-4">Jadwal Hari Ini</h3>
+        {todays.length === 0 ? (
+          <p className="text-slate-500 text-sm">Tidak ada appointment hari ini.</p>
+        ) : (
+          <div className="space-y-2">
+            {todays.map((a) => (
+              <div key={a._id} className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
+                <div>
+                  <p className="font-medium">{a.patientId?.name} — {a.serviceId?.title}</p>
+                  <p className="text-sm text-slate-500">{formatDateTime(a.appointmentDate, a.appointmentTime)}</p>
+                </div>
+                <StatusBadge status={a.status} />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default DentistDashboard;
