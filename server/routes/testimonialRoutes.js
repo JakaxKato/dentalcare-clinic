@@ -2,7 +2,11 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const {
-  listTestimonials, createTestimonial, approveTestimonial, deleteTestimonial,
+  listTestimonials,
+  listMyTestimonials,
+  createTestimonial,
+  approveTestimonial,
+  deleteTestimonial,
 } = require('../controllers/testimonialController');
 const { protect, authorize } = require('../middleware/auth');
 const { validateTestimonial } = require('../validators');
@@ -22,8 +26,9 @@ const optionalAuth = async (req, _res, next) => {
 };
 
 router.get('/', optionalAuth, listTestimonials);
-router.post('/', validateTestimonial, createTestimonial);
+router.get('/my-testimonials', protect, listMyTestimonials);
+router.post('/', optionalAuth, validateTestimonial, createTestimonial);
 router.put('/:id/approve', protect, authorize('admin'), approveTestimonial);
-router.delete('/:id', protect, authorize('admin'), deleteTestimonial);
+router.delete('/:id', protect, deleteTestimonial);
 
 module.exports = router;

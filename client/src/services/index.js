@@ -44,6 +44,7 @@ export const articleService = {
 
 export const testimonialService = {
   list: () => api.get('/testimonials').then((r) => r.data.data),
+  mine: () => api.get('/testimonials/my-testimonials').then((r) => r.data.data),
   create: (data) => api.post('/testimonials', data).then((r) => r.data.data),
   approve: (id, isApproved = true) =>
     api.put(`/testimonials/${id}/approve`, { isApproved }).then((r) => r.data.data),

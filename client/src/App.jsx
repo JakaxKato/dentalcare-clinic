@@ -27,6 +27,7 @@ import Register from './pages/auth/Register';
 import PatientDashboard from './pages/patient/Dashboard';
 import PatientAppointments from './pages/patient/Appointments';
 import PatientProfile from './pages/patient/Profile';
+import PatientTestimonials from './pages/patient/Testimonials';
 
 // Dentist
 import DentistDashboard from './pages/dentist/Dashboard';
@@ -68,6 +69,7 @@ const App = () => (
     >
       <Route path="dashboard" element={<PatientDashboard />} />
       <Route path="appointments" element={<PatientAppointments />} />
+      <Route path="testimonials" element={<PatientTestimonials />} />
       <Route path="profile" element={<PatientProfile />} />
     </Route>
 
