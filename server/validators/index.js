@@ -51,7 +51,10 @@ const validateArticle = (req, _res, next) => {
 
 const validateTestimonial = (req, _res, next) => {
   const { patientName, rating, message } = req.body;
-  if (!isNonEmpty(patientName)) throw new ApiError(400, 'patientName is required');
+  // patientName only required when not authenticated (auth path auto-fills from user)
+  if (!req.user && !isNonEmpty(patientName)) {
+    throw new ApiError(400, 'patientName is required');
+  }
   if (!isNonEmpty(message)) throw new ApiError(400, 'message is required');
   const r = Number(rating);
   if (!Number.isInteger(r) || r < 1 || r > 5) throw new ApiError(400, 'rating must be an integer 1-5');

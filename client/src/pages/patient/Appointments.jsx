@@ -78,6 +78,9 @@ const PatientAppointments = () => {
                 {a.status === 'pending' && (
                   <button onClick={() => cancel(a._id)} className="btn-danger text-xs">Batalkan</button>
                 )}
+                {a.status === 'completed' && (
+                  <Link to="/patient/testimonials" className="btn-primary text-xs">Beri Testimoni</Link>
+                )}
               </div>
             </div>
           ))}

@@ -11,11 +11,25 @@ const listTestimonials = asyncHandler(async (req, res) => {
   res.json({ success: true, count: items.length, data: items });
 });
 
-// @desc    Submit testimonial (public)
+// @desc    List testimonials owned by the logged-in user
+// @route   GET /api/testimonials/my-testimonials
+const listMyTestimonials = asyncHandler(async (req, res) => {
+  const items = await Testimonial.find({ patientId: req.user._id }).sort({ createdAt: -1 });
+  res.json({ success: true, count: items.length, data: items });
+});
+
+// @desc    Submit testimonial. Auto-fills patient info if authenticated.
 // @route   POST /api/testimonials
 const createTestimonial = asyncHandler(async (req, res) => {
-  const { patientName, rating, message } = req.body;
+  const { rating, message } = req.body;
+  let patientName = req.body.patientName;
+  let patientId;
+  if (req.user) {
+    patientId = req.user._id;
+    patientName = req.user.name;
+  }
   const item = await Testimonial.create({
+    patientId,
     patientName,
     rating,
     message,
@@ -23,7 +37,7 @@ const createTestimonial = asyncHandler(async (req, res) => {
   });
   res.status(201).json({
     success: true,
-    message: 'Thank you! Your testimonial is pending approval.',
+    message: 'Terima kasih! Testimoni Anda menunggu persetujuan admin.',
     data: item,
   });
 });
@@ -38,13 +52,24 @@ const approveTestimonial = asyncHandler(async (req, res) => {
   res.json({ success: true, data: item });
 });
 
-// @desc    Delete testimonial (admin)
+// @desc    Delete testimonial (admin or owner if still pending)
 // @route   DELETE /api/testimonials/:id
 const deleteTestimonial = asyncHandler(async (req, res) => {
   const item = await Testimonial.findById(req.params.id);
   if (!item) throw new ApiError(404, 'Testimonial not found');
+  const isAdmin = req.user.role === 'admin';
+  const isOwner = item.patientId && String(item.patientId) === String(req.user._id);
+  if (!isAdmin && !(isOwner && !item.isApproved)) {
+    throw new ApiError(403, 'Not allowed to delete this testimonial');
+  }
   await item.deleteOne();
   res.json({ success: true, message: 'Testimonial deleted' });
 });
 
-module.exports = { listTestimonials, createTestimonial, approveTestimonial, deleteTestimonial };
+module.exports = {
+  listTestimonials,
+  listMyTestimonials,
+  createTestimonial,
+  approveTestimonial,
+  deleteTestimonial,
+};

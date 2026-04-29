@@ -3,6 +3,7 @@ import DashboardLayout from './DashboardLayout';
 const navItems = [
   { to: '/patient/dashboard', label: 'Dashboard', icon: '📊', end: true },
   { to: '/patient/appointments', label: 'Appointment', icon: '📅' },
+  { to: '/patient/testimonials', label: 'Testimoni Saya', icon: '⭐' },
   { to: '/patient/profile', label: 'Profil Saya', icon: '👤' },
   { to: '/appointment', label: 'Booking Baru', icon: '➕' },
 ];
