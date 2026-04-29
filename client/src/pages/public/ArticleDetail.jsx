@@ -5,6 +5,7 @@ import EmptyState from '../../components/common/EmptyState';
 import { articleService } from '../../services';
 import { formatDate } from '../../utils/format';
 import { extractMessage } from '../../services/api';
+import { CLINIC } from '../../config/clinic';
 
 const ArticleDetail = () => {
   const { slug } = useParams();
@@ -39,7 +40,7 @@ const ArticleDetail = () => {
       </div>
       <h1 className="text-4xl mt-3">{article.title}</h1>
       <div className="flex items-center gap-3 mt-4 text-sm text-slate-500">
-        <span>{article.authorId?.name || 'DentalCare'}</span>
+        <span>{article.authorId?.name || CLINIC.shortName}</span>
         <span>•</span>
         <span>{formatDate(article.createdAt)}</span>
       </div>

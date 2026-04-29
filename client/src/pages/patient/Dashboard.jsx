@@ -7,6 +7,7 @@ import EmptyState from '../../components/common/EmptyState';
 import { appointmentService } from '../../services';
 import { useAuth } from '../../context/AuthContext';
 import { formatDateTime } from '../../utils/format';
+import { CLINIC } from '../../config/clinic';
 
 const PatientDashboard = () => {
   const { user } = useAuth();
@@ -26,7 +27,7 @@ const PatientDashboard = () => {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold">Halo, {user.name} 👋</h2>
-        <p className="text-slate-600">Ringkasan aktivitas Anda di DentalCare.</p>
+        <p className="text-slate-600">Ringkasan aktivitas Anda di {CLINIC.shortName}.</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

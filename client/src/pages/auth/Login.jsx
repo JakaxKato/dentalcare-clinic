@@ -4,6 +4,7 @@ import Input from '../../components/common/Input';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { extractMessage } from '../../services/api';
+import { CLINIC } from '../../config/clinic';
 
 const Login = () => {
   const { login } = useAuth();
@@ -37,7 +38,7 @@ const Login = () => {
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md card p-8">
         <h1 className="text-2xl font-bold text-center">Masuk ke Akun Anda</h1>
-        <p className="text-slate-600 text-sm text-center mt-2">Selamat datang kembali di DentalCare!</p>
+        <p className="text-slate-600 text-sm text-center mt-2">Selamat datang kembali di {CLINIC.shortName}!</p>
         <form onSubmit={submit} className="mt-6 space-y-4">
           <Input
             label="Email"
@@ -68,12 +69,15 @@ const Login = () => {
           <Link to="/register" className="text-brand-600 font-medium hover:underline">Daftar</Link>
         </p>
         <div className="mt-6 p-3 bg-slate-50 rounded-lg text-xs text-slate-600">
-          <p className="font-semibold mb-1">Akun demo (setelah seed):</p>
+          <p className="font-semibold mb-1">Akun demo untuk preview:</p>
           <ul className="space-y-0.5">
-            <li>admin@dentalcare.id / password123</li>
-            <li>sarah@dentalcare.id / password123</li>
-            <li>patient@dentalcare.id / password123</li>
+            <li>admin@dentalcare.id / password123 (Admin)</li>
+            <li>sarah@dentalcare.id / password123 (Dokter)</li>
+            <li>patient@dentalcare.id / password123 (Pasien)</li>
           </ul>
+          <p className="text-[10px] text-slate-400 mt-2 italic">
+            Catatan: akun demo ini hanya untuk preview. Pada deploy produksi, akun dibuat oleh admin klinik.
+          </p>
         </div>
       </div>
     </div>
