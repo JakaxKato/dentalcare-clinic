@@ -1,8 +1,13 @@
+import { CLINIC } from '../../config/clinic';
+
 const WhatsAppFAB = () => {
-  const number = import.meta.env.VITE_WHATSAPP_NUMBER || '6281234567890';
+  const number = CLINIC.whatsappNumber;
+  const greeting = encodeURIComponent(
+    `Halo ${CLINIC.name}, saya ingin konsultasi / booking appointment.`
+  );
   return (
     <a
-      href={`https://wa.me/${number}?text=Halo%20DentalCare%2C%20saya%20ingin%20konsultasi.`}
+      href={`https://wa.me/${number}?text=${greeting}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat WhatsApp"

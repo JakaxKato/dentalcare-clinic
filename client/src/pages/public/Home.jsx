@@ -5,20 +5,21 @@ import DentistCard from '../../components/cards/DentistCard';
 import ArticleCard from '../../components/cards/ArticleCard';
 import Loader from '../../components/common/Loader';
 import { serviceService, dentistService, articleService, testimonialService } from '../../services';
+import { CLINIC } from '../../config/clinic';
 
 const Hero = () => (
   <section className="relative bg-gradient-to-br from-brand-50 via-white to-accent-400/10">
     <div className="container-app py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
       <div>
         <span className="inline-block bg-brand-100 text-brand-700 text-sm font-medium px-3 py-1 rounded-full mb-4">
-          Klinik Gigi Modern
+          {CLINIC.tagline}
         </span>
         <h1 className="text-4xl md:text-5xl lg:text-6xl text-slate-900 leading-tight">
           Senyum Sehat & <span className="text-brand-600">Percaya Diri</span> untuk Keluarga Anda
         </h1>
         <p className="mt-5 text-lg text-slate-600 max-w-lg">
-          DentalCare menggabungkan teknologi modern dengan sentuhan personal — booking online, dokter berpengalaman,
-          dan suasana yang nyaman untuk semua usia.
+          {CLINIC.name} hadir di dua lokasi strategis di Bandung — menggabungkan teknologi modern dengan sentuhan personal:
+          booking online, dokter berpengalaman, dan suasana yang nyaman untuk semua usia.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link to="/appointment" className="btn-primary">📅 Book Appointment</Link>
@@ -26,9 +27,9 @@ const Hero = () => (
         </div>
         <div className="mt-10 grid grid-cols-3 gap-4 max-w-md">
           {[
-            { v: '15+', l: 'Tahun Pengalaman' },
-            { v: '8K+', l: 'Pasien Puas' },
-            { v: '4.9★', l: 'Rating Google' },
+            { v: CLINIC.stats.years, l: 'Tahun Pengalaman' },
+            { v: CLINIC.stats.patients, l: 'Pasien Puas' },
+            { v: CLINIC.stats.rating, l: 'Rating Google' },
           ].map((s) => (
             <div key={s.l}>
               <p className="text-2xl font-bold text-slate-900">{s.v}</p>
@@ -60,7 +61,7 @@ const Hero = () => (
 const Features = () => (
   <section className="container-app py-16">
     <div className="text-center max-w-2xl mx-auto mb-12">
-      <h2 className="text-3xl">Mengapa Memilih DentalCare?</h2>
+      <h2 className="text-3xl">Mengapa Memilih {CLINIC.shortName}?</h2>
       <p className="text-slate-600 mt-3">Komitmen kami adalah memberikan perawatan gigi berkualitas dengan pengalaman yang menyenangkan.</p>
     </div>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -112,10 +113,10 @@ const Home = () => {
         <div className="flex items-end justify-between mb-8">
           <div>
             <h2 className="text-3xl">Layanan Unggulan</h2>
-            <p className="text-slate-600 mt-2">Pilih layanan sesuai kebutuhan kesehatan gigi Anda.</p>
+            <p className="text-slate-600 mt-1">Perawatan dari rutin hingga estetik untuk seluruh keluarga.</p>
           </div>
-          <Link to="/services" className="text-brand-600 hover:underline text-sm font-medium hidden md:block">
-            Lihat Semua →
+          <Link to="/services" className="hidden md:inline text-brand-600 hover:underline text-sm">
+            Lihat semua layanan →
           </Link>
         </div>
         {loading ? (
@@ -127,49 +128,79 @@ const Home = () => {
         )}
       </section>
 
-      <section className="bg-white py-16">
+      <section className="bg-slate-50 py-16">
         <div className="container-app">
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <h2 className="text-3xl">Tim Dokter Profesional</h2>
-            <p className="text-slate-600 mt-2">Berkomitmen memberikan perawatan terbaik untuk Anda.</p>
+          <div className="flex items-end justify-between mb-8">
+            <div>
+              <h2 className="text-3xl">Dokter Kami</h2>
+              <p className="text-slate-600 mt-1">Tim dokter gigi tersertifikasi dan berpengalaman.</p>
+            </div>
+            <Link to="/dentists" className="hidden md:inline text-brand-600 hover:underline text-sm">
+              Semua dokter →
+            </Link>
           </div>
-          {!loading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {dentists.map((d) => <DentistCard key={d.user._id} entry={d} />)}
+          {loading ? (
+            <Loader />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {dentists.map((d) => <DentistCard key={d.user?._id || d._id} entry={d} />)}
             </div>
           )}
-          <div className="text-center mt-8">
-            <Link to="/dentists" className="btn-secondary">Lihat Semua Dokter</Link>
-          </div>
         </div>
       </section>
 
       {testimonials.length > 0 && (
         <section className="container-app py-16">
-          <div className="text-center mb-10">
+          <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-3xl">Apa Kata Pasien Kami</h2>
+            <p className="text-slate-600 mt-3">Kepercayaan Anda adalah kebanggaan kami.</p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {testimonials.map((t) => (
-              <div key={t._id} className="card p-5">
-                <div className="text-amber-500 mb-2">{'★'.repeat(t.rating)}</div>
-                <p className="text-sm text-slate-700 italic">"{t.message}"</p>
-                <p className="text-sm font-semibold mt-3">— {t.patientName}</p>
+              <div key={t._id} className="card p-6">
+                <div className="flex gap-0.5 text-amber-400 mb-2">
+                  {'★'.repeat(t.rating)}
+                  {'☆'.repeat(5 - t.rating)}
+                </div>
+                <p className="text-slate-700 text-sm italic">"{t.message}"</p>
+                <p className="mt-4 font-semibold text-slate-800 text-sm">— {t.patientName}</p>
               </div>
             ))}
           </div>
         </section>
       )}
 
+      <section className="bg-brand-600 text-white py-16">
+        <div className="container-app text-center">
+          <h2 className="text-3xl md:text-4xl text-white">Siap Memulai Perawatan?</h2>
+          <p className="mt-3 text-brand-100 max-w-xl mx-auto">
+            Booking online dalam 2 menit, atau hubungi kami via WhatsApp untuk konsultasi.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link to="/appointment" className="bg-white text-brand-700 hover:bg-slate-50 px-6 py-3 rounded-xl font-semibold">
+              📅 Book Appointment
+            </Link>
+            <a
+              href={`https://wa.me/${CLINIC.whatsappNumber}?text=${encodeURIComponent(`Halo ${CLINIC.name}, saya ingin konsultasi.`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-emerald-500 hover:bg-emerald-600 px-6 py-3 rounded-xl font-semibold"
+            >
+              💬 WhatsApp Kami
+            </a>
+          </div>
+        </div>
+      </section>
+
       {articles.length > 0 && (
         <section className="container-app py-16">
           <div className="flex items-end justify-between mb-8">
             <div>
               <h2 className="text-3xl">Artikel Terbaru</h2>
-              <p className="text-slate-600 mt-2">Tips & edukasi kesehatan gigi dari ahlinya.</p>
+              <p className="text-slate-600 mt-1">Tips kesehatan gigi untuk Anda.</p>
             </div>
-            <Link to="/blog" className="text-brand-600 hover:underline text-sm font-medium hidden md:block">
-              Lihat Semua →
+            <Link to="/blog" className="hidden md:inline text-brand-600 hover:underline text-sm">
+              Semua artikel →
             </Link>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
@@ -177,18 +208,6 @@ const Home = () => {
           </div>
         </section>
       )}
-
-      <section className="bg-brand-600 text-white py-16">
-        <div className="container-app text-center">
-          <h2 className="text-3xl text-white">Siap Memulai Senyum Sehat Anda?</h2>
-          <p className="text-brand-100 mt-3 max-w-xl mx-auto">
-            Booking konsultasi pertama Anda hari ini — gratis tanya jawab dengan dokter kami.
-          </p>
-          <Link to="/appointment" className="mt-6 inline-flex bg-white text-brand-700 hover:bg-slate-100 btn">
-            Book Appointment Sekarang
-          </Link>
-        </div>
-      </section>
     </>
   );
 };

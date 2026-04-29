@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { CLINIC } from '../../config/clinic';
 
 const links = [
   { to: '/', label: 'Beranda' },
@@ -31,7 +32,7 @@ const Navbar = () => {
           <div className="w-9 h-9 rounded-lg bg-brand-600 text-white flex items-center justify-center font-bold">
             🦷
           </div>
-          <span className="font-extrabold text-lg text-slate-800">DentalCare</span>
+          <span className="font-extrabold text-lg text-slate-800">{CLINIC.shortName}</span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1">

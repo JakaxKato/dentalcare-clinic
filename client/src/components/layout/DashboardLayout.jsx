@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { CLINIC } from '../../config/clinic';
 
 const DashboardLayout = ({ navItems = [], title = 'Dashboard' }) => {
   const { user, logout } = useAuth();
@@ -23,7 +24,7 @@ const DashboardLayout = ({ navItems = [], title = 'Dashboard' }) => {
         <div className="h-16 flex items-center justify-between px-5 border-b border-slate-100">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-brand-600 text-white flex items-center justify-center text-sm">🦷</div>
-            <span className="font-extrabold text-slate-800">DentalCare</span>
+            <span className="font-extrabold text-slate-800">{CLINIC.shortName}</span>
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}

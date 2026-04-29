@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Input, Textarea } from '../../components/common/Input';
 import { useToast } from '../../context/ToastContext';
+import { CLINIC } from '../../config/clinic';
 
 const FAQ = [
-  { q: 'Apakah perlu booking dulu?', a: 'Sangat disarankan agar Anda mendapatkan slot dan dokter sesuai pilihan tanpa harus mengantri.' },
-  { q: 'Apakah klinik menerima BPJS?', a: 'Saat ini DentalCare belum bekerja sama dengan BPJS, namun kami menerima asuransi swasta tertentu. Hubungi kami untuk detailnya.' },
-  { q: 'Apakah ada cicilan untuk perawatan mahal?', a: 'Ya, kami bekerja sama dengan layanan cicilan medis untuk perawatan ortodonti, implant, dan veneer.' },
-  { q: 'Bagaimana jika saya perlu reschedule?', a: 'Anda bisa membatalkan appointment dengan status pending dan membuat baru, atau hubungi admin untuk reschedule.' },
+  { q: 'Apakah perlu booking dulu?', a: 'Sangat disarankan agar Anda mendapatkan slot dan dokter sesuai pilihan tanpa harus mengantri. Booking bisa dilakukan online 24 jam melalui website ini.' },
+  { q: 'Apakah klinik menerima BPJS?', a: 'Saat ini kami belum bekerja sama dengan BPJS, namun kami menerima asuransi swasta tertentu. Hubungi kami untuk detailnya.' },
+  { q: 'Apakah ada cicilan untuk perawatan mahal?', a: 'Ya, kami bekerja sama dengan layanan cicilan medis untuk perawatan ortodonti (behel), implant, dan veneer.' },
+  { q: 'Bagaimana jika saya perlu reschedule?', a: 'Anda bisa membatalkan appointment dengan status pending dan membuat baru, atau hubungi admin via WhatsApp untuk reschedule.' },
+  { q: 'Apakah menerima pasien anak?', a: 'Ya, kami memiliki pendekatan khusus untuk pasien anak dengan suasana yang ramah dan tidak menakutkan.' },
 ];
 
 const Contact = () => {
@@ -31,30 +33,47 @@ const Contact = () => {
             <div className="card p-5 flex items-start gap-3">
               <div className="text-2xl">📍</div>
               <div>
-                <h3 className="font-semibold">Alamat</h3>
-                <p className="text-slate-600 text-sm">Jl. Sudirman No. 123, Jakarta Pusat 10210</p>
+                <h3 className="font-semibold">{CLINIC.address.primary.label}</h3>
+                <p className="text-slate-600 text-sm">{CLINIC.address.primary.line}</p>
+              </div>
+            </div>
+            <div className="card p-5 flex items-start gap-3">
+              <div className="text-2xl">📍</div>
+              <div>
+                <h3 className="font-semibold">{CLINIC.address.secondary.label}</h3>
+                <p className="text-slate-600 text-sm">{CLINIC.address.secondary.line}</p>
               </div>
             </div>
             <div className="card p-5 flex items-start gap-3">
               <div className="text-2xl">📞</div>
               <div>
-                <h3 className="font-semibold">Telepon</h3>
-                <p className="text-slate-600 text-sm">(021) 1234-5678 / +62 812-3456-7890</p>
+                <h3 className="font-semibold">Telepon / WhatsApp</h3>
+                <p className="text-slate-600 text-sm">
+                  <a
+                    href={`https://wa.me/${CLINIC.whatsappNumber}?text=${encodeURIComponent(`Halo ${CLINIC.name}, saya ingin bertanya.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-brand-600"
+                  >
+                    {CLINIC.phoneDisplay}
+                  </a>
+                </p>
               </div>
             </div>
             <div className="card p-5 flex items-start gap-3">
               <div className="text-2xl">⏰</div>
               <div>
                 <h3 className="font-semibold">Jam Operasional</h3>
-                <p className="text-slate-600 text-sm">Senin–Jumat 09:00–21:00 · Sabtu 09:00–18:00 · Minggu 10:00–16:00</p>
+                <p className="text-slate-600 text-sm">{CLINIC.hours.summary}</p>
+                <p className="text-slate-500 text-xs mt-1">Buka setiap hari termasuk akhir pekan.</p>
               </div>
             </div>
           </div>
 
           <div className="mt-6 rounded-2xl overflow-hidden shadow-md">
             <iframe
-              title="Lokasi DentalCare"
-              src="https://www.google.com/maps?q=Jakarta+Pusat&output=embed"
+              title={`Lokasi ${CLINIC.name}`}
+              src={CLINIC.mapEmbedSrc}
               className="w-full h-72 border-0"
               loading="lazy"
             />
