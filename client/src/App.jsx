@@ -29,11 +29,8 @@ import ResetPassword from './pages/auth/ResetPassword';
 import PatientDashboard from './pages/patient/Dashboard';
 import PatientAppointments from './pages/patient/Appointments';
 import PatientProfile from './pages/patient/Profile';
-<<<<<<< HEAD
 import PatientTestimonials from './pages/patient/Testimonials';
-=======
 import PatientPrescriptions from './pages/patient/Prescriptions';
->>>>>>> 57c03a6 (Sprint 1 + 2: security hardening + dental features)
 
 // Dentist
 import DentistDashboard from './pages/dentist/Dashboard';
@@ -84,12 +81,11 @@ const App = () => (
     >
       <Route path="dashboard" element={<PatientDashboard />} />
       <Route path="appointments" element={<PatientAppointments />} />
-<<<<<<< HEAD
+
       <Route path="testimonials" element={<PatientTestimonials />} />
 =======
       <Route path="prescriptions" element={<PatientPrescriptions />} />
       <Route path="invoices" element={<InvoiceList />} />
->>>>>>> 57c03a6 (Sprint 1 + 2: security hardening + dental features)
       <Route path="profile" element={<PatientProfile />} />
     </Route>
 
