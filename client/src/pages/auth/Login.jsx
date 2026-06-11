@@ -64,7 +64,10 @@ const Login = () => {
             {loading ? 'Memproses...' : 'Masuk'}
           </button>
         </form>
-        <p className="text-sm text-center text-slate-600 mt-5">
+        <p className="text-sm text-center mt-4">
+          <Link to="/forgot-password" className="text-brand-600 hover:underline">Lupa password?</Link>
+        </p>
+        <p className="text-sm text-center text-slate-600 mt-2">
           Belum punya akun?{' '}
           <Link to="/register" className="text-brand-600 font-medium hover:underline">Daftar</Link>
         </p>

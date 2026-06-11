@@ -22,16 +22,23 @@ import NotFound from './pages/public/NotFound';
 // Auth
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 
 // Patient
 import PatientDashboard from './pages/patient/Dashboard';
 import PatientAppointments from './pages/patient/Appointments';
 import PatientProfile from './pages/patient/Profile';
+<<<<<<< HEAD
 import PatientTestimonials from './pages/patient/Testimonials';
+=======
+import PatientPrescriptions from './pages/patient/Prescriptions';
+>>>>>>> 57c03a6 (Sprint 1 + 2: security hardening + dental features)
 
 // Dentist
 import DentistDashboard from './pages/dentist/Dashboard';
 import DentistAppointments from './pages/dentist/Appointments';
+import DentistTreatment from './pages/dentist/Treatment';
 
 // Admin
 import AdminDashboard from './pages/admin/Dashboard';
@@ -41,6 +48,12 @@ import AdminAppointments from './pages/admin/Appointments';
 import AdminPatients from './pages/admin/Patients';
 import AdminArticles from './pages/admin/Articles';
 import AdminTestimonials from './pages/admin/Testimonials';
+
+// Shared
+import InvoiceList from './pages/shared/InvoiceList';
+
+// Print
+import PrescriptionPrint from './pages/print/PrescriptionPrint';
 
 const App = () => (
   <Routes>
@@ -57,6 +70,8 @@ const App = () => (
       <Route path="contact" element={<Contact />} />
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />
+      <Route path="forgot-password" element={<ForgotPassword />} />
+      <Route path="reset-password/:token" element={<ResetPassword />} />
     </Route>
 
     <Route
@@ -69,7 +84,12 @@ const App = () => (
     >
       <Route path="dashboard" element={<PatientDashboard />} />
       <Route path="appointments" element={<PatientAppointments />} />
+<<<<<<< HEAD
       <Route path="testimonials" element={<PatientTestimonials />} />
+=======
+      <Route path="prescriptions" element={<PatientPrescriptions />} />
+      <Route path="invoices" element={<InvoiceList />} />
+>>>>>>> 57c03a6 (Sprint 1 + 2: security hardening + dental features)
       <Route path="profile" element={<PatientProfile />} />
     </Route>
 
@@ -83,6 +103,7 @@ const App = () => (
     >
       <Route path="dashboard" element={<DentistDashboard />} />
       <Route path="appointments" element={<DentistAppointments />} />
+      <Route path="treatment/:id" element={<DentistTreatment />} />
     </Route>
 
     <Route
@@ -98,9 +119,19 @@ const App = () => (
       <Route path="services" element={<AdminServices />} />
       <Route path="appointments" element={<AdminAppointments />} />
       <Route path="patients" element={<AdminPatients />} />
+      <Route path="invoices" element={<InvoiceList isAdmin />} />
       <Route path="articles" element={<AdminArticles />} />
       <Route path="testimonials" element={<AdminTestimonials />} />
     </Route>
+
+    <Route
+      path="/print/prescription/:id"
+      element={
+        <ProtectedRoute roles={['patient', 'dentist', 'admin']}>
+          <PrescriptionPrint />
+        </ProtectedRoute>
+      }
+    />
 
     <Route path="*" element={<NotFound />} />
   </Routes>

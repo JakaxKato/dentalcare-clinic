@@ -256,6 +256,51 @@ const stats = asyncHandler(async (_req, res) => {
   });
 });
 
+// @desc    Update odontogram for an appointment (admin or assigned dentist)
+// @route   PUT /api/appointments/:id/odontogram
+const updateOdontogram = asyncHandler(async (req, res) => {
+  const { odontogram } = req.body;
+  if (!Array.isArray(odontogram)) {
+    throw new ApiError(400, 'odontogram must be an array');
+  }
+
+  const appt = await Appointment.findById(req.params.id);
+  if (!appt) throw new ApiError(404, 'Appointment not found');
+
+  const isAdmin = req.user.role === 'admin';
+  const isDentist = req.user.role === 'dentist' && appt.dentistId.toString() === req.user._id.toString();
+  if (!isAdmin && !isDentist) {
+    throw new ApiError(403, 'Only admin or assigned dentist can update odontogram');
+  }
+
+  appt.odontogram = odontogram;
+  await appt.save();
+  res.json({ success: true, data: appt.odontogram });
+});
+
+// @desc    Get patient's latest odontogram (from most recent completed appointment)
+// @route   GET /api/appointments/patient/:patientId/odontogram
+const getPatientOdontogram = asyncHandler(async (req, res) => {
+  const isSelf = req.user._id.toString() === req.params.patientId;
+  const isStaff = req.user.role === 'admin' || req.user.role === 'dentist';
+  if (!isSelf && !isStaff) throw new ApiError(403, 'Not authorized');
+
+  const latest = await Appointment.findOne({
+    patientId: req.params.patientId,
+    odontogram: { $exists: true, $ne: [] },
+  })
+    .sort({ appointmentDate: -1, appointmentTime: -1 })
+    .select('odontogram appointmentDate dentistId')
+    .populate('dentistId', 'name');
+
+  res.json({
+    success: true,
+    data: latest
+      ? { odontogram: latest.odontogram, takenAt: latest.appointmentDate, dentist: latest.dentistId }
+      : { odontogram: [], takenAt: null, dentist: null },
+  });
+});
+
 module.exports = {
   createAppointment,
   listAppointments,
@@ -265,4 +310,6 @@ module.exports = {
   rescheduleAppointment,
   deleteAppointment,
   stats,
+  updateOdontogram,
+  getPatientOdontogram,
 };

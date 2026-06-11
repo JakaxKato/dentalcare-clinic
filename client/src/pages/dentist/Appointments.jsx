@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import StatusBadge from '../../components/common/StatusBadge';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
@@ -92,6 +93,7 @@ const DentistAppointments = () => {
                 {['pending', 'confirmed'].includes(a.status) && (
                   <button onClick={() => transition(a._id, 'cancelled')} className="btn-danger text-xs">Cancel</button>
                 )}
+                <Link to={`/dentist/treatment/${a._id}`} className="btn-primary text-xs">Treatment</Link>
                 <button onClick={() => setActive(a)} className="btn-ghost text-xs">Detail</button>
               </div>
             </div>

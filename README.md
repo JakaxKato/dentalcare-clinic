@@ -16,6 +16,13 @@ Sistem manajemen klinik dokter gigi full-stack berbasis **MERN** (MongoDB, Expre
 
 ### ✨ Highlight
 - 🔐 JWT auth dengan role-based access control
+- 🛡️ **Security hardening**: Helmet, rate limiting (login 10/15min), NoSQL injection sanitizer, CORS allowlist
+- 🔑 **Forgot/reset password** via email (SMTP) — fallback console log untuk dev
+- ☁️ **Cloudinary upload** dengan fallback ke local disk untuk dev
+- 🦷 **Odontogram interaktif** (notasi FDI dewasa 32 gigi) — editable oleh dokter, read-only di profil pasien
+- 📋 **Rekam medis pasien**: golongan darah, alergi, kondisi sistemik, obat saat ini, catatan
+- ℞ **Resep obat**: multi-item dengan dosis, frekuensi, durasi, instruksi + halaman print
+- 🧾 **Invoice + PDF download** (auto-numbering, diskon, pajak, multi-payment status)
 - 🔁 Status appointment dengan validasi alur (pending → confirmed → completed)
 - 📅 Cek bentrok jadwal dokter otomatis
 - 🌐 Tampilan publik responsif dengan WhatsApp floating, Google Maps, FAQ, testimoni
@@ -139,10 +146,12 @@ Lihat `server/models/` untuk schema lengkap.
 
 | Model | Deskripsi |
 |-------|-----------|
-| `User` | name, email, password (hashed), phone, role (`patient`/`dentist`/`admin`), avatar, isActive |
+| `User` | name, email, password (hashed), phone, role (`patient`/`dentist`/`admin`), avatar, isActive, dateOfBirth, gender, address, **medicalHistory** (bloodType, allergies, conditions, currentMedications, notes), resetPasswordTokenHash |
 | `DentistProfile` | userId, specialization, experienceYears, education, bio, availableDays, workingHours, consultationFee |
 | `Service` | title, slug (auto), description, priceRange, duration, image, isActive |
-| `Appointment` | patientId, dentistId, serviceId, date, time, status, complaint, diagnosis, treatmentNotes, recommendation |
+| `Appointment` | patientId, dentistId, serviceId, date, time, status, complaint, diagnosis, treatmentNotes, recommendation, **odontogram[]** (FDI tooth chart) |
+| `Prescription` | appointmentId, patientId, dentistId, **items[]** (drugName, dosage, frequency, duration, instructions), generalNotes |
+| `Invoice` | invoiceNumber (auto INV-YYYYMM-XXXX), appointmentId, patientId, dentistId, items[], subtotal, discount, taxRate, tax, total, amountPaid, paymentStatus, paymentMethod, paidAt |
 | `Article` | title, slug, content, excerpt, coverImage, authorId, tags, published |
 | `Testimonial` | patientName, rating, message, isApproved |
 
@@ -153,19 +162,22 @@ Lihat `server/models/` untuk schema lengkap.
 Semua endpoint berada di prefix `/api`. JSON request, respons format `{ success, data, message? }`.
 
 ### Auth
-| Method | Path                  | Akses     |
-|--------|-----------------------|-----------|
-| POST   | `/auth/register`      | Public    |
-| POST   | `/auth/login`         | Public    |
-| GET    | `/auth/me`            | Auth      |
+| Method | Path                                | Akses     |
+|--------|-------------------------------------|-----------|
+| POST   | `/auth/register`                    | Public    |
+| POST   | `/auth/login`                       | Public    |
+| GET    | `/auth/me`                          | Auth      |
+| POST   | `/auth/forgot-password`             | Public    |
+| POST   | `/auth/reset-password/:token`       | Public    |
 
 ### Users
-| Method | Path           | Akses             |
-|--------|----------------|-------------------|
-| GET    | `/users`       | Admin             |
-| GET    | `/users/:id`   | Admin / Self      |
-| PUT    | `/users/:id`   | Admin / Self      |
-| DELETE | `/users/:id`   | Admin             |
+| Method | Path                              | Akses             |
+|--------|-----------------------------------|-------------------|
+| GET    | `/users`                          | Admin             |
+| GET    | `/users/:id`                      | Admin / Self      |
+| PUT    | `/users/:id`                      | Admin / Self      |
+| PUT    | `/users/:id/medical-history`      | Admin / Dentist / Self |
+| DELETE | `/users/:id`                      | Admin             |
 
 ### Dentists
 | Method | Path             | Akses |
@@ -186,16 +198,38 @@ Semua endpoint berada di prefix `/api`. JSON request, respons format `{ success,
 | DELETE | `/services/:id`     | Admin  |
 
 ### Appointments
-| Method | Path                                | Akses |
-|--------|-------------------------------------|-------|
-| POST   | `/appointments`                     | Patient/Admin |
-| GET    | `/appointments`                     | Admin/Dentist |
-| GET    | `/appointments/stats`               | Admin |
-| GET    | `/appointments/my-appointments`     | Patient |
-| GET    | `/appointments/:id`                 | Admin / Owner / Assigned dentist |
-| PUT    | `/appointments/:id/status`          | Admin / Dentist / Patient (cancel only) |
-| PUT    | `/appointments/:id/reschedule`      | Admin / Assigned dentist |
-| DELETE | `/appointments/:id`                 | Admin |
+| Method | Path                                              | Akses |
+|--------|---------------------------------------------------|-------|
+| POST   | `/appointments`                                   | Patient/Admin |
+| GET    | `/appointments`                                   | Admin/Dentist |
+| GET    | `/appointments/stats`                             | Admin |
+| GET    | `/appointments/my-appointments`                   | Patient |
+| GET    | `/appointments/patient/:patientId/odontogram`     | Self / Staff |
+| GET    | `/appointments/:id`                               | Admin / Owner / Assigned dentist |
+| PUT    | `/appointments/:id/status`                        | Admin / Dentist / Patient (cancel only) |
+| PUT    | `/appointments/:id/reschedule`                    | Admin / Assigned dentist |
+| PUT    | `/appointments/:id/odontogram`                    | Admin / Assigned dentist |
+| DELETE | `/appointments/:id`                               | Admin |
+
+### Prescriptions
+| Method | Path                  | Akses |
+|--------|-----------------------|-------|
+| POST   | `/prescriptions`      | Admin / Dentist |
+| GET    | `/prescriptions`      | Auth (filtered by role) |
+| GET    | `/prescriptions/:id`  | Auth (self / staff) |
+| PUT    | `/prescriptions/:id`  | Admin / Issuing dentist |
+| DELETE | `/prescriptions/:id`  | Admin |
+
+### Invoices
+| Method | Path                          | Akses |
+|--------|-------------------------------|-------|
+| POST   | `/invoices`                   | Admin / Dentist |
+| GET    | `/invoices`                   | Auth (filtered by role) |
+| GET    | `/invoices/:id`               | Auth (self / staff) |
+| GET    | `/invoices/:id/pdf`           | Auth (self / staff) — returns PDF |
+| PUT    | `/invoices/:id`               | Admin |
+| PUT    | `/invoices/:id/payment`       | Admin |
+| DELETE | `/invoices/:id`               | Admin |
 
 ### Articles
 | Method | Path                | Akses |
@@ -223,12 +257,23 @@ Semua endpoint berada di prefix `/api`. JSON request, respons format `{ success,
 
 ## 🔐 Business Logic & Security
 
+### Auth & Access
 - Password di-hash menggunakan **bcrypt** (10 rounds)
 - JWT token dikirim sebagai `Authorization: Bearer <token>` (interceptor Axios mengurus otomatis)
 - Field `password` selalu di-exclude dari respons (`select: false` + `toJSON` override)
+- Forgot-password: token random 32 byte, simpan SHA-256 hash di DB, TTL 30 menit, response generik (tidak bocor email terdaftar)
 - **Pasien** hanya bisa melihat appointment miliknya
 - **Dokter** hanya bisa melihat appointment yang ditugaskan kepadanya
 - **Admin** bisa melihat & mengubah semua data
+
+### Hardening (Sprint 1)
+- **Helmet** memasang security headers default
+- **Rate limit** global: 300 req / 15 menit / IP
+- **Rate limit** auth (login/register/forgot/reset): 10 req / 15 menit / IP, skip successful
+- **express-mongo-sanitize** mencegah NoSQL injection lewat operator `$`/`.`
+- **CORS allowlist** dari env `CLIENT_URL` (comma-separated); request tanpa Origin tetap dilewatkan
+- **Env validation** saat startup: `MONGO_URI`, `JWT_SECRET` (≥32 char) wajib; `CLIENT_URL` wajib di production
+- **Trust proxy** aktif untuk deteksi IP asli di balik reverse proxy (Render/Vercel/Nginx)
 - **Tanggal lampau** ditolak saat membuat appointment
 - **Bentrok jadwal** dicek (dentistId + tanggal + jam yang masih `pending`/`confirmed`)
 - **Alur status**:
@@ -281,7 +326,8 @@ Semua endpoint berada di prefix `/api`. JSON request, respons format `{ success,
 - Tambah specialization/working hours via halaman **Admin → Dokter**
 - Untuk login dokter: gunakan akun yang dibuat oleh admin (ada field password)
 - Token disimpan di `localStorage` (`dc_token`). Untuk produksi tinggi-keamanan, ganti ke httpOnly cookie + CSRF token.
-- Untuk image upload ke Cloudinary, ganti `middleware/upload.js` dengan `multer-storage-cloudinary` dan tambahkan `CLOUDINARY_*` env.
+- **Image upload**: secara default ke local disk. Set `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` agar otomatis pindah ke Cloudinary (folder bisa diset via `CLOUDINARY_FOLDER`, default `dentalcare`).
+- **Email reset password**: tanpa konfigurasi SMTP, isi email akan di-log ke console (mudah untuk dev). Untuk produksi set `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`. Mailtrap atau Resend bagus untuk testing.
 
 ---
 

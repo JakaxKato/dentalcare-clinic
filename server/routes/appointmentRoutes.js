@@ -2,6 +2,7 @@ const express = require('express');
 const {
   createAppointment, listAppointments, myAppointments, getAppointment,
   updateStatus, rescheduleAppointment, deleteAppointment, stats,
+  updateOdontogram, getPatientOdontogram,
 } = require('../controllers/appointmentController');
 const { protect, authorize } = require('../middleware/auth');
 const { validateAppointment } = require('../validators');
@@ -12,9 +13,11 @@ router.post('/', protect, authorize('patient', 'admin'), validateAppointment, cr
 router.get('/', protect, authorize('admin', 'dentist'), listAppointments);
 router.get('/stats', protect, authorize('admin'), stats);
 router.get('/my-appointments', protect, authorize('patient'), myAppointments);
+router.get('/patient/:patientId/odontogram', protect, getPatientOdontogram);
 router.get('/:id', protect, getAppointment);
 router.put('/:id/status', protect, updateStatus);
 router.put('/:id/reschedule', protect, rescheduleAppointment);
+router.put('/:id/odontogram', protect, updateOdontogram);
 router.delete('/:id', protect, authorize('admin'), deleteAppointment);
 
 module.exports = router;

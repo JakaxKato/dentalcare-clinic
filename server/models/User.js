@@ -1,6 +1,18 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+const medicalHistorySchema = new mongoose.Schema(
+  {
+    bloodType: { type: String, enum: ['', 'A', 'B', 'AB', 'O', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], default: '' },
+    allergies: { type: [String], default: [] },
+    conditions: { type: [String], default: [] },
+    currentMedications: { type: [String], default: [] },
+    notes: { type: String, default: '', trim: true },
+    updatedAt: { type: Date },
+  },
+  { _id: false }
+);
+
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: [true, 'Name is required'], trim: true },
@@ -21,6 +33,12 @@ const userSchema = new mongoose.Schema(
     },
     avatar: { type: String, default: '' },
     isActive: { type: Boolean, default: true },
+    dateOfBirth: { type: Date },
+    gender: { type: String, enum: ['', 'male', 'female'], default: '' },
+    address: { type: String, default: '', trim: true },
+    medicalHistory: { type: medicalHistorySchema, default: () => ({}) },
+    resetPasswordTokenHash: { type: String, select: false },
+    resetPasswordExpires: { type: Date, select: false },
   },
   { timestamps: true }
 );
