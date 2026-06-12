@@ -7,9 +7,11 @@ import { articleService } from '../../services';
 import { formatDate } from '../../utils/format';
 import { extractMessage } from '../../services/api';
 import { CLINIC } from '../../config/clinic';
+import { useClinic } from '../../context/ClinicContext';
 
 const ArticleDetail = () => {
   const { slug } = useParams();
+  const { settings } = useClinic();
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -43,7 +45,7 @@ const ArticleDetail = () => {
       </div>
       <h1 className="text-4xl mt-3">{article.title}</h1>
       <div className="flex items-center gap-3 mt-4 text-sm text-slate-500">
-        <span>{article.authorId?.name || CLINIC.shortName}</span>
+        <span>{article.authorId?.name || settings.clinicName || CLINIC.shortName}</span>
         <span>•</span>
         <span>{formatDate(article.createdAt)}</span>
       </div>

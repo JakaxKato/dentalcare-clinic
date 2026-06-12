@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AlertTriangle, Newspaper } from 'lucide-react';
 import ArticleCard from '../../components/cards/ArticleCard';
-import Loader from '../../components/common/Loader';
+import { CardGridSkeleton } from '../../components/common/Skeleton';
 import EmptyState from '../../components/common/EmptyState';
 import { articleService } from '../../services';
 import { extractMessage } from '../../services/api';
@@ -41,7 +41,7 @@ const Blog = () => {
         />
       </div>
       {loading ? (
-        <Loader />
+        <CardGridSkeleton />
       ) : error ? (
         <EmptyState icon={AlertTriangle} title="Gagal memuat" description={error} />
       ) : filtered.length === 0 ? (

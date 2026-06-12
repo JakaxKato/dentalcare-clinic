@@ -15,12 +15,15 @@
     "@fullcalendar/interaction": "^6.1.20",
     "@fullcalendar/react": "^6.1.20",
     "@fullcalendar/timegrid": "^6.1.20",
+    "@hookform/resolvers": "^5.4.0",
     "axios": "^1.17.0",
     "lucide-react": "^1.17.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.78.0",
     "react-router-dom": "^6.30.4",
-    "swiper": "^12.2.0"
+    "swiper": "^12.2.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

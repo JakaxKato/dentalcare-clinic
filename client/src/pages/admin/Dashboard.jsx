@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CalendarDays, CalendarCheck, Users, CheckCircle2 } from 'lucide-react';
 import StatCard from '../../components/dashboard/StatCard';
-import Loader from '../../components/common/Loader';
+import { DashboardSkeleton } from '../../components/common/Skeleton';
 import { appointmentService } from '../../services';
 import { useToast } from '../../context/ToastContext';
 import { extractMessage } from '../../services/api';
@@ -20,7 +20,7 @@ const AdminDashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (loading || !stats) return <Loader />;
+  if (loading || !stats) return <DashboardSkeleton cards={4} />;
 
   return (
     <div className="space-y-6">

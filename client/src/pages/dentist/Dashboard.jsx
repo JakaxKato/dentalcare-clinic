@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { CalendarCheck, Clock, CheckCircle2 } from 'lucide-react';
 import StatCard from '../../components/dashboard/StatCard';
 import StatusBadge from '../../components/common/StatusBadge';
-import Loader from '../../components/common/Loader';
+import { DashboardSkeleton } from '../../components/common/Skeleton';
 import { appointmentService } from '../../services';
 import { useAuth } from '../../context/AuthContext';
 import { formatDateTime } from '../../utils/format';
@@ -21,7 +21,7 @@ const DentistDashboard = () => {
   const upcoming = appts.filter((a) => ['pending', 'confirmed'].includes(a.status) && new Date(a.appointmentDate) >= new Date());
   const completed = appts.filter((a) => a.status === 'completed').length;
 
-  if (loading) return <Loader />;
+  if (loading) return <DashboardSkeleton />;
 
   return (
     <div className="space-y-6">

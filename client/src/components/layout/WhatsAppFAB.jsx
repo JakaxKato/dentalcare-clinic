@@ -1,10 +1,12 @@
 import { MessageCircle } from 'lucide-react';
 import { CLINIC } from '../../config/clinic';
+import { useClinic } from '../../context/ClinicContext';
 
 const WhatsAppFAB = () => {
-  const number = CLINIC.whatsappNumber;
+  const { settings } = useClinic();
+  const number = (settings.whatsapp || CLINIC.whatsappNumber).replace(/\D/g, '');
   const greeting = encodeURIComponent(
-    `Halo ${CLINIC.name}, saya ingin konsultasi / booking appointment.`
+    `Halo ${settings.clinicName || CLINIC.name}, saya ingin konsultasi / booking appointment.`
   );
   return (
     <a

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { MapPin, Phone, Clock, ChevronDown } from 'lucide-react';
 import { Input, Textarea } from '../../components/common/Input';
 import { useToast } from '../../context/ToastContext';
+import { useClinic } from '../../context/ClinicContext';
 import { CLINIC } from '../../config/clinic';
 
 const FAQ = [
@@ -14,7 +15,10 @@ const FAQ = [
 
 const Contact = () => {
   const toast = useToast();
+  const { settings } = useClinic();
   const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const clinicName = settings.clinicName || CLINIC.name;
+  const whatsapp = (settings.whatsapp || CLINIC.whatsappNumber).replace(/\D/g, '');
 
   const handle = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const submit = (e) => {
@@ -36,17 +40,10 @@ const Contact = () => {
                 <MapPin className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-semibold">{CLINIC.address.primary.label}</h3>
-                <p className="text-slate-600 text-sm">{CLINIC.address.primary.line}</p>
-              </div>
-            </div>
-            <div className="card p-5 flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0">
-                <MapPin className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-semibold">{CLINIC.address.secondary.label}</h3>
-                <p className="text-slate-600 text-sm">{CLINIC.address.secondary.line}</p>
+                <h3 className="font-semibold">{clinicName}</h3>
+                <p className="text-slate-600 text-sm">
+                  {settings.address || CLINIC.address.primary.line}
+                </p>
               </div>
             </div>
             <div className="card p-5 flex items-start gap-3">
@@ -57,12 +54,12 @@ const Contact = () => {
                 <h3 className="font-semibold">Telepon / WhatsApp</h3>
                 <p className="text-slate-600 text-sm">
                   <a
-                    href={`https://wa.me/${CLINIC.whatsappNumber}?text=${encodeURIComponent(`Halo ${CLINIC.name}, saya ingin bertanya.`)}`}
+                    href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(`Halo ${clinicName}, saya ingin bertanya.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-brand-600"
                   >
-                    {CLINIC.phoneDisplay}
+                    {settings.phone || CLINIC.phoneDisplay}
                   </a>
                 </p>
               </div>
@@ -73,16 +70,17 @@ const Contact = () => {
               </div>
               <div>
                 <h3 className="font-semibold">Jam Operasional</h3>
-                <p className="text-slate-600 text-sm">{CLINIC.hours.summary}</p>
-                <p className="text-slate-500 text-xs mt-1">Buka setiap hari termasuk akhir pekan.</p>
+                <p className="text-slate-600 text-sm whitespace-pre-line">
+                  {settings.operatingHours || CLINIC.hours.summary}
+                </p>
               </div>
             </div>
           </div>
 
           <div className="mt-6 rounded-2xl overflow-hidden shadow-md">
             <iframe
-              title={`Lokasi ${CLINIC.name}`}
-              src={CLINIC.mapEmbedSrc}
+              title={`Lokasi ${clinicName}`}
+              src={settings.mapEmbedUrl || CLINIC.mapEmbedSrc}
               className="w-full h-72 border-0"
               loading="lazy"
             />

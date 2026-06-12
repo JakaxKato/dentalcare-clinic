@@ -26,6 +26,7 @@ const uploadRoutes = require('./routes/uploadRoutes');
 const prescriptionRoutes = require('./routes/prescriptionRoutes');
 const invoiceRoutes = require('./routes/invoiceRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
+const clinicSettingsRoutes = require('./routes/clinicSettingsRoutes');
 
 const app = express();
 
@@ -99,6 +100,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/prescriptions', prescriptionRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/clinic-settings', clinicSettingsRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

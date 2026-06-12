@@ -90,6 +90,11 @@ export const paymentService = {
     api.post(`/payments/appointment/${appointmentId}/dp/confirm`).then((r) => r.data.data),
 };
 
+export const clinicSettingsService = {
+  get: () => api.get('/clinic-settings').then((r) => r.data.data),
+  update: (data) => api.put('/clinic-settings', data).then((r) => r.data.data),
+};
+
 export const invoiceService = {
   create: (data) => api.post('/invoices', data).then((r) => r.data.data),
   list: (params = {}) => api.get('/invoices', { params }).then((r) => r.data.data),

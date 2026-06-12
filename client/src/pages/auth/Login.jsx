@@ -1,36 +1,51 @@
-import { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { z } from 'zod';
 import Input from '../../components/common/Input';
 import { useAuth } from '../../context/AuthContext';
+import { useClinic } from '../../context/ClinicContext';
 import { useToast } from '../../context/ToastContext';
 import { extractMessage } from '../../services/api';
-import { CLINIC } from '../../config/clinic';
+
+const loginSchema = z.object({
+  email: z.string().trim().email('Masukkan alamat email yang valid'),
+  password: z.string().min(1, 'Password wajib diisi'),
+});
 
 const Login = () => {
   const { login } = useAuth();
+  const { settings } = useClinic();
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToast();
-  const [form, setForm] = useState({ email: '', password: '' });
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' },
+  });
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
-  const submit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const submit = async (form) => {
     try {
-      const u = await login(form);
-      toast.success(`Selamat datang, ${u.name}!`);
+      const user = await login(form);
+      toast.success(`Selamat datang, ${user.name}!`);
       const from = location.state?.from;
-      if (from) return navigate(from, { replace: true });
+      if (from) {
+        navigate(from, { replace: true });
+        return;
+      }
       const target =
-        u.role === 'admin' ? '/admin/dashboard' : u.role === 'dentist' ? '/dentist/dashboard' : '/patient/dashboard';
+        user.role === 'admin'
+          ? '/admin/dashboard'
+          : user.role === 'dentist'
+            ? '/dentist/dashboard'
+            : '/patient/dashboard';
       navigate(target, { replace: true });
-    } catch (err) {
-      toast.error(extractMessage(err, 'Login gagal'));
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      toast.error(extractMessage(error, 'Login gagal'));
     }
   };
 
@@ -38,38 +53,40 @@ const Login = () => {
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md card p-8">
         <h1 className="text-2xl font-bold text-center">Masuk ke Akun Anda</h1>
-        <p className="text-slate-600 text-sm text-center mt-2">Selamat datang kembali di {CLINIC.shortName}!</p>
-        <form onSubmit={submit} className="mt-6 space-y-4">
+        <p className="text-slate-600 text-sm text-center mt-2">
+          Selamat datang kembali di {settings.clinicName}!
+        </p>
+        <form onSubmit={handleSubmit(submit)} className="mt-6 space-y-4" noValidate>
           <Input
             label="Email"
             type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
             placeholder="anda@email.com"
-            required
             autoComplete="email"
+            error={errors.email?.message}
+            {...register('email')}
           />
           <Input
             label="Password"
             type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="••••••••"
-            required
+            placeholder="********"
             autoComplete="current-password"
+            error={errors.password?.message}
+            {...register('password')}
           />
-          <button type="submit" disabled={loading} className="btn-primary w-full">
-            {loading ? 'Memproses...' : 'Masuk'}
+          <button type="submit" disabled={isSubmitting} className="btn-primary w-full">
+            {isSubmitting ? 'Memproses...' : 'Masuk'}
           </button>
         </form>
         <p className="text-sm text-center mt-4">
-          <Link to="/forgot-password" className="text-brand-600 hover:underline">Lupa password?</Link>
+          <Link to="/forgot-password" className="text-brand-600 hover:underline">
+            Lupa password?
+          </Link>
         </p>
         <p className="text-sm text-center text-slate-600 mt-2">
           Belum punya akun?{' '}
-          <Link to="/register" className="text-brand-600 font-medium hover:underline">Daftar</Link>
+          <Link to="/register" className="text-brand-600 font-medium hover:underline">
+            Daftar
+          </Link>
         </p>
         <div className="mt-6 p-3 bg-slate-50 rounded-lg text-xs text-slate-600">
           <p className="font-semibold mb-1">Akun demo untuk preview:</p>
@@ -79,7 +96,7 @@ const Login = () => {
             <li>patient@dentalcare.id / password123 (Pasien)</li>
           </ul>
           <p className="text-[10px] text-slate-400 mt-2 italic">
-            Catatan: akun demo ini hanya untuk preview. Pada deploy produksi, akun dibuat oleh admin klinik.
+            Akun demo hanya untuk preview. Pada produksi, akun dibuat melalui alur resmi klinik.
           </p>
         </div>
       </div>

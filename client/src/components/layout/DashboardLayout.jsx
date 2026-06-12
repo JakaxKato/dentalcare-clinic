@@ -2,8 +2,10 @@ import { useState, isValidElement } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { ArrowLeft, LogOut, Menu, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useClinic } from '../../context/ClinicContext';
 import { CLINIC } from '../../config/clinic';
 import ToothIcon from '../common/ToothIcon';
+import ThemeToggle from '../common/ThemeToggle';
 
 const renderIcon = (icon) => {
   if (icon == null) return null;
@@ -20,6 +22,7 @@ const renderIcon = (icon) => {
 
 const DashboardLayout = ({ navItems = [], title = 'Dashboard' }) => {
   const { user, logout } = useAuth();
+  const { settings } = useClinic();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -29,18 +32,24 @@ const DashboardLayout = ({ navItems = [], title = 'Dashboard' }) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex">
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 transform transition-transform ${
+        className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transform transition-transform ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 flex flex-col`}
       >
         <div className="h-16 flex items-center justify-between px-5 border-b border-slate-100">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-brand-600 text-white flex items-center justify-center">
-              <ToothIcon className="w-4 h-4" strokeWidth={2} />
-            </div>
-            <span className="font-extrabold text-slate-800">{CLINIC.shortName}</span>
+            {settings.logoUrl ? (
+              <img src={settings.logoUrl} alt={settings.clinicName} className="h-8 w-auto object-contain" />
+            ) : (
+              <div className="w-8 h-8 rounded-lg bg-brand-600 text-white flex items-center justify-center">
+                <ToothIcon className="w-4 h-4" strokeWidth={2} />
+              </div>
+            )}
+            <span className="font-extrabold text-slate-800 dark:text-slate-100">
+              {settings.clinicName || CLINIC.shortName}
+            </span>
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -63,7 +72,7 @@ const DashboardLayout = ({ navItems = [], title = 'Dashboard' }) => {
                 `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
                   isActive
                     ? 'bg-brand-50 text-brand-700'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
                 }`
               }
             >
@@ -94,7 +103,7 @@ const DashboardLayout = ({ navItems = [], title = 'Dashboard' }) => {
       )}
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-20">
+        <header className="h-16 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-20">
           <button
             onClick={() => setSidebarOpen(true)}
             className="lg:hidden p-2 rounded-md text-slate-700 hover:bg-slate-100"
@@ -103,9 +112,12 @@ const DashboardLayout = ({ navItems = [], title = 'Dashboard' }) => {
             <Menu className="w-5 h-5" />
           </button>
           <h1 className="text-lg font-semibold text-slate-800 hidden sm:block">{title}</h1>
-          <Link to="/" className="text-sm text-brand-600 hover:underline inline-flex items-center gap-1">
-            <ArrowLeft className="w-4 h-4" /> Lihat Website
-          </Link>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <Link to="/" className="text-sm text-brand-600 hover:underline inline-flex items-center gap-1">
+              <ArrowLeft className="w-4 h-4" /> Lihat Website
+            </Link>
+          </div>
         </header>
 
         <main className="flex-1 p-4 lg:p-8 overflow-auto">

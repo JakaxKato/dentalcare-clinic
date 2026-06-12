@@ -47,6 +47,7 @@ const AdminAppointments = lazy(() => import('./pages/admin/Appointments'));
 const AdminPatients = lazy(() => import('./pages/admin/Patients'));
 const AdminArticles = lazy(() => import('./pages/admin/Articles'));
 const AdminTestimonials = lazy(() => import('./pages/admin/Testimonials'));
+const AdminSettings = lazy(() => import('./pages/admin/Settings'));
 
 // Shared (lazy loaded)
 const InvoiceList = lazy(() => import('./pages/shared/InvoiceList'));
@@ -123,6 +124,7 @@ const App = () => (
         <Route path="invoices" element={<InvoiceList isAdmin />} />
         <Route path="articles" element={<AdminArticles />} />
         <Route path="testimonials" element={<AdminTestimonials />} />
+        <Route path="settings" element={<AdminSettings />} />
       </Route>
 
       <Route

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AlertTriangle, Stethoscope } from 'lucide-react';
 import DentistCard from '../../components/cards/DentistCard';
-import Loader from '../../components/common/Loader';
+import { CardGridSkeleton } from '../../components/common/Skeleton';
 import EmptyState from '../../components/common/EmptyState';
 import { dentistService } from '../../services';
 import { extractMessage } from '../../services/api';
@@ -26,7 +26,7 @@ const Dentists = () => {
         <p className="text-slate-600 mt-3">Bertemu dengan dokter gigi spesialis berpengalaman dan ramah.</p>
       </div>
       {loading ? (
-        <Loader />
+        <CardGridSkeleton />
       ) : error ? (
         <EmptyState icon={AlertTriangle} title="Gagal memuat" description={error} />
       ) : dentists.length === 0 ? (

@@ -30,7 +30,7 @@ class ErrorBoundary extends Component {
             <p className="text-slate-600 mb-6">
               Aplikasi mengalami error yang tidak terduga. Silakan muat ulang halaman.
             </p>
-            {process.env.NODE_ENV !== 'production' && this.state.error && (
+            {import.meta.env.DEV && this.state.error && (
               <pre className="text-left text-xs bg-slate-100 rounded-lg p-4 mb-6 overflow-auto max-h-40 text-rose-600">
                 {this.state.error.toString()}
               </pre>

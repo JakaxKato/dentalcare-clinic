@@ -17,9 +17,10 @@ import {
 import ServiceCard from '../../components/cards/ServiceCard';
 import DentistCard from '../../components/cards/DentistCard';
 import ArticleCard from '../../components/cards/ArticleCard';
-import Loader from '../../components/common/Loader';
+import { CardGridSkeleton } from '../../components/common/Skeleton';
 import { serviceService, dentistService, articleService, testimonialService } from '../../services';
 import { CLINIC } from '../../config/clinic';
+import { useClinic } from '../../context/ClinicContext';
 
 const HERO_SLIDES = [
   {
@@ -45,19 +46,23 @@ const GALLERY_IMAGES = [
   'https://images.unsplash.com/photo-1571772996211-2f02c9727629?w=900&q=80',
 ];
 
-const Hero = () => (
-  <section className="relative bg-gradient-to-br from-brand-50 via-white to-accent-400/10">
+const Hero = () => {
+  const { settings } = useClinic();
+  const clinicName = settings.clinicName || CLINIC.name;
+
+  return (
+  <section className="relative bg-gradient-to-br from-brand-50 via-white to-accent-400/10 dark:via-slate-950 dark:to-slate-900">
     <div className="container-app py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
       <div>
         <span className="inline-block bg-brand-100 text-brand-700 text-sm font-medium px-3 py-1 rounded-full mb-4">
-          {CLINIC.tagline}
+          {settings.tagline || CLINIC.tagline}
         </span>
         <h1 className="text-4xl md:text-5xl lg:text-6xl text-slate-900 leading-tight">
           Senyum Sehat & <span className="text-brand-600">Percaya Diri</span> untuk Keluarga Anda
         </h1>
         <p className="mt-5 text-lg text-slate-600 max-w-lg">
-          {CLINIC.name} hadir di dua lokasi strategis di Bandung — menggabungkan teknologi modern dengan sentuhan personal:
-          booking online, dokter berpengalaman, dan suasana yang nyaman untuk semua usia.
+          {clinicName} menggabungkan teknologi modern dengan sentuhan personal:
+          booking online, dokter berpengalaman, dan suasana nyaman untuk semua usia.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link to="/appointment" className="btn-primary">
@@ -115,7 +120,8 @@ const Hero = () => (
       </div>
     </div>
   </section>
-);
+  );
+};
 
 const FEATURES = [
   { Icon: Stethoscope, t: 'Dokter Berpengalaman', d: 'Tim dokter gigi tersertifikasi PDGI dengan spesialisasi lengkap.' },
@@ -124,10 +130,12 @@ const FEATURES = [
   { Icon: HeartHandshake, t: 'Ramah & Nyaman', d: 'Suasana klinik yang menenangkan, cocok untuk anak hingga dewasa.' },
 ];
 
-const Features = () => (
+const Features = () => {
+  const { settings } = useClinic();
+  return (
   <section className="container-app py-16">
     <div className="text-center max-w-2xl mx-auto mb-12">
-      <h2 className="text-3xl">Mengapa Memilih {CLINIC.shortName}?</h2>
+      <h2 className="text-3xl">Mengapa Memilih {settings.clinicName || CLINIC.shortName}?</h2>
       <p className="text-slate-600 mt-3">Komitmen kami adalah memberikan perawatan gigi berkualitas dengan pengalaman yang menyenangkan.</p>
     </div>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -142,7 +150,8 @@ const Features = () => (
       ))}
     </div>
   </section>
-);
+  );
+};
 
 const Gallery = () => (
   <section className="container-app py-16">
@@ -186,6 +195,7 @@ const Gallery = () => (
 );
 
 const Home = () => {
+  const { settings } = useClinic();
   const [services, setServices] = useState([]);
   const [dentists, setDentists] = useState([]);
   const [articles, setArticles] = useState([]);
@@ -224,7 +234,7 @@ const Home = () => {
           </Link>
         </div>
         {loading ? (
-          <Loader />
+          <CardGridSkeleton />
         ) : (
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
@@ -264,7 +274,7 @@ const Home = () => {
             </Link>
           </div>
           {loading ? (
-            <Loader />
+            <CardGridSkeleton />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {dentists.map((d) => <DentistCard key={d.user?._id || d._id} entry={d} />)}
@@ -327,7 +337,7 @@ const Home = () => {
               <CalendarCheck className="w-5 h-5" /> Book Appointment
             </Link>
             <a
-              href={`https://wa.me/${CLINIC.whatsappNumber}?text=${encodeURIComponent(`Halo ${CLINIC.name}, saya ingin konsultasi.`)}`}
+              href={`https://wa.me/${(settings.whatsapp || CLINIC.whatsappNumber).replace(/\D/g, '')}?text=${encodeURIComponent(`Halo ${settings.clinicName || CLINIC.name}, saya ingin konsultasi.`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 px-6 py-3 rounded-xl font-semibold"

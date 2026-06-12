@@ -28,6 +28,11 @@ Sistem manajemen klinik dokter gigi full-stack berbasis **MERN** (MongoDB, Expre
 - 🌐 Tampilan publik responsif dengan WhatsApp floating, Google Maps, FAQ, testimoni
 - 📊 Dashboard statistik admin: top services, top dentists, pasien baru, status breakdown
 - 📥 Export laporan appointment ke CSV
+- 🎨 White-label settings untuk nama, logo, warna, kontak, jam operasional, dan peta
+- 🌙 Dark mode dengan preferensi tersimpan
+- 📱 PWA installable dengan offline app shell
+- ⚡ Loading skeleton untuk dashboard dan katalog utama
+- ✅ Validasi form terstruktur menggunakan React Hook Form + Zod
 - 🌱 Seed data: admin + 3 dokter + 1 pasien demo + 6 layanan + 3 artikel + 4 testimoni
 
 ---
@@ -261,6 +266,12 @@ Semua endpoint berada di prefix `/api`. JSON request, respons format `{ success,
 | Method | Path       | Akses |
 |--------|------------|-------|
 | POST   | `/upload`  | Admin / Dentist (multipart, field `image`) |
+
+### Clinic Settings
+| Method | Path                | Akses |
+|--------|---------------------|-------|
+| GET    | `/clinic-settings`  | Public |
+| PUT    | `/clinic-settings`  | Admin |
 
 ---
 

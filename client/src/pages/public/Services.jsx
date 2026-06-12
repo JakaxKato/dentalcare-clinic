@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AlertTriangle, Search } from 'lucide-react';
 import ServiceCard from '../../components/cards/ServiceCard';
-import Loader from '../../components/common/Loader';
+import { CardGridSkeleton } from '../../components/common/Skeleton';
 import EmptyState from '../../components/common/EmptyState';
 import { serviceService } from '../../services';
 import { extractMessage } from '../../services/api';
@@ -39,7 +39,7 @@ const Services = () => {
       </div>
 
       {loading ? (
-        <Loader />
+        <CardGridSkeleton />
       ) : error ? (
         <EmptyState icon={AlertTriangle} title="Gagal memuat layanan" description={error} />
       ) : filtered.length === 0 ? (

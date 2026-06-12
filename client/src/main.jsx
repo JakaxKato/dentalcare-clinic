@@ -5,6 +5,9 @@ import App from './App';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
+import { ClinicProvider } from './context/ClinicContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { registerServiceWorker } from './pwa';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -15,12 +18,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <AuthProvider>
-          <ToastProvider>
-            <App />
-          </ToastProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <ClinicProvider>
+            <AuthProvider>
+              <ToastProvider>
+                <App />
+              </ToastProvider>
+            </AuthProvider>
+          </ClinicProvider>
+        </ThemeProvider>
       </BrowserRouter>
     </ErrorBoundary>
   </React.StrictMode>
 );
+
+registerServiceWorker();

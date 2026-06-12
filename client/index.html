@@ -3,7 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/tooth.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/pwa-icon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1782f5" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <script>
+      try {
+        const savedTheme = localStorage.getItem('dc_theme');
+        const dark =
+          savedTheme === 'dark' ||
+          (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', dark);
+      } catch {}
+    </script>
     <meta name="description" content="Smile Dental Studio — Klinik Gigi Modern di Bojongsoang & Antapani Bandung. Booking online 24 jam, dokter gigi tersertifikasi." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

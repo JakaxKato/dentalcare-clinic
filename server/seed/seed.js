@@ -12,6 +12,7 @@ const DentistProfile = require('../models/DentistProfile');
 const Service = require('../models/Service');
 const Article = require('../models/Article');
 const Testimonial = require('../models/Testimonial');
+const ClinicSettings = require('../models/ClinicSettings');
 
 const services = [
   {
@@ -157,6 +158,7 @@ const run = async () => {
     Service.deleteMany({}),
     Article.deleteMany({}),
     Testimonial.deleteMany({}),
+    ClinicSettings.deleteMany({}),
   ]);
 
   console.log('Creating admin...');
@@ -200,6 +202,9 @@ const run = async () => {
 
   console.log('Creating testimonials...');
   await Testimonial.insertMany(testimonials);
+
+  console.log('Creating clinic settings...');
+  await ClinicSettings.getOrCreate();
 
   console.log('\nSeed complete!');
   console.log('Login credentials:');
