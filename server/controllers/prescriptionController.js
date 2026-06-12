@@ -36,7 +36,7 @@ const createPrescription = asyncHandler(async (req, res) => {
   res.status(201).json({ success: true, data: presc });
 });
 
-// @desc    List prescriptions (filtered by role)
+// @desc    List prescriptions (filtered by role, with pagination)
 // @route   GET /api/prescriptions?patientId=&appointmentId=
 const listPrescriptions = asyncHandler(async (req, res) => {
   const filter = {};
@@ -51,13 +51,20 @@ const listPrescriptions = asyncHandler(async (req, res) => {
     if (req.query.patientId) filter.patientId = req.query.patientId;
   }
 
+  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+  const skip = (page - 1) * limit;
+  const total = await Prescription.countDocuments(filter);
+
   const list = await Prescription.find(filter)
     .populate('patientId', 'name email phone')
     .populate('dentistId', 'name email')
     .populate({ path: 'appointmentId', select: 'appointmentDate appointmentTime serviceId', populate: { path: 'serviceId', select: 'title' } })
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
 
-  res.json({ success: true, count: list.length, data: list });
+  res.json({ success: true, count: total, page, totalPages: Math.ceil(total / limit), data: list });
 });
 
 // @desc    Get prescription by id

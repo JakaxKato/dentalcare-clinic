@@ -4,8 +4,10 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
+const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
+const mongoose = require('mongoose');
 
 const { validateEnv, getCorsOrigins } = require('./config/env');
 const connectDB = require('./config/db');
@@ -30,6 +32,7 @@ const app = express();
 app.set('trust proxy', 1);
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+app.use(compression());
 
 const allowedOrigins = getCorsOrigins();
 app.use(
@@ -73,8 +76,16 @@ app.use('/api/auth/reset-password', authLimiter);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Health check — includes database connectivity status
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, status: 'ok', uptime: process.uptime() });
+  const dbStates = ['disconnected', 'connected', 'connecting', 'disconnecting'];
+  const dbState = mongoose.connection.readyState;
+  res.json({
+    success: true,
+    status: dbState === 1 ? 'ok' : 'degraded',
+    uptime: process.uptime(),
+    database: dbStates[dbState] || 'unknown',
+  });
 });
 
 app.use('/api/auth', authRoutes);
@@ -96,16 +107,42 @@ const PORT = process.env.PORT || 5000;
 
 const { startReminderScheduler } = require('./utils/reminderJob');
 
+let server;
+
 const start = async () => {
   try {
     await connectDB();
-    app.listen(PORT, () => console.log(`API server running on port ${PORT}`));
+    server = app.listen(PORT, () => console.log(`API server running on port ${PORT}`));
     if (process.env.DISABLE_REMINDER !== 'true') startReminderScheduler();
   } catch (err) {
     console.error('Startup error:', err.message);
     process.exit(1);
   }
 };
+
+// Graceful shutdown — close HTTP server and MongoDB connection on termination signals
+const shutdown = async (signal) => {
+  console.log(`\n[shutdown] ${signal} received. Shutting down gracefully...`);
+  if (server) {
+    server.close(() => {
+      console.log('[shutdown] HTTP server closed.');
+      mongoose.connection.close(false).then(() => {
+        console.log('[shutdown] MongoDB connection closed.');
+        process.exit(0);
+      });
+    });
+    // Force exit after 10 seconds if graceful shutdown hangs
+    setTimeout(() => {
+      console.error('[shutdown] Forced exit after timeout.');
+      process.exit(1);
+    }, 10000);
+  } else {
+    process.exit(0);
+  }
+};
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
 
 if (require.main === module) {
   start();

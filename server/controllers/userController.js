@@ -2,7 +2,7 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 const ApiError = require('../utils/ApiError');
 
-// @desc    List users (admin) — supports ?role= and ?search=
+// @desc    List users (admin) — supports ?role= and ?search= and pagination
 // @route   GET /api/users
 const listUsers = asyncHandler(async (req, res) => {
   const { role, search } = req.query;
@@ -14,8 +14,14 @@ const listUsers = asyncHandler(async (req, res) => {
       { email: { $regex: search, $options: 'i' } },
     ];
   }
-  const users = await User.find(filter).sort({ createdAt: -1 });
-  res.json({ success: true, count: users.length, data: users });
+
+  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+  const skip = (page - 1) * limit;
+  const total = await User.countDocuments(filter);
+
+  const users = await User.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
+  res.json({ success: true, count: total, page, totalPages: Math.ceil(total / limit), data: users });
 });
 
 // @desc    Get user by id (admin or self)

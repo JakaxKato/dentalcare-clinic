@@ -1,4 +1,10 @@
 require('dotenv').config();
+
+if (process.env.NODE_ENV === 'production') {
+  console.error('\n[seed] Refusing to run in production! This script deletes all data.\n');
+  process.exit(1);
+}
+
 const mongoose = require('mongoose');
 const connectDB = require('../config/db');
 const User = require('../models/User');

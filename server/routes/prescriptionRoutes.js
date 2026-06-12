@@ -7,13 +7,14 @@ const {
   deletePrescription,
 } = require('../controllers/prescriptionController');
 const { protect, authorize } = require('../middleware/auth');
+const { validatePrescription } = require('../validators');
 
 const router = express.Router();
 
-router.post('/', protect, authorize('admin', 'dentist'), createPrescription);
+router.post('/', protect, authorize('admin', 'dentist'), validatePrescription, createPrescription);
 router.get('/', protect, listPrescriptions);
 router.get('/:id', protect, getPrescription);
-router.put('/:id', protect, authorize('admin', 'dentist'), updatePrescription);
+router.put('/:id', protect, authorize('admin', 'dentist'), validatePrescription, updatePrescription);
 router.delete('/:id', protect, authorize('admin'), deletePrescription);
 
 module.exports = router;

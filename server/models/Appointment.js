@@ -75,6 +75,7 @@ const appointmentSchema = new mongoose.Schema(
 );
 
 appointmentSchema.index({ dentistId: 1, appointmentDate: 1, appointmentTime: 1 });
+appointmentSchema.index({ patientId: 1, status: 1 });
 
 module.exports = mongoose.model('Appointment', appointmentSchema);
 module.exports.APPOINTMENT_STATUSES = APPOINTMENT_STATUSES;

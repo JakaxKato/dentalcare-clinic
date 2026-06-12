@@ -61,6 +61,52 @@ const validateTestimonial = (req, _res, next) => {
   next();
 };
 
+const validateInvoice = (req, _res, next) => {
+  requireFields(req.body, ['appointmentId']);
+  if (req.body.items !== undefined) {
+    if (!Array.isArray(req.body.items)) throw new ApiError(400, 'items must be an array');
+    for (const item of req.body.items) {
+      if (!isNonEmpty(item.description)) throw new ApiError(400, 'Each item must have a description');
+      if (item.unitPrice !== undefined && (Number(item.unitPrice) < 0 || !Number.isFinite(Number(item.unitPrice)))) {
+        throw new ApiError(400, 'unitPrice must be a non-negative number');
+      }
+    }
+  }
+  if (req.body.discount !== undefined) {
+    const d = Number(req.body.discount);
+    if (!Number.isFinite(d) || d < 0) throw new ApiError(400, 'discount must be a non-negative number');
+  }
+  if (req.body.taxRate !== undefined) {
+    const t = Number(req.body.taxRate);
+    if (!Number.isFinite(t) || t < 0 || t > 100) throw new ApiError(400, 'taxRate must be between 0 and 100');
+  }
+  next();
+};
+
+const validatePrescription = (req, _res, next) => {
+  requireFields(req.body, ['appointmentId']);
+  if (!Array.isArray(req.body.items) || req.body.items.length === 0) {
+    throw new ApiError(400, 'At least one prescription item is required');
+  }
+  for (const item of req.body.items) {
+    if (!isNonEmpty(item.drugName)) throw new ApiError(400, 'Each item must have a drugName');
+  }
+  next();
+};
+
+const validateUserUpdate = (req, _res, next) => {
+  if (req.body.email !== undefined && !isEmail(req.body.email)) {
+    throw new ApiError(400, 'Valid email is required');
+  }
+  if (req.body.name !== undefined && !isNonEmpty(req.body.name)) {
+    throw new ApiError(400, 'Name cannot be empty');
+  }
+  if (req.body.password !== undefined && req.body.password.length < 6) {
+    throw new ApiError(400, 'Password must be at least 6 characters');
+  }
+  next();
+};
+
 module.exports = {
   validateRegister,
   validateLogin,
@@ -68,4 +114,7 @@ module.exports = {
   validateService,
   validateArticle,
   validateTestimonial,
+  validateInvoice,
+  validatePrescription,
+  validateUserUpdate,
 };

@@ -97,7 +97,7 @@ const createInvoice = asyncHandler(async (req, res) => {
   res.status(201).json({ success: true, data: inv });
 });
 
-// @desc    List invoices
+// @desc    List invoices (with pagination)
 // @route   GET /api/invoices
 const listInvoices = asyncHandler(async (req, res) => {
   const filter = {};
@@ -107,12 +107,19 @@ const listInvoices = asyncHandler(async (req, res) => {
   if (req.query.status) filter.paymentStatus = req.query.status;
   if (req.query.patientId && req.user.role === 'admin') filter.patientId = req.query.patientId;
 
+  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+  const skip = (page - 1) * limit;
+  const total = await Invoice.countDocuments(filter);
+
   const list = await Invoice.find(filter)
     .populate('patientId', 'name email phone')
     .populate('dentistId', 'name')
     .populate({ path: 'appointmentId', select: 'appointmentDate appointmentTime serviceId', populate: { path: 'serviceId', select: 'title' } })
-    .sort({ createdAt: -1 });
-  res.json({ success: true, count: list.length, data: list });
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+  res.json({ success: true, count: total, page, totalPages: Math.ceil(total / limit), data: list });
 });
 
 const findInvoiceForView = async (id) =>

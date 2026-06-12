@@ -51,7 +51,7 @@ const login = asyncHandler(async (req, res) => {
   res.json({
     success: true,
     data: {
-      user,
+      user: user.toJSON(),
       token: generateToken(user._id, user.role),
     },
   });

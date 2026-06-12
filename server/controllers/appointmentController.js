@@ -169,23 +169,38 @@ const listAppointments = asyncHandler(async (req, res) => {
   }
   if (req.query.dentistId && req.user.role === 'admin') filter.dentistId = req.query.dentistId;
 
+  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+  const skip = (page - 1) * limit;
+  const total = await Appointment.countDocuments(filter);
+
   const appts = await Appointment.find(filter)
     .populate('patientId', 'name email phone avatar')
     .populate('dentistId', 'name email avatar')
     .populate('serviceId', 'title slug duration priceRange')
-    .sort({ appointmentDate: 1, appointmentTime: 1 });
+    .sort({ appointmentDate: 1, appointmentTime: 1 })
+    .skip(skip)
+    .limit(limit);
 
-  res.json({ success: true, count: appts.length, data: appts });
+  res.json({ success: true, count: total, page, totalPages: Math.ceil(total / limit), data: appts });
 });
 
 // @desc    Patient's own appointments
 // @route   GET /api/appointments/my-appointments
 const myAppointments = asyncHandler(async (req, res) => {
-  const appts = await Appointment.find({ patientId: req.user._id })
+  const filter = { patientId: req.user._id };
+  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+  const skip = (page - 1) * limit;
+  const total = await Appointment.countDocuments(filter);
+
+  const appts = await Appointment.find(filter)
     .populate('dentistId', 'name email avatar')
     .populate('serviceId', 'title slug duration priceRange')
-    .sort({ appointmentDate: -1, appointmentTime: -1 });
-  res.json({ success: true, count: appts.length, data: appts });
+    .sort({ appointmentDate: -1, appointmentTime: -1 })
+    .skip(skip)
+    .limit(limit);
+  res.json({ success: true, count: total, page, totalPages: Math.ceil(total / limit), data: appts });
 });
 
 // @desc    Get single appointment

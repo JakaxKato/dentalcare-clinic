@@ -2,6 +2,13 @@ const mongoose = require('mongoose');
 
 const PAYMENT_STATUSES = ['unpaid', 'partial', 'paid', 'refunded', 'cancelled'];
 
+// Atomic counter collection to avoid race conditions on invoice number generation
+const counterSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
+  seq: { type: Number, default: 0 },
+});
+const Counter = mongoose.models.Counter || mongoose.model('Counter', counterSchema);
+
 const invoiceItemSchema = new mongoose.Schema(
   {
     description: { type: String, required: true, trim: true },
@@ -39,16 +46,21 @@ const invoiceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Atomic invoice number generation using a counter collection.
+// findOneAndUpdate with $inc is atomic in MongoDB, so concurrent requests
+// will always get different sequence numbers.
 invoiceSchema.statics.generateInvoiceNumber = async function () {
   const now = new Date();
   const ym = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}`;
-  const count = await this.countDocuments({
-    createdAt: {
-      $gte: new Date(now.getFullYear(), now.getMonth(), 1),
-      $lt: new Date(now.getFullYear(), now.getMonth() + 1, 1),
-    },
-  });
-  return `INV-${ym}-${String(count + 1).padStart(4, '0')}`;
+  const counterId = `invoice-${ym}`;
+
+  const counter = await Counter.findOneAndUpdate(
+    { _id: counterId },
+    { $inc: { seq: 1 } },
+    { upsert: true, returnDocument: 'after' }
+  );
+
+  return `INV-${ym}-${String(counter.seq).padStart(4, '0')}`;
 };
 
 module.exports = mongoose.model('Invoice', invoiceSchema);

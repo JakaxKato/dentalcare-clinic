@@ -17,9 +17,19 @@ const serviceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-serviceSchema.pre('validate', function (next) {
+serviceSchema.pre('validate', async function (next) {
   if (this.title && (this.isModified('title') || !this.slug)) {
-    this.slug = slugify(this.title, { lower: true, strict: true });
+    let base = slugify(this.title, { lower: true, strict: true });
+    let candidate = base;
+    let suffix = 1;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const existing = await mongoose.model('Service').findOne({ slug: candidate, _id: { $ne: this._id } });
+      if (!existing) break;
+      suffix += 1;
+      candidate = `${base}-${suffix}`;
+    }
+    this.slug = candidate;
   }
   next();
 });
