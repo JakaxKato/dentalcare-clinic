@@ -7,7 +7,10 @@ const EmptyState = ({ icon, title = 'Belum ada data', description, action }) => 
     renderedIcon = <Inbox className="w-12 h-12 text-slate-400" />;
   } else if (isValidElement(icon)) {
     renderedIcon = icon;
-  } else if (typeof icon === 'function') {
+  } else if (
+    typeof icon === 'function' ||
+    (typeof icon === 'object' && icon !== null && '$$typeof' in icon)
+  ) {
     const Icon = icon;
     renderedIcon = <Icon className="w-12 h-12 text-slate-400" />;
   } else {
