@@ -79,6 +79,9 @@ const renderInvoicePdf = (invoice, { clinicName = 'DentalCare Clinic', clinicAdd
   if (invoice.discount) drawRow('Discount', `- ${formatIDR(invoice.discount)}`);
   if (invoice.tax) drawRow(`Tax (${invoice.taxRate}%)`, formatIDR(invoice.tax));
   drawRow('TOTAL', formatIDR(invoice.total), true);
+  if (invoice.downPaymentApplied) {
+    drawRow('DP Applied', formatIDR(invoice.downPaymentApplied));
+  }
   if (invoice.amountPaid) drawRow('Paid', formatIDR(invoice.amountPaid));
   if (invoice.amountPaid && invoice.amountPaid < invoice.total) {
     drawRow('Balance', formatIDR(invoice.total - invoice.amountPaid), true);

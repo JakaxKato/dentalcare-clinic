@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { ArrowLeft, Printer, Download, Plus, X } from 'lucide-react';
 import Loader from '../../components/common/Loader';
 import StatusBadge from '../../components/common/StatusBadge';
 import Odontogram from '../../components/clinical/Odontogram';
@@ -193,7 +194,9 @@ const DentistTreatment = () => {
     <div className="space-y-4 max-w-5xl">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <button onClick={() => navigate(-1)} className="text-sm text-slate-500 hover:text-slate-700">← Kembali</button>
+          <button onClick={() => navigate(-1)} className="text-sm text-slate-500 hover:text-slate-700 inline-flex items-center gap-1">
+            <ArrowLeft className="w-4 h-4" /> Kembali
+          </button>
           <h2 className="text-2xl font-bold mt-1">Treatment — {appt.patientId?.name}</h2>
           <p className="text-sm text-slate-500">
             {appt.serviceId?.title} · {formatDateTime(appt.appointmentDate, appt.appointmentTime)}
@@ -267,7 +270,6 @@ const DentistTreatment = () => {
           onSave={savePrescription}
           saving={saving}
           patientName={appt.patientId?.name}
-          appointmentId={id}
         />
       )}
 
@@ -317,7 +319,7 @@ const MedicalHistoryView = ({ mh }) => {
   );
 };
 
-const PrescriptionEditor = ({ draft, setDraft, existing, onSave, saving, patientName, appointmentId }) => {
+const PrescriptionEditor = ({ draft, setDraft, existing, onSave, saving, patientName }) => {
   const updateItem = (i, key, val) => {
     const items = [...draft.items];
     items[i] = { ...items[i], [key]: val };
@@ -337,8 +339,8 @@ const PrescriptionEditor = ({ draft, setDraft, existing, onSave, saving, patient
           <p className="text-sm text-slate-500">Untuk {patientName}</p>
         </div>
         {existing && (
-          <Link to={`/print/prescription/${existing._id}`} target="_blank" className="btn-ghost text-sm">
-            🖨️ Print
+          <Link to={`/print/prescription/${existing._id}`} target="_blank" className="btn-ghost text-sm inline-flex items-center gap-1.5">
+            <Printer className="w-4 h-4" /> Print
           </Link>
         )}
       </div>
@@ -361,7 +363,9 @@ const PrescriptionEditor = ({ draft, setDraft, existing, onSave, saving, patient
             <Input label="Petunjuk Pakai" value={it.instructions} onChange={(e) => updateItem(i, 'instructions', e.target.value)} placeholder="Setelah makan" />
           </div>
         ))}
-        <button onClick={addItem} className="btn-ghost text-sm w-full border border-dashed border-slate-300">+ Tambah Obat</button>
+        <button onClick={addItem} className="btn-ghost text-sm w-full border border-dashed border-slate-300 inline-flex items-center justify-center gap-1.5">
+          <Plus className="w-4 h-4" /> Tambah Obat
+        </button>
       </div>
 
       <Textarea
@@ -422,7 +426,9 @@ const InvoiceEditor = ({ draft, setDraft, existing, onSave, saving }) => {
           )}
         </div>
         {existing && (
-          <button onClick={handleDownload} className="btn-ghost text-sm">⬇️ Download PDF</button>
+          <button onClick={handleDownload} className="btn-ghost text-sm inline-flex items-center gap-1.5">
+            <Download className="w-4 h-4" /> Download PDF
+          </button>
         )}
       </div>
 
@@ -438,10 +444,14 @@ const InvoiceEditor = ({ draft, setDraft, existing, onSave, saving }) => {
             <div className="w-32">
               <Input label={i === 0 ? 'Harga Satuan' : ''} type="number" min="0" value={it.unitPrice} onChange={(e) => updateItem(i, 'unitPrice', e.target.value)} />
             </div>
-            <button onClick={() => removeItem(i)} className="text-red-600 hover:underline text-xs pb-2.5">×</button>
+            <button onClick={() => removeItem(i)} className="text-red-600 hover:text-red-700 pb-2.5" aria-label="Hapus item">
+              <X className="w-4 h-4" />
+            </button>
           </div>
         ))}
-        <button onClick={addItem} className="btn-ghost text-sm w-full border border-dashed border-slate-300">+ Tambah Item</button>
+        <button onClick={addItem} className="btn-ghost text-sm w-full border border-dashed border-slate-300 inline-flex items-center justify-center gap-1.5">
+          <Plus className="w-4 h-4" /> Tambah Item
+        </button>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -456,6 +466,17 @@ const InvoiceEditor = ({ draft, setDraft, existing, onSave, saving }) => {
         <div className="flex justify-between font-bold text-base border-t border-slate-200 pt-2 mt-2">
           <span>Total</span><span>{formatIDR(totals.total)}</span>
         </div>
+        {existing?.downPaymentApplied > 0 && (
+          <>
+            <div className="flex justify-between text-emerald-700">
+              <span>DP diterapkan</span><span>- {formatIDR(existing.downPaymentApplied)}</span>
+            </div>
+            <div className="flex justify-between font-semibold">
+              <span>Sisa tagihan</span>
+              <span>{formatIDR(Math.max(0, totals.total - existing.amountPaid))}</span>
+            </div>
+          </>
+        )}
       </div>
 
       <Textarea label="Catatan" value={draft.notes} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} />

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { AlertTriangle, Search } from 'lucide-react';
 import ServiceCard from '../../components/cards/ServiceCard';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
@@ -40,9 +41,9 @@ const Services = () => {
       {loading ? (
         <Loader />
       ) : error ? (
-        <EmptyState icon="⚠️" title="Gagal memuat layanan" description={error} />
+        <EmptyState icon={AlertTriangle} title="Gagal memuat layanan" description={error} />
       ) : filtered.length === 0 ? (
-        <EmptyState icon="🔎" title="Layanan tidak ditemukan" description="Coba kata kunci lain." />
+        <EmptyState icon={Search} title="Layanan tidak ditemukan" description="Coba kata kunci lain." />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((s) => <ServiceCard key={s._id} service={s} />)}

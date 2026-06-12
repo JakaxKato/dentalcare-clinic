@@ -45,6 +45,31 @@ const appointmentSchema = new mongoose.Schema(
     treatmentNotes: { type: String, default: '', trim: true },
     recommendation: { type: String, default: '', trim: true },
     odontogram: { type: [toothSchema], default: [] },
+    reminderSentAt: { type: Date, default: null },
+    reminderLastAttemptAt: { type: Date, default: null },
+    reminderError: { type: String, default: '' },
+    downPayment: {
+      amount: { type: Number, default: 0, min: 0 },
+      status: {
+        type: String,
+        enum: [
+          'unpaid',
+          'pending',
+          'paid',
+          'failed',
+          'expired',
+          'partially_refunded',
+          'refunded',
+        ],
+        default: 'unpaid',
+      },
+      provider: { type: String, default: 'midtrans' },
+      transactionId: { type: String, default: '' },
+      orderId: { type: String, default: '' },
+      paidAt: { type: Date, default: null },
+      refundedAmount: { type: Number, default: 0, min: 0 },
+      snapToken: { type: String, default: '' },
+    },
   },
   { timestamps: true }
 );

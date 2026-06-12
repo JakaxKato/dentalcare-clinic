@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { CalendarDays, CalendarCheck, Users, CheckCircle2 } from 'lucide-react';
 import StatCard from '../../components/dashboard/StatCard';
 import Loader from '../../components/common/Loader';
 import { appointmentService } from '../../services';
@@ -26,10 +27,10 @@ const AdminDashboard = () => {
       <h2 className="text-2xl font-bold">Dashboard Klinik</h2>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total Appointment" value={stats.totalAppointments} icon="📅" />
-        <StatCard label="Hari Ini" value={stats.todayCount} icon="🗓️" />
-        <StatCard label="Pasien Baru (Bulan ini)" value={stats.newPatientsThisMonth} icon="👥" />
-        <StatCard label="Selesai" value={stats.byStatus.completed} icon="✅" />
+        <StatCard label="Total Appointment" value={stats.totalAppointments} icon={<CalendarDays className="w-6 h-6" />} />
+        <StatCard label="Hari Ini" value={stats.todayCount} icon={<CalendarCheck className="w-6 h-6" />} />
+        <StatCard label="Pasien Baru (Bulan ini)" value={stats.newPatientsThisMonth} icon={<Users className="w-6 h-6" />} />
+        <StatCard label="Selesai" value={stats.byStatus.completed} icon={<CheckCircle2 className="w-6 h-6" />} />
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">

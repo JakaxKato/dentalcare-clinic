@@ -30,11 +30,11 @@ const validateAppointment = (req, _res, next) => {
   const { dentistId, serviceId, appointmentDate, appointmentTime } = req.body;
   requireFields(req.body, ['dentistId', 'serviceId', 'appointmentDate', 'appointmentTime']);
   if (!isTime(appointmentTime)) throw new ApiError(400, 'appointmentTime must be in HH:MM 24h format');
-  const date = new Date(appointmentDate);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(appointmentDate))) {
+    throw new ApiError(400, 'appointmentDate must be in YYYY-MM-DD format');
+  }
+  const date = new Date(`${appointmentDate}T00:00:00.000Z`);
   if (Number.isNaN(date.getTime())) throw new ApiError(400, 'Invalid appointmentDate');
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  if (date < today) throw new ApiError(400, 'Appointment date cannot be in the past');
   void dentistId; void serviceId;
   next();
 };

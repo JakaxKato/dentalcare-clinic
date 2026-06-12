@@ -2,7 +2,19 @@ const asyncHandler = require('express-async-handler');
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
 const Service = require('../models/Service');
+const DentistProfile = require('../models/DentistProfile');
 const ApiError = require('../utils/ApiError');
+const { runReminderJob } = require('../utils/reminderJob');
+const {
+  toDateKey,
+  dateRangeUtc,
+  getDateKeyInTimeZone,
+  getSchedule,
+  isWorkingDay,
+  isWithinWorkingHours,
+  intervalsOverlap,
+  buildAvailableSlots,
+} = require('../utils/appointmentSchedule');
 
 const ALLOWED_TRANSITIONS = {
   pending: ['confirmed', 'cancelled'],
@@ -11,44 +23,131 @@ const ALLOWED_TRANSITIONS = {
   cancelled: [],
 };
 
-const startOfDay = (d) => {
-  const date = new Date(d);
-  date.setHours(0, 0, 0, 0);
-  return date;
+const loadScheduleContext = async ({
+  dentistId,
+  serviceId,
+  appointmentDate,
+  excludeAppointmentId,
+}) => {
+  const range = dateRangeUtc(appointmentDate);
+  if (!range) throw new ApiError(400, 'Invalid appointmentDate');
+
+  const [dentist, profile, service] = await Promise.all([
+    User.findOne({ _id: dentistId, role: 'dentist', isActive: true }),
+    DentistProfile.findOne({ userId: dentistId }),
+    Service.findOne({ _id: serviceId, isActive: true }),
+  ]);
+  if (!dentist) throw new ApiError(404, 'Dentist not found or inactive');
+  if (!service) throw new ApiError(404, 'Service not found or inactive');
+
+  const filter = {
+    dentistId,
+    appointmentDate: { $gte: range.start, $lte: range.end },
+    status: { $in: ['pending', 'confirmed'] },
+  };
+  if (excludeAppointmentId) filter._id = { $ne: excludeAppointmentId };
+
+  const appointments = await Appointment.find(filter)
+    .select('appointmentTime serviceId')
+    .populate('serviceId', 'duration');
+
+  return { dentist, profile, service, appointments, range };
 };
-const endOfDay = (d) => {
-  const date = new Date(d);
-  date.setHours(23, 59, 59, 999);
-  return date;
+
+const assertSlotAvailable = ({ profile, service, appointments, date, time }) => {
+  if (!isWorkingDay(profile, date)) {
+    throw new ApiError(400, 'Dentist is not available on the selected day');
+  }
+  if (!isWithinWorkingHours(profile, time, service.duration)) {
+    throw new ApiError(400, 'Selected time is outside the dentist working hours');
+  }
+  const conflict = appointments.some((appt) =>
+    intervalsOverlap(
+      time,
+      service.duration,
+      appt.appointmentTime,
+      appt.serviceId?.duration || 30
+    )
+  );
+  if (conflict) {
+    throw new ApiError(409, 'Selected time slot is not available for this dentist');
+  }
 };
+
+// @desc    Public available slots for a dentist, date, and service
+// @route   GET /api/appointments/availability
+const getAvailability = asyncHandler(async (req, res) => {
+  const { dentistId, serviceId, date, excludeAppointmentId } = req.query;
+  if (!dentistId || !serviceId || !date) {
+    throw new ApiError(400, 'dentistId, serviceId, and date are required');
+  }
+  if (toDateKey(date) < getDateKeyInTimeZone()) {
+    throw new ApiError(400, 'Appointment date cannot be in the past');
+  }
+
+  const context = await loadScheduleContext({
+    dentistId,
+    serviceId,
+    appointmentDate: date,
+    excludeAppointmentId,
+  });
+  const slots = buildAvailableSlots({
+    profile: context.profile,
+    date,
+    duration: context.service.duration,
+    appointments: context.appointments,
+  });
+
+  res.json({
+    success: true,
+    data: {
+      date: context.range.key,
+      slots,
+      duration: context.service.duration,
+      schedule: getSchedule(context.profile),
+    },
+  });
+});
 
 // @desc    Create appointment (patient)
 // @route   POST /api/appointments
 const createAppointment = asyncHandler(async (req, res) => {
-  const { dentistId, serviceId, appointmentDate, appointmentTime, complaint } = req.body;
-
-  const dentist = await User.findOne({ _id: dentistId, role: 'dentist', isActive: true });
-  if (!dentist) throw new ApiError(404, 'Dentist not found or inactive');
-
-  const service = await Service.findById(serviceId);
-  if (!service || !service.isActive) throw new ApiError(404, 'Service not found or inactive');
-
-  const date = new Date(appointmentDate);
-  const conflict = await Appointment.findOne({
-    dentistId,
-    appointmentDate: { $gte: startOfDay(date), $lte: endOfDay(date) },
-    appointmentTime,
-    status: { $in: ['pending', 'confirmed'] },
-  });
-  if (conflict) {
-    throw new ApiError(409, 'Selected time slot is not available for this dentist');
-  }
-
-  const appt = await Appointment.create({
-    patientId: req.user._id,
+  const {
     dentistId,
     serviceId,
-    appointmentDate: date,
+    appointmentDate,
+    appointmentTime,
+    complaint,
+    patientId: requestedPatientId,
+  } = req.body;
+  const patientId = req.user.role === 'admin' ? requestedPatientId : req.user._id;
+  if (!patientId) throw new ApiError(400, 'patientId is required when admin creates an appointment');
+  if (toDateKey(appointmentDate) < getDateKeyInTimeZone()) {
+    throw new ApiError(400, 'Appointment date cannot be in the past');
+  }
+  if (req.user.role === 'admin') {
+    const patient = await User.findOne({ _id: patientId, role: 'patient', isActive: true });
+    if (!patient) throw new ApiError(404, 'Patient not found or inactive');
+  }
+
+  const context = await loadScheduleContext({
+    dentistId,
+    serviceId,
+    appointmentDate,
+  });
+  assertSlotAvailable({
+    profile: context.profile,
+    service: context.service,
+    appointments: context.appointments,
+    date: context.range.key,
+    time: appointmentTime,
+  });
+
+  const appt = await Appointment.create({
+    patientId,
+    dentistId,
+    serviceId,
+    appointmentDate: context.range.start,
     appointmentTime,
     complaint,
     status: 'pending',
@@ -64,8 +163,9 @@ const listAppointments = asyncHandler(async (req, res) => {
   if (req.user.role === 'dentist') filter.dentistId = req.user._id;
   if (req.query.status) filter.status = req.query.status;
   if (req.query.date) {
-    const d = new Date(req.query.date);
-    filter.appointmentDate = { $gte: startOfDay(d), $lte: endOfDay(d) };
+    const range = dateRangeUtc(req.query.date);
+    if (!range) throw new ApiError(400, 'Invalid date filter');
+    filter.appointmentDate = { $gte: range.start, $lte: range.end };
   }
   if (req.query.dentistId && req.user.role === 'admin') filter.dentistId = req.query.dentistId;
 
@@ -169,22 +269,28 @@ const rescheduleAppointment = asyncHandler(async (req, res) => {
     throw new ApiError(400, 'Only pending or confirmed appointments can be rescheduled');
   }
 
-  const date = new Date(appointmentDate);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  if (date < today) throw new ApiError(400, 'New date cannot be in the past');
-
-  const conflict = await Appointment.findOne({
-    _id: { $ne: appt._id },
+  if (toDateKey(appointmentDate) < getDateKeyInTimeZone()) {
+    throw new ApiError(400, 'New date cannot be in the past');
+  }
+  const context = await loadScheduleContext({
     dentistId: appt.dentistId,
-    appointmentDate: { $gte: startOfDay(date), $lte: endOfDay(date) },
-    appointmentTime,
-    status: { $in: ['pending', 'confirmed'] },
+    serviceId: appt.serviceId,
+    appointmentDate,
+    excludeAppointmentId: appt._id,
   });
-  if (conflict) throw new ApiError(409, 'Time slot is not available');
+  assertSlotAvailable({
+    profile: context.profile,
+    service: context.service,
+    appointments: context.appointments,
+    date: context.range.key,
+    time: appointmentTime,
+  });
 
-  appt.appointmentDate = date;
+  appt.appointmentDate = context.range.start;
   appt.appointmentTime = appointmentTime;
+  appt.reminderSentAt = null;
+  appt.reminderLastAttemptAt = null;
+  appt.reminderError = '';
   await appt.save();
 
   res.json({ success: true, data: appt });
@@ -202,6 +308,7 @@ const deleteAppointment = asyncHandler(async (req, res) => {
 // @desc    Stats for admin dashboard
 // @route   GET /api/appointments/stats
 const stats = asyncHandler(async (_req, res) => {
+  const todayRange = dateRangeUtc(getDateKeyInTimeZone());
   const [
     totalAppointments,
     pending,
@@ -219,7 +326,7 @@ const stats = asyncHandler(async (_req, res) => {
     Appointment.countDocuments({ status: 'completed' }),
     Appointment.countDocuments({ status: 'cancelled' }),
     Appointment.countDocuments({
-      appointmentDate: { $gte: startOfDay(new Date()), $lte: endOfDay(new Date()) },
+      appointmentDate: { $gte: todayRange.start, $lte: todayRange.end },
     }),
     User.countDocuments({
       role: 'patient',
@@ -278,6 +385,13 @@ const updateOdontogram = asyncHandler(async (req, res) => {
   res.json({ success: true, data: appt.odontogram });
 });
 
+// @desc    Manually trigger the H-1 WhatsApp reminder job (admin)
+// @route   POST /api/appointments/trigger-reminders
+const triggerReminderJob = asyncHandler(async (_req, res) => {
+  const results = await runReminderJob();
+  res.json({ success: true, data: results });
+});
+
 // @desc    Get patient's latest odontogram (from most recent completed appointment)
 // @route   GET /api/appointments/patient/:patientId/odontogram
 const getPatientOdontogram = asyncHandler(async (req, res) => {
@@ -312,4 +426,6 @@ module.exports = {
   stats,
   updateOdontogram,
   getPatientOdontogram,
+  triggerReminderJob,
+  getAvailability,
 };

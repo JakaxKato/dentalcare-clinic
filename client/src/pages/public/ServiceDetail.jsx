@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { AlertTriangle, ArrowLeft, Sparkles } from 'lucide-react';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
 import { serviceService } from '../../services';
@@ -25,7 +26,7 @@ const ServiceDetail = () => {
   if (error || !service)
     return (
       <div className="container-app py-12">
-        <EmptyState icon="⚠️" title="Layanan tidak ditemukan" description={error} />
+        <EmptyState icon={AlertTriangle} title="Layanan tidak ditemukan" description={error} />
       </div>
     );
 
@@ -36,7 +37,9 @@ const ServiceDetail = () => {
           {service.image ? (
             <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-6xl">🦷</div>
+            <div className="w-full h-full flex items-center justify-center text-brand-500">
+              <Sparkles className="w-20 h-20" strokeWidth={1.4} />
+            </div>
           )}
         </div>
         <h1 className="text-3xl">{service.title}</h1>
@@ -53,7 +56,9 @@ const ServiceDetail = () => {
           <Link to={`/appointment?service=${service._id}`} className="btn-primary w-full mt-5">
             Book Layanan Ini
           </Link>
-          <Link to="/services" className="btn-ghost w-full mt-2">← Kembali ke Layanan</Link>
+          <Link to="/services" className="btn-ghost w-full mt-2">
+            <ArrowLeft className="w-4 h-4" /> Kembali ke Layanan
+          </Link>
         </div>
       </aside>
     </div>

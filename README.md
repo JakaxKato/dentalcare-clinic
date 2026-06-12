@@ -201,6 +201,7 @@ Semua endpoint berada di prefix `/api`. JSON request, respons format `{ success,
 | Method | Path                                              | Akses |
 |--------|---------------------------------------------------|-------|
 | POST   | `/appointments`                                   | Patient/Admin |
+| GET    | `/appointments/availability`                      | Public |
 | GET    | `/appointments`                                   | Admin/Dentist |
 | GET    | `/appointments/stats`                             | Admin |
 | GET    | `/appointments/my-appointments`                   | Patient |
@@ -210,6 +211,14 @@ Semua endpoint berada di prefix `/api`. JSON request, respons format `{ success,
 | PUT    | `/appointments/:id/reschedule`                    | Admin / Assigned dentist |
 | PUT    | `/appointments/:id/odontogram`                    | Admin / Assigned dentist |
 | DELETE | `/appointments/:id`                               | Admin |
+
+### Payments
+| Method | Path                                      | Akses |
+|--------|-------------------------------------------|-------|
+| GET    | `/payments/appointment/:id/dp`            | Owner / Assigned staff |
+| POST   | `/payments/appointment/:id/dp`            | Patient owner |
+| POST   | `/payments/appointment/:id/dp/confirm`    | Patient/Admin (development only) |
+| POST   | `/payments/notification`                  | Midtrans webhook |
 
 ### Prescriptions
 | Method | Path                  | Akses |

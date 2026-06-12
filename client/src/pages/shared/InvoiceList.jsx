@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Receipt } from 'lucide-react';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
 import Modal from '../../components/common/Modal';
@@ -70,7 +71,7 @@ const InvoiceList = ({ isAdmin = false }) => {
       <h2 className="text-2xl font-bold">{isAdmin ? 'Invoice (Semua)' : 'Invoice Saya'}</h2>
 
       {list.length === 0 ? (
-        <EmptyState icon="🧾" title="Belum ada invoice" />
+        <EmptyState icon={Receipt} title="Belum ada invoice" />
       ) : (
         <div className="card overflow-x-auto">
           <table className="w-full text-sm">
@@ -81,6 +82,7 @@ const InvoiceList = ({ isAdmin = false }) => {
                 {isAdmin && <th className="px-4 py-3">Pasien</th>}
                 <th className="px-4 py-3">Layanan</th>
                 <th className="px-4 py-3 text-right">Total</th>
+                <th className="px-4 py-3 text-right">Terbayar</th>
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3"></th>
               </tr>
@@ -93,6 +95,14 @@ const InvoiceList = ({ isAdmin = false }) => {
                   {isAdmin && <td className="px-4 py-3">{inv.patientId?.name}</td>}
                   <td className="px-4 py-3 text-slate-600">{inv.appointmentId?.serviceId?.title || '-'}</td>
                   <td className="px-4 py-3 text-right font-semibold">{formatIDR(inv.total)}</td>
+                  <td className="px-4 py-3 text-right">
+                    <span>{formatIDR(inv.amountPaid)}</span>
+                    {inv.downPaymentApplied > 0 && (
+                      <span className="block text-[11px] text-emerald-600">
+                        termasuk DP {formatIDR(inv.downPaymentApplied)}
+                      </span>
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     <span className={`inline-block px-2 py-0.5 rounded-full text-xs ${statusStyle[inv.paymentStatus] || ''}`}>
                       {inv.paymentStatus}
@@ -115,12 +125,18 @@ const InvoiceList = ({ isAdmin = false }) => {
         {active && (
           <div className="space-y-3">
             <p className="text-sm">Total tagihan: <strong>{formatIDR(active.total)}</strong></p>
+            {active.downPaymentApplied > 0 && (
+              <p className="text-sm text-emerald-700">
+                DP Midtrans sudah diterapkan: <strong>{formatIDR(active.downPaymentApplied)}</strong>
+              </p>
+            )}
             <Input
               label="Jumlah Dibayar (Rp)"
               type="number"
-              min="0"
+              min={active.downPaymentApplied || 0}
               value={payment.amountPaid}
               onChange={(e) => setPayment({ ...payment, amountPaid: e.target.value })}
+              hint="Isi total pembayaran kumulatif, termasuk DP."
             />
             <label className="block">
               <span className="block text-sm font-medium text-slate-700 mb-1">Metode Pembayaran</span>

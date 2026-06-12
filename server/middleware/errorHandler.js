@@ -23,6 +23,11 @@ const errorHandler = (err, req, res, _next) => {
     message = Object.values(err.errors).map((e) => e.message).join(', ');
   }
 
+  if (err.name === 'MulterError') {
+    statusCode = 400;
+    message = err.code === 'LIMIT_FILE_SIZE' ? 'Image must be 5MB or smaller' : err.message;
+  }
+
   res.status(statusCode).json({
     success: false,
     message,

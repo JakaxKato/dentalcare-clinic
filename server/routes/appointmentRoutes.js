@@ -2,16 +2,18 @@ const express = require('express');
 const {
   createAppointment, listAppointments, myAppointments, getAppointment,
   updateStatus, rescheduleAppointment, deleteAppointment, stats,
-  updateOdontogram, getPatientOdontogram,
+  updateOdontogram, getPatientOdontogram, triggerReminderJob, getAvailability,
 } = require('../controllers/appointmentController');
 const { protect, authorize } = require('../middleware/auth');
 const { validateAppointment } = require('../validators');
 
 const router = express.Router();
 
+router.get('/availability', getAvailability);
 router.post('/', protect, authorize('patient', 'admin'), validateAppointment, createAppointment);
 router.get('/', protect, authorize('admin', 'dentist'), listAppointments);
 router.get('/stats', protect, authorize('admin'), stats);
+router.post('/trigger-reminders', protect, authorize('admin'), triggerReminderJob);
 router.get('/my-appointments', protect, authorize('patient'), myAppointments);
 router.get('/patient/:patientId/odontogram', protect, getPatientOdontogram);
 router.get('/:id', protect, getAppointment);

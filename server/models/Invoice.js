@@ -30,6 +30,7 @@ const invoiceSchema = new mongoose.Schema(
     tax: { type: Number, min: 0, default: 0 },
     total: { type: Number, required: true, min: 0, default: 0 },
     amountPaid: { type: Number, min: 0, default: 0 },
+    downPaymentApplied: { type: Number, min: 0, default: 0 },
     paymentStatus: { type: String, enum: PAYMENT_STATUSES, default: 'unpaid', index: true },
     paymentMethod: { type: String, default: '' },
     paidAt: { type: Date },

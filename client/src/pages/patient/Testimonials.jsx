@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Star } from 'lucide-react';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
 import { Textarea } from '../../components/common/Input';
@@ -8,19 +9,30 @@ import { extractMessage } from '../../services/api';
 import { formatDate } from '../../utils/format';
 
 const StarPicker = ({ value, onChange }) => (
-  <div className="flex gap-1 text-3xl">
+  <div className="flex gap-1">
     {[1, 2, 3, 4, 5].map((n) => (
       <button
         key={n}
         type="button"
         onClick={() => onChange(n)}
-        className={`transition-transform hover:scale-110 ${
-          n <= value ? 'text-amber-400' : 'text-slate-300'
-        }`}
+        className="transition-transform hover:scale-110"
         aria-label={`${n} star${n > 1 ? 's' : ''}`}
       >
-        ★
+        <Star
+          className={`w-7 h-7 ${n <= value ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`}
+        />
       </button>
+    ))}
+  </div>
+);
+
+const StarRow = ({ rating = 0 }) => (
+  <div className="flex items-center gap-0.5">
+    {[1, 2, 3, 4, 5].map((n) => (
+      <Star
+        key={n}
+        className={`w-5 h-5 ${n <= rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`}
+      />
     ))}
   </div>
 );
@@ -107,17 +119,14 @@ const PatientTestimonials = () => {
         {loading ? (
           <Loader />
         ) : items.length === 0 ? (
-          <EmptyState icon="⭐" title="Belum ada testimoni" description="Testimoni yang Anda kirim akan muncul di sini." />
+          <EmptyState icon={Star} title="Belum ada testimoni" description="Testimoni yang Anda kirim akan muncul di sini." />
         ) : (
           <div className="space-y-3">
             {items.map((t) => (
               <div key={t._id} className="card p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
-                    <p className="text-amber-500 text-lg">
-                      {'★'.repeat(t.rating)}
-                      <span className="text-slate-300">{'★'.repeat(5 - t.rating)}</span>
-                    </p>
+                    <StarRow rating={t.rating} />
                     <p className="text-sm text-slate-700 italic mt-2">"{t.message}"</p>
                     <p className="text-xs text-slate-400 mt-3">
                       Dikirim {formatDate(t.createdAt)}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { AlertTriangle, Newspaper } from 'lucide-react';
 import ArticleCard from '../../components/cards/ArticleCard';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
@@ -42,9 +43,9 @@ const Blog = () => {
       {loading ? (
         <Loader />
       ) : error ? (
-        <EmptyState icon="⚠️" title="Gagal memuat" description={error} />
+        <EmptyState icon={AlertTriangle} title="Gagal memuat" description={error} />
       ) : filtered.length === 0 ? (
-        <EmptyState icon="📰" title="Belum ada artikel" />
+        <EmptyState icon={Newspaper} title="Belum ada artikel" />
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((a) => <ArticleCard key={a._id} article={a} />)}

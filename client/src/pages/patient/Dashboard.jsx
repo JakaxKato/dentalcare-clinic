@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { CalendarDays, Clock, CheckCircle2, Lightbulb } from 'lucide-react';
 import StatCard from '../../components/dashboard/StatCard';
 import StatusBadge from '../../components/common/StatusBadge';
 import Loader from '../../components/common/Loader';
@@ -26,14 +27,14 @@ const PatientDashboard = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold">Halo, {user.name} 👋</h2>
+        <h2 className="text-2xl font-bold">Halo, {user.name}</h2>
         <p className="text-slate-600">Ringkasan aktivitas Anda di {CLINIC.shortName}.</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatCard label="Total Appointment" value={appts.length} icon="📅" />
-        <StatCard label="Upcoming" value={upcoming.length} icon="⏳" />
-        <StatCard label="Selesai" value={completed} icon="✅" />
+        <StatCard label="Total Appointment" value={appts.length} icon={<CalendarDays className="w-6 h-6" />} />
+        <StatCard label="Upcoming" value={upcoming.length} icon={<Clock className="w-6 h-6" />} />
+        <StatCard label="Selesai" value={completed} icon={<CheckCircle2 className="w-6 h-6" />} />
       </div>
 
       <div className="card p-6">
@@ -43,7 +44,7 @@ const PatientDashboard = () => {
         </div>
         {upcoming.length === 0 ? (
           <EmptyState
-            icon="📅"
+            icon={CalendarDays}
             title="Belum ada appointment"
             description="Yuk mulai dengan membuat appointment pertama Anda."
             action={<Link to="/appointment" className="btn-primary">Book Sekarang</Link>}
@@ -66,7 +67,9 @@ const PatientDashboard = () => {
       </div>
 
       <div className="card p-6">
-        <h3 className="text-lg font-semibold mb-2">💡 Tips Hari Ini</h3>
+        <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+          <Lightbulb className="w-5 h-5 text-amber-500" /> Tips Hari Ini
+        </h3>
         <p className="text-slate-600 text-sm">
           Sikat gigi tidak hanya tentang lamanya, tapi juga teknik. Sikat 2 menit dengan gerakan kecil, lembut, dan
           jangkau seluruh permukaan gigi termasuk gusi.

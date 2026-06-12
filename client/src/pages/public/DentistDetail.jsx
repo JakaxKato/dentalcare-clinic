@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { AlertTriangle, UserCircle2 } from 'lucide-react';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
 import { dentistService } from '../../services';
@@ -25,7 +26,7 @@ const DentistDetail = () => {
   if (error || !data)
     return (
       <div className="container-app py-12">
-        <EmptyState icon="⚠️" title="Dokter tidak ditemukan" description={error} />
+        <EmptyState icon={AlertTriangle} title="Dokter tidak ditemukan" description={error} />
       </div>
     );
 
@@ -39,7 +40,9 @@ const DentistDetail = () => {
             {user.avatar ? (
               <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-5xl">👨‍⚕️</div>
+              <div className="w-full h-full flex items-center justify-center text-brand-600">
+                <UserCircle2 className="w-20 h-20" strokeWidth={1.4} />
+              </div>
             )}
           </div>
           <h2 className="text-xl font-bold">{user.name}</h2>

@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { CalendarDays, Plus } from 'lucide-react';
 import StatusBadge from '../../components/common/StatusBadge';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
 import Modal from '../../components/common/Modal';
+import DpButton from '../../components/payment/DpButton';
 import { appointmentService } from '../../services';
 import { useToast } from '../../context/ToastContext';
 import { formatDateTime } from '../../utils/format';
@@ -42,7 +44,9 @@ const PatientAppointments = () => {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-bold">Riwayat Appointment</h2>
-        <Link to="/appointment" className="btn-primary text-sm">+ Booking Baru</Link>
+        <Link to="/appointment" className="btn-primary text-sm inline-flex items-center gap-1.5">
+          <Plus className="w-4 h-4" /> Booking Baru
+        </Link>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -60,7 +64,7 @@ const PatientAppointments = () => {
       </div>
 
       {filtered.length === 0 ? (
-        <EmptyState icon="📅" title="Tidak ada appointment" description="Coba filter lain atau buat booking baru." />
+        <EmptyState icon={CalendarDays} title="Tidak ada appointment" description="Coba filter lain atau buat booking baru." />
       ) : (
         <div className="card divide-y divide-slate-100">
           {filtered.map((a) => (
@@ -72,8 +76,11 @@ const PatientAppointments = () => {
                 </p>
                 {a.complaint && <p className="text-xs text-slate-500 mt-1">"{a.complaint}"</p>}
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <StatusBadge status={a.status} />
+                {['pending', 'confirmed'].includes(a.status) && (
+                  <DpButton appointmentId={a._id} onPaid={load} />
+                )}
                 <button onClick={() => setSelected(a)} className="btn-secondary text-xs">Detail</button>
                 {a.status === 'pending' && (
                   <button onClick={() => cancel(a._id)} className="btn-danger text-xs">Batalkan</button>

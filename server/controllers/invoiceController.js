@@ -4,6 +4,7 @@ const Appointment = require('../models/Appointment');
 const Service = require('../models/Service');
 const ApiError = require('../utils/ApiError');
 const { renderInvoicePdf } = require('../utils/invoicePdf');
+const { refreshInvoicePaymentStatus } = require('../utils/invoicePayment');
 
 const recalc = (items, discount = 0, taxRate = 0) => {
   const subtotal = items.reduce((s, it) => s + (Number(it.amount) || 0), 0);
@@ -25,11 +26,12 @@ const sanitizeItems = (items = []) =>
     };
   });
 
-const canViewInvoice = (req, inv) =>
+const idOf = (value) => (value?._id || value)?.toString();
+const canManageInvoice = (req, inv) =>
   req.user.role === 'admin' ||
-  req.user.role === 'dentist' ||
-  inv.patientId._id.toString() === req.user._id.toString() ||
-  inv.patientId.toString?.() === req.user._id.toString();
+  (req.user.role === 'dentist' && idOf(inv.dentistId) === req.user._id.toString());
+const canViewInvoice = (req, inv) =>
+  canManageInvoice(req, inv) || idOf(inv.patientId) === req.user._id.toString();
 
 // @desc    Create invoice (auto-generate from appointment if items omitted)
 // @route   POST /api/invoices
@@ -42,6 +44,12 @@ const createInvoice = asyncHandler(async (req, res) => {
 
   const appt = await Appointment.findById(appointmentId).populate('serviceId');
   if (!appt) throw new ApiError(404, 'Appointment not found');
+  if (
+    req.user.role === 'dentist' &&
+    appt.dentistId.toString() !== req.user._id.toString()
+  ) {
+    throw new ApiError(403, 'Only the assigned dentist can create this invoice');
+  }
 
   let lineItems = sanitizeItems(items);
   if (lineItems.length === 0) {
@@ -59,6 +67,8 @@ const createInvoice = asyncHandler(async (req, res) => {
 
   const { subtotal, tax, total } = recalc(lineItems, discount, taxRate);
   const invoiceNumber = await Invoice.generateInvoiceNumber();
+  const downPaymentApplied =
+    appt.downPayment?.status === 'paid' ? Number(appt.downPayment.amount) || 0 : 0;
 
   const inv = await Invoice.create({
     invoiceNumber,
@@ -71,6 +81,16 @@ const createInvoice = asyncHandler(async (req, res) => {
     taxRate,
     tax,
     total,
+    amountPaid: downPaymentApplied,
+    downPaymentApplied,
+    paymentStatus:
+      downPaymentApplied >= total && total > 0
+        ? 'paid'
+        : downPaymentApplied > 0
+          ? 'partial'
+          : 'unpaid',
+    paymentMethod: downPaymentApplied > 0 ? 'Midtrans DP' : '',
+    paidAt: downPaymentApplied >= total && total > 0 ? new Date() : undefined,
     notes,
   });
 
@@ -110,11 +130,12 @@ const getInvoice = asyncHandler(async (req, res) => {
   res.json({ success: true, data: inv });
 });
 
-// @desc    Update invoice (admin)
+// @desc    Update invoice (admin or assigned dentist)
 // @route   PUT /api/invoices/:id
 const updateInvoice = asyncHandler(async (req, res) => {
   const inv = await Invoice.findById(req.params.id);
   if (!inv) throw new ApiError(404, 'Invoice not found');
+  if (!canManageInvoice(req, inv)) throw new ApiError(403, 'Not authorized');
 
   if (Array.isArray(req.body.items)) inv.items = sanitizeItems(req.body.items);
   if (req.body.discount !== undefined) inv.discount = req.body.discount;
@@ -125,6 +146,7 @@ const updateInvoice = asyncHandler(async (req, res) => {
   inv.subtotal = t.subtotal;
   inv.tax = t.tax;
   inv.total = t.total;
+  refreshInvoicePaymentStatus(inv);
 
   await inv.save();
   res.json({ success: true, data: inv });
@@ -136,22 +158,19 @@ const updatePayment = asyncHandler(async (req, res) => {
   const inv = await Invoice.findById(req.params.id);
   if (!inv) throw new ApiError(404, 'Invoice not found');
 
-  const { amountPaid, paymentMethod, paymentStatus } = req.body;
-  if (amountPaid !== undefined) inv.amountPaid = Number(amountPaid) || 0;
-  if (paymentMethod !== undefined) inv.paymentMethod = paymentMethod;
-
-  if (paymentStatus) {
-    inv.paymentStatus = paymentStatus;
-  } else if (inv.amountPaid >= inv.total) {
-    inv.paymentStatus = 'paid';
-  } else if (inv.amountPaid > 0) {
-    inv.paymentStatus = 'partial';
-  } else {
-    inv.paymentStatus = 'unpaid';
+  const { amountPaid, paymentMethod } = req.body;
+  if (amountPaid !== undefined) {
+    const nextAmount = Number(amountPaid);
+    if (!Number.isFinite(nextAmount) || nextAmount < 0) {
+      throw new ApiError(400, 'amountPaid must be a non-negative number');
+    }
+    if (nextAmount < (Number(inv.downPaymentApplied) || 0)) {
+      throw new ApiError(400, 'amountPaid cannot be lower than the applied DP');
+    }
+    inv.amountPaid = nextAmount;
   }
-
-  if (inv.paymentStatus === 'paid' && !inv.paidAt) inv.paidAt = new Date();
-  if (inv.paymentStatus !== 'paid') inv.paidAt = undefined;
+  if (paymentMethod !== undefined) inv.paymentMethod = paymentMethod;
+  refreshInvoicePaymentStatus(inv);
 
   await inv.save();
   res.json({ success: true, data: inv });

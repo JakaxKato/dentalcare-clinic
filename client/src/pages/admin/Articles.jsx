@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Newspaper, Plus } from 'lucide-react';
 import Modal from '../../components/common/Modal';
 import { Input, Textarea } from '../../components/common/Input';
 import Loader from '../../components/common/Loader';
@@ -85,11 +86,13 @@ const AdminArticles = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Manajemen Artikel</h2>
-        <button onClick={openCreate} className="btn-primary text-sm">+ Tulis Artikel</button>
+        <button onClick={openCreate} className="btn-primary text-sm inline-flex items-center gap-1.5">
+          <Plus className="w-4 h-4" /> Tulis Artikel
+        </button>
       </div>
 
       {items.length === 0 ? (
-        <EmptyState icon="📰" title="Belum ada artikel" />
+        <EmptyState icon={Newspaper} title="Belum ada artikel" />
       ) : (
         <div className="card divide-y divide-slate-100">
           {items.map((a) => (

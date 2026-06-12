@@ -23,6 +23,7 @@ const testimonialRoutes = require('./routes/testimonialRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const prescriptionRoutes = require('./routes/prescriptionRoutes');
 const invoiceRoutes = require('./routes/invoiceRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
 
@@ -86,16 +87,20 @@ app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/prescriptions', prescriptionRoutes);
 app.use('/api/invoices', invoiceRoutes);
+app.use('/api/payments', paymentRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
+const { startReminderScheduler } = require('./utils/reminderJob');
+
 const start = async () => {
   try {
     await connectDB();
     app.listen(PORT, () => console.log(`API server running on port ${PORT}`));
+    if (process.env.DISABLE_REMINDER !== 'true') startReminderScheduler();
   } catch (err) {
     console.error('Startup error:', err.message);
     process.exit(1);

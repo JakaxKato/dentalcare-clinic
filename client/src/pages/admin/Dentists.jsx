@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Stethoscope, Plus } from 'lucide-react';
 import Modal from '../../components/common/Modal';
 import { Input, Textarea } from '../../components/common/Input';
 import Loader from '../../components/common/Loader';
@@ -93,11 +94,13 @@ const AdminDentists = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Manajemen Dokter</h2>
-        <button onClick={openCreate} className="btn-primary text-sm">+ Tambah Dokter</button>
+        <button onClick={openCreate} className="btn-primary text-sm inline-flex items-center gap-1.5">
+          <Plus className="w-4 h-4" /> Tambah Dokter
+        </button>
       </div>
 
       {items.length === 0 ? (
-        <EmptyState icon="👨‍⚕️" title="Belum ada dokter" />
+        <EmptyState icon={Stethoscope} title="Belum ada dokter" />
       ) : (
         <div className="card overflow-x-auto">
           <table className="w-full text-sm">

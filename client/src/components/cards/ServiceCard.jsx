@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Sparkles } from 'lucide-react';
 import { formatPriceRange } from '../../utils/format';
 
 const ServiceCard = ({ service }) => (
@@ -10,7 +11,9 @@ const ServiceCard = ({ service }) => (
       {service.image ? (
         <img src={service.image} alt={service.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition" />
       ) : (
-        <div className="w-full h-full flex items-center justify-center text-5xl">🦷</div>
+        <div className="w-full h-full flex items-center justify-center text-brand-500">
+          <Sparkles className="w-14 h-14" strokeWidth={1.4} />
+        </div>
       )}
     </div>
     <div className="p-5 flex-1 flex flex-col">

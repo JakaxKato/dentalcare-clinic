@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { AlertTriangle, ArrowLeft } from 'lucide-react';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
 import { articleService } from '../../services';
@@ -26,13 +27,15 @@ const ArticleDetail = () => {
   if (error || !article)
     return (
       <div className="container-app py-12">
-        <EmptyState icon="⚠️" title="Artikel tidak ditemukan" description={error} />
+        <EmptyState icon={AlertTriangle} title="Artikel tidak ditemukan" description={error} />
       </div>
     );
 
   return (
     <article className="container-app py-12 max-w-3xl">
-      <Link to="/blog" className="text-sm text-brand-600 hover:underline">← Kembali ke Blog</Link>
+      <Link to="/blog" className="text-sm text-brand-600 hover:underline inline-flex items-center gap-1">
+        <ArrowLeft className="w-4 h-4" /> Kembali ke Blog
+      </Link>
       <div className="flex flex-wrap gap-2 mt-6">
         {(article.tags || []).map((t) => (
           <span key={t} className="text-xs px-2 py-0.5 bg-brand-50 text-brand-700 rounded-full">#{t}</span>

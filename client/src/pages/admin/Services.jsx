@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Wrench, Plus } from 'lucide-react';
 import Modal from '../../components/common/Modal';
 import { Input, Textarea } from '../../components/common/Input';
 import Loader from '../../components/common/Loader';
@@ -86,11 +87,13 @@ const AdminServices = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Manajemen Layanan</h2>
-        <button onClick={openCreate} className="btn-primary text-sm">+ Tambah Layanan</button>
+        <button onClick={openCreate} className="btn-primary text-sm inline-flex items-center gap-1.5">
+          <Plus className="w-4 h-4" /> Tambah Layanan
+        </button>
       </div>
 
       {items.length === 0 ? (
-        <EmptyState icon="🛠️" title="Belum ada layanan" />
+        <EmptyState icon={Wrench} title="Belum ada layanan" />
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {items.map((s) => (

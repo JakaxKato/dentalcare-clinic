@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import PublicLayout from './components/layout/PublicLayout';
@@ -5,6 +6,7 @@ import PatientLayout from './components/layout/PatientLayout';
 import DentistLayout from './components/layout/DentistLayout';
 import AdminLayout from './components/layout/AdminLayout';
 import ProtectedRoute from './routes/ProtectedRoute';
+import Loader from './components/common/Loader';
 
 // Public
 import Home from './pages/public/Home';
@@ -41,7 +43,7 @@ import DentistTreatment from './pages/dentist/Treatment';
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminDentists from './pages/admin/Dentists';
 import AdminServices from './pages/admin/Services';
-import AdminAppointments from './pages/admin/Appointments';
+const AdminAppointments = lazy(() => import('./pages/admin/Appointments'));
 import AdminPatients from './pages/admin/Patients';
 import AdminArticles from './pages/admin/Articles';
 import AdminTestimonials from './pages/admin/Testimonials';
@@ -81,9 +83,7 @@ const App = () => (
     >
       <Route path="dashboard" element={<PatientDashboard />} />
       <Route path="appointments" element={<PatientAppointments />} />
-
       <Route path="testimonials" element={<PatientTestimonials />} />
-=======
       <Route path="prescriptions" element={<PatientPrescriptions />} />
       <Route path="invoices" element={<InvoiceList />} />
       <Route path="profile" element={<PatientProfile />} />
@@ -113,7 +113,14 @@ const App = () => (
       <Route path="dashboard" element={<AdminDashboard />} />
       <Route path="dentists" element={<AdminDentists />} />
       <Route path="services" element={<AdminServices />} />
-      <Route path="appointments" element={<AdminAppointments />} />
+      <Route
+        path="appointments"
+        element={
+          <Suspense fallback={<Loader />}>
+            <AdminAppointments />
+          </Suspense>
+        }
+      />
       <Route path="patients" element={<AdminPatients />} />
       <Route path="invoices" element={<InvoiceList isAdmin />} />
       <Route path="articles" element={<AdminArticles />} />

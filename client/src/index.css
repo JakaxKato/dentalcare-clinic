@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --swiper-theme-color: #0d8a8a;
+  --swiper-pagination-bullet-inactive-color: #cbd5e1;
+  --swiper-pagination-bullet-inactive-opacity: 1;
+  --swiper-pagination-bullet-size: 8px;
+  --swiper-pagination-bullet-horizontal-gap: 5px;
+  --swiper-navigation-size: 22px;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+  color: #0d8a8a;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  background: #fff;
+  transform: scale(1.05);
+}
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  font-weight: 700;
+}
+
 @layer base {
   html { scroll-behavior: smooth; }
   body {

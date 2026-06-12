@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Newspaper } from 'lucide-react';
 import { formatDateShort } from '../../utils/format';
 
 const ArticleCard = ({ article }) => (
@@ -7,7 +8,9 @@ const ArticleCard = ({ article }) => (
       {article.coverImage ? (
         <img src={article.coverImage} alt={article.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition" />
       ) : (
-        <div className="w-full h-full flex items-center justify-center text-4xl">📰</div>
+        <div className="w-full h-full flex items-center justify-center text-slate-400">
+          <Newspaper className="w-12 h-12" strokeWidth={1.4} />
+        </div>
       )}
     </div>
     <div className="p-5 flex-1 flex flex-col">

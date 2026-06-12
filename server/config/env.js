@@ -17,6 +17,22 @@ const validateEnv = () => {
     console.error('\n[env] CLIENT_URL is required in production for CORS.\n');
     process.exit(1);
   }
+
+  const midtransKeys = [
+    process.env.MIDTRANS_SERVER_KEY,
+    process.env.MIDTRANS_CLIENT_KEY,
+  ].filter(Boolean);
+  if (midtransKeys.length === 1) {
+    console.error('\n[env] MIDTRANS_SERVER_KEY and MIDTRANS_CLIENT_KEY must be set together.\n');
+    process.exit(1);
+  }
+
+  for (const key of ['DP_PERCENT', 'DP_MIN_AMOUNT']) {
+    if (process.env[key] !== undefined && (!Number.isFinite(Number(process.env[key])) || Number(process.env[key]) < 0)) {
+      console.error(`\n[env] ${key} must be a non-negative number.\n`);
+      process.exit(1);
+    }
+  }
 };
 
 const getCorsOrigins = () => {

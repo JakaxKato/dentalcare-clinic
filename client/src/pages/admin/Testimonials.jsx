@@ -1,9 +1,21 @@
 import { useEffect, useState } from 'react';
+import { Star } from 'lucide-react';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
 import { testimonialService } from '../../services';
 import { useToast } from '../../context/ToastContext';
 import { extractMessage } from '../../services/api';
+
+const StarRow = ({ rating = 0 }) => (
+  <div className="flex items-center gap-0.5">
+    {[1, 2, 3, 4, 5].map((n) => (
+      <Star
+        key={n}
+        className={`w-4 h-4 ${n <= rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`}
+      />
+    ))}
+  </div>
+);
 
 const AdminTestimonials = () => {
   const toast = useToast();
@@ -45,7 +57,7 @@ const AdminTestimonials = () => {
       <h2 className="text-2xl font-bold">Manajemen Testimoni</h2>
 
       {items.length === 0 ? (
-        <EmptyState icon="⭐" title="Belum ada testimoni" />
+        <EmptyState icon={Star} title="Belum ada testimoni" />
       ) : (
         <div className="grid md:grid-cols-2 gap-4">
           {items.map((t) => (
@@ -53,7 +65,7 @@ const AdminTestimonials = () => {
               <div className="flex justify-between items-start">
                 <div>
                   <p className="font-semibold">{t.patientName}</p>
-                  <p className="text-amber-500 text-sm">{'★'.repeat(t.rating)}{'☆'.repeat(5 - t.rating)}</p>
+                  <StarRow rating={t.rating} />
                 </div>
                 <span className={`badge ${t.isApproved ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
                   {t.isApproved ? 'Disetujui' : 'Pending'}

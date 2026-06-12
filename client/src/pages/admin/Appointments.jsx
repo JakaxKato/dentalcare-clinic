@@ -1,4 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import idLocale from '@fullcalendar/core/locales/id';
+import { CalendarDays, CalendarRange, Download, List } from 'lucide-react';
 import StatusBadge from '../../components/common/StatusBadge';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
@@ -15,18 +21,97 @@ const AdminAppointments = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [date, setDate] = useState('');
+  const [view, setView] = useState('table');
   const [active, setActive] = useState(null);
   const [reschedule, setReschedule] = useState({ open: false, data: null, date: '', time: '' });
+  const [rescheduleSlots, setRescheduleSlots] = useState([]);
+  const [rescheduleLoading, setRescheduleLoading] = useState(false);
+  const [rescheduleError, setRescheduleError] = useState('');
 
-  const load = () => {
+  const load = useCallback(() => {
     setLoading(true);
     const params = {};
     if (filter !== 'all') params.status = filter;
     if (date) params.date = date;
-    appointmentService.list(params).then(setAppts).finally(() => setLoading(false));
-  };
+    appointmentService
+      .list(params)
+      .then(setAppts)
+      .catch((err) => toast.error(extractMessage(err, 'Gagal memuat appointment')))
+      .finally(() => setLoading(false));
+  }, [date, filter, toast]);
 
-  useEffect(() => { load(); }, [filter, date]);
+  useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    if (!reschedule.open || !reschedule.data || !reschedule.date) {
+      setRescheduleSlots([]);
+      setRescheduleError('');
+      return;
+    }
+    let current = true;
+    setRescheduleLoading(true);
+    setRescheduleError('');
+    appointmentService
+      .availability({
+        dentistId: reschedule.data.dentistId?._id,
+        serviceId: reschedule.data.serviceId?._id,
+        date: reschedule.date,
+        excludeAppointmentId: reschedule.data._id,
+      })
+      .then((result) => {
+        if (current) setRescheduleSlots(result.slots);
+      })
+      .catch((err) => {
+        if (current) setRescheduleError(extractMessage(err, 'Gagal memuat slot'));
+      })
+      .finally(() => {
+        if (current) setRescheduleLoading(false);
+      });
+    return () => {
+      current = false;
+    };
+  }, [reschedule.open, reschedule.data, reschedule.date]);
+
+  const calendarEvents = useMemo(
+    () =>
+      appts.map((appointment) => {
+        const dateKey = String(appointment.appointmentDate).slice(0, 10);
+        const duration = appointment.serviceId?.duration || 30;
+        const [hour, minute] = appointment.appointmentTime.split(':').map(Number);
+        const endMinutes = hour * 60 + minute + duration;
+        const end = `${String(Math.floor(endMinutes / 60)).padStart(2, '0')}:${String(
+          endMinutes % 60
+        ).padStart(2, '0')}`;
+        return {
+          id: appointment._id,
+          title: `${appointment.patientId?.name || 'Pasien'} - ${
+            appointment.serviceId?.title || 'Layanan'
+          }`,
+          start: `${dateKey}T${appointment.appointmentTime}:00`,
+          end: `${dateKey}T${end}:00`,
+          backgroundColor:
+            appointment.status === 'completed'
+              ? '#059669'
+              : appointment.status === 'confirmed'
+                ? '#0284c7'
+                : appointment.status === 'cancelled'
+                  ? '#94a3b8'
+                  : '#d97706',
+          borderColor: 'transparent',
+          extendedProps: { appointment },
+        };
+      }),
+    [appts]
+  );
+
+  const openReschedule = (appointment) => {
+    setReschedule({
+      open: true,
+      data: appointment,
+      date: String(appointment.appointmentDate).slice(0, 10),
+      time: appointment.appointmentTime,
+    });
+  };
 
   const transition = async (id, status) => {
     try {
@@ -50,6 +135,10 @@ const AdminAppointments = () => {
   };
 
   const submitReschedule = async () => {
+    if (!reschedule.date || !reschedule.time) {
+      toast.error('Pilih tanggal dan jam baru');
+      return;
+    }
     try {
       await appointmentService.reschedule(reschedule.data._id, {
         appointmentDate: reschedule.date,
@@ -90,7 +179,22 @@ const AdminAppointments = () => {
     <div className="space-y-6">
       <div className="flex flex-wrap justify-between items-center gap-3">
         <h2 className="text-2xl font-bold">Manajemen Appointment</h2>
-        <button onClick={exportCSV} className="btn-secondary text-sm">⬇️ Export CSV</button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setView(view === 'table' ? 'calendar' : 'table')}
+            className="btn-secondary text-sm inline-flex items-center gap-1.5"
+          >
+            {view === 'table' ? (
+              <CalendarRange className="w-4 h-4" />
+            ) : (
+              <List className="w-4 h-4" />
+            )}
+            {view === 'table' ? 'Kalender' : 'Daftar'}
+          </button>
+          <button onClick={exportCSV} className="btn-secondary text-sm inline-flex items-center gap-1.5">
+            <Download className="w-4 h-4" /> Export CSV
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-3 items-center">
@@ -106,7 +210,30 @@ const AdminAppointments = () => {
       </div>
 
       {appts.length === 0 ? (
-        <EmptyState icon="📅" title="Tidak ada appointment" />
+        <EmptyState icon={CalendarDays} title="Tidak ada appointment" />
+      ) : view === 'calendar' ? (
+        <div className="card p-3 md:p-5 overflow-x-auto">
+          <div className="min-w-[760px]">
+            <FullCalendar
+              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+              initialView="timeGridWeek"
+              headerToolbar={{
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay',
+              }}
+              buttonText={{ today: 'Hari ini', month: 'Bulan', week: 'Minggu', day: 'Hari' }}
+              locale={idLocale}
+              firstDay={1}
+              slotMinTime="08:00:00"
+              slotMaxTime="20:00:00"
+              allDaySlot={false}
+              height="auto"
+              events={calendarEvents}
+              eventClick={(info) => setActive(info.event.extendedProps.appointment)}
+            />
+          </div>
+        </div>
       ) : (
         <div className="card overflow-x-auto">
           <table className="w-full text-sm">
@@ -135,7 +262,7 @@ const AdminAppointments = () => {
                     )}
                     {['pending', 'confirmed'].includes(a.status) && (
                       <>
-                        <button onClick={() => setReschedule({ open: true, data: a, date: '', time: a.appointmentTime })} className="btn-ghost text-xs">Reschedule</button>
+                        <button onClick={() => openReschedule(a)} className="btn-ghost text-xs">Reschedule</button>
                         <button onClick={() => transition(a._id, 'cancelled')} className="btn-danger text-xs">Cancel</button>
                       </>
                     )}
@@ -178,12 +305,23 @@ const AdminAppointments = () => {
             onChange={(e) => setReschedule({ ...reschedule, date: e.target.value })}
             min={new Date().toISOString().split('T')[0]}
           />
-          <Input
-            label="Jam Baru"
-            type="time"
-            value={reschedule.time}
-            onChange={(e) => setReschedule({ ...reschedule, time: e.target.value })}
-          />
+          <label className="block">
+            <span className="label">Jam Baru</span>
+            <select
+              className={`input ${rescheduleError ? 'border-rose-400' : ''}`}
+              value={reschedule.time}
+              onChange={(e) => setReschedule({ ...reschedule, time: e.target.value })}
+              disabled={rescheduleLoading || !reschedule.date}
+            >
+              <option value="">
+                {rescheduleLoading ? 'Memuat slot...' : 'Pilih jam'}
+              </option>
+              {rescheduleSlots.map((slot) => (
+                <option key={slot} value={slot}>{slot}</option>
+              ))}
+            </select>
+            {rescheduleError && <p className="text-xs text-rose-600 mt-1">{rescheduleError}</p>}
+          </label>
           <div className="flex justify-end gap-2 pt-2">
             <button onClick={() => setReschedule({ open: false, data: null, date: '', time: '' })} className="btn-ghost">Batal</button>
             <button onClick={submitReschedule} className="btn-primary">Simpan</button>

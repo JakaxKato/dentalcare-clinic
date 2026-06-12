@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Users } from 'lucide-react';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
 import { userService } from '../../services';
@@ -58,7 +59,7 @@ const AdminPatients = () => {
       />
 
       {items.length === 0 ? (
-        <EmptyState icon="👥" title="Belum ada pasien" />
+        <EmptyState icon={Users} title="Belum ada pasien" />
       ) : (
         <div className="card overflow-x-auto">
           <table className="w-full text-sm">

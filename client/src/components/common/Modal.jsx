@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { X } from 'lucide-react';
 
 const Modal = ({ open, onClose, title, children, size = 'md' }) => {
   useEffect(() => {
@@ -19,10 +20,10 @@ const Modal = ({ open, onClose, title, children, size = 'md' }) => {
           <h3 className="text-lg font-semibold text-slate-800">{title}</h3>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
+            className="text-slate-400 hover:text-slate-600 leading-none"
             aria-label="Close"
           >
-            ×
+            <X className="w-5 h-5" />
           </button>
         </div>
         <div className="p-6">{children}</div>

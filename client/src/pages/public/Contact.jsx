@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { MapPin, Phone, Clock, ChevronDown } from 'lucide-react';
 import { Input, Textarea } from '../../components/common/Input';
 import { useToast } from '../../context/ToastContext';
 import { CLINIC } from '../../config/clinic';
@@ -31,21 +32,27 @@ const Contact = () => {
 
           <div className="space-y-4 mt-8">
             <div className="card p-5 flex items-start gap-3">
-              <div className="text-2xl">📍</div>
+              <div className="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0">
+                <MapPin className="w-5 h-5" />
+              </div>
               <div>
                 <h3 className="font-semibold">{CLINIC.address.primary.label}</h3>
                 <p className="text-slate-600 text-sm">{CLINIC.address.primary.line}</p>
               </div>
             </div>
             <div className="card p-5 flex items-start gap-3">
-              <div className="text-2xl">📍</div>
+              <div className="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0">
+                <MapPin className="w-5 h-5" />
+              </div>
               <div>
                 <h3 className="font-semibold">{CLINIC.address.secondary.label}</h3>
                 <p className="text-slate-600 text-sm">{CLINIC.address.secondary.line}</p>
               </div>
             </div>
             <div className="card p-5 flex items-start gap-3">
-              <div className="text-2xl">📞</div>
+              <div className="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0">
+                <Phone className="w-5 h-5" />
+              </div>
               <div>
                 <h3 className="font-semibold">Telepon / WhatsApp</h3>
                 <p className="text-slate-600 text-sm">
@@ -61,7 +68,9 @@ const Contact = () => {
               </div>
             </div>
             <div className="card p-5 flex items-start gap-3">
-              <div className="text-2xl">⏰</div>
+              <div className="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0">
+                <Clock className="w-5 h-5" />
+              </div>
               <div>
                 <h3 className="font-semibold">Jam Operasional</h3>
                 <p className="text-slate-600 text-sm">{CLINIC.hours.summary}</p>
@@ -94,9 +103,9 @@ const Contact = () => {
             <div className="space-y-3">
               {FAQ.map((f) => (
                 <details key={f.q} className="card p-4 group">
-                  <summary className="cursor-pointer font-medium flex justify-between items-center">
+                  <summary className="cursor-pointer font-medium flex justify-between items-center list-none">
                     {f.q}
-                    <span className="text-brand-600 group-open:rotate-180 transition">▾</span>
+                    <ChevronDown className="w-4 h-4 text-brand-600 group-open:rotate-180 transition" />
                   </summary>
                   <p className="text-slate-600 text-sm mt-2">{f.a}</p>
                 </details>

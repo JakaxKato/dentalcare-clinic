@@ -1,3 +1,4 @@
+import { Check } from 'lucide-react';
 import { CLINIC } from '../../config/clinic';
 
 const About = () => (
@@ -21,7 +22,9 @@ const About = () => (
             'Dua cabang strategis untuk kemudahan akses',
           ].map((p) => (
             <li key={p} className="flex items-start gap-3">
-              <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">✓</span>
+              <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                <Check className="w-3.5 h-3.5" strokeWidth={3} />
+              </span>
               <span className="text-slate-700">{p}</span>
             </li>
           ))}

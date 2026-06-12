@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Printer, Pill } from 'lucide-react';
 import Loader from '../../components/common/Loader';
 import { prescriptionService } from '../../services';
 
@@ -31,7 +32,9 @@ const PrescriptionPrint = () => {
       <style>{`@media print { .no-print { display: none; } body { background: white; } }`}</style>
 
       <div className="no-print mb-4 flex justify-end">
-        <button onClick={() => window.print()} className="btn-primary text-sm">🖨️ Print</button>
+        <button onClick={() => window.print()} className="btn-primary text-sm inline-flex items-center gap-1.5">
+          <Printer className="w-4 h-4" /> Print
+        </button>
       </div>
 
       <div className="border-b-2 border-slate-300 pb-4 mb-4">
@@ -61,7 +64,7 @@ const PrescriptionPrint = () => {
       )}
 
       <div className="border-t border-slate-200 pt-4">
-        <p className="text-2xl font-serif mb-3">℞</p>
+        <Pill className="w-7 h-7 mb-3 text-slate-700" />
         <ol className="space-y-4 list-decimal list-inside">
           {data.items.map((it, i) => (
             <li key={i} className="text-sm">

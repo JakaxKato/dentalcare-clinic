@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Pill, Printer } from 'lucide-react';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
 import { prescriptionService } from '../../services';
@@ -20,7 +21,7 @@ const PatientPrescriptions = () => {
       <h2 className="text-2xl font-bold">Resep Saya</h2>
 
       {list.length === 0 ? (
-        <EmptyState icon="℞" title="Belum ada resep" />
+        <EmptyState icon={Pill} title="Belum ada resep" />
       ) : (
         <div className="space-y-3">
           {list.map((p) => (
@@ -34,8 +35,8 @@ const PatientPrescriptions = () => {
                   <p className="text-xs text-slate-500 mt-1">{p.appointmentId.serviceId.title}</p>
                 )}
               </div>
-              <Link to={`/print/prescription/${p._id}`} target="_blank" className="btn-ghost text-sm">
-                🖨️ Lihat / Print
+              <Link to={`/print/prescription/${p._id}`} target="_blank" className="btn-ghost text-sm inline-flex items-center gap-1.5">
+                <Printer className="w-4 h-4" /> Lihat / Print
               </Link>
             </div>
           ))}

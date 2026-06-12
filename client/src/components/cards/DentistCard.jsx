@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { UserCircle2 } from 'lucide-react';
 
 const DentistCard = ({ entry }) => {
   const { user, profile } = entry;
@@ -8,7 +9,9 @@ const DentistCard = ({ entry }) => {
         {user.avatar ? (
           <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-2xl">👨‍⚕️</div>
+          <div className="w-full h-full flex items-center justify-center text-brand-600">
+            <UserCircle2 className="w-12 h-12" strokeWidth={1.4} />
+          </div>
         )}
       </div>
       <div className="min-w-0 flex-1">

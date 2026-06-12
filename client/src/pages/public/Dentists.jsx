@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { AlertTriangle, Stethoscope } from 'lucide-react';
 import DentistCard from '../../components/cards/DentistCard';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
@@ -27,9 +28,9 @@ const Dentists = () => {
       {loading ? (
         <Loader />
       ) : error ? (
-        <EmptyState icon="⚠️" title="Gagal memuat" description={error} />
+        <EmptyState icon={AlertTriangle} title="Gagal memuat" description={error} />
       ) : dentists.length === 0 ? (
-        <EmptyState icon="👨‍⚕️" title="Belum ada dokter" />
+        <EmptyState icon={Stethoscope} title="Belum ada dokter" />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {dentists.map((d) => <DentistCard key={d.user._id} entry={d} />)}

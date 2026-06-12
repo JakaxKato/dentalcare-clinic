@@ -1,14 +1,24 @@
+import {
+  LayoutDashboard,
+  CalendarDays,
+  Receipt,
+  Stethoscope,
+  Wrench,
+  Users,
+  Newspaper,
+  Star,
+} from 'lucide-react';
 import DashboardLayout from './DashboardLayout';
 
 const navItems = [
-  { to: '/admin/dashboard', label: 'Dashboard', icon: '📊', end: true },
-  { to: '/admin/appointments', label: 'Appointment', icon: '📅' },
-  { to: '/admin/invoices', label: 'Invoice', icon: '🧾' },
-  { to: '/admin/dentists', label: 'Dokter', icon: '🦷' },
-  { to: '/admin/services', label: 'Layanan', icon: '🛠️' },
-  { to: '/admin/patients', label: 'Pasien', icon: '👥' },
-  { to: '/admin/articles', label: 'Artikel', icon: '📰' },
-  { to: '/admin/testimonials', label: 'Testimoni', icon: '⭐' },
+  { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/admin/appointments', label: 'Appointment', icon: CalendarDays },
+  { to: '/admin/invoices', label: 'Invoice', icon: Receipt },
+  { to: '/admin/dentists', label: 'Dokter', icon: Stethoscope },
+  { to: '/admin/services', label: 'Layanan', icon: Wrench },
+  { to: '/admin/patients', label: 'Pasien', icon: Users },
+  { to: '/admin/articles', label: 'Artikel', icon: Newspaper },
+  { to: '/admin/testimonials', label: 'Testimoni', icon: Star },
 ];
 
 const AdminLayout = () => <DashboardLayout navItems={navItems} title="Admin" />;

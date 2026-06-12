@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { CalendarDays } from 'lucide-react';
 import StatusBadge from '../../components/common/StatusBadge';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
@@ -19,15 +20,19 @@ const DentistAppointments = () => {
   const [active, setActive] = useState(null);
   const [notes, setNotes] = useState({ diagnosis: '', treatmentNotes: '', recommendation: '' });
 
-  const load = () => {
+  const load = useCallback(() => {
     setLoading(true);
     const params = {};
     if (filter !== 'all') params.status = filter;
     if (date) params.date = date;
-    appointmentService.list(params).then(setAppts).finally(() => setLoading(false));
-  };
+    appointmentService
+      .list(params)
+      .then(setAppts)
+      .catch((err) => toast.error(extractMessage(err, 'Gagal memuat appointment')))
+      .finally(() => setLoading(false));
+  }, [date, filter, toast]);
 
-  useEffect(() => { load(); }, [filter, date]);
+  useEffect(() => { load(); }, [load]);
 
   const openComplete = (a) => {
     setActive(a);
@@ -70,7 +75,7 @@ const DentistAppointments = () => {
       </div>
 
       {appts.length === 0 ? (
-        <EmptyState icon="📅" title="Tidak ada appointment" />
+        <EmptyState icon={CalendarDays} title="Tidak ada appointment" />
       ) : (
         <div className="card divide-y divide-slate-100">
           {appts.map((a) => (

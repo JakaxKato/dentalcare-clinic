@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { CalendarCheck, Clock, CheckCircle2 } from 'lucide-react';
 import StatCard from '../../components/dashboard/StatCard';
 import StatusBadge from '../../components/common/StatusBadge';
 import Loader from '../../components/common/Loader';
@@ -30,9 +31,9 @@ const DentistDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatCard label="Pasien Hari Ini" value={todays.length} icon="🗓️" />
-        <StatCard label="Upcoming" value={upcoming.length} icon="⏳" />
-        <StatCard label="Selesai (total)" value={completed} icon="✅" />
+        <StatCard label="Pasien Hari Ini" value={todays.length} icon={<CalendarCheck className="w-6 h-6" />} />
+        <StatCard label="Upcoming" value={upcoming.length} icon={<Clock className="w-6 h-6" />} />
+        <StatCard label="Selesai (total)" value={completed} icon={<CheckCircle2 className="w-6 h-6" />} />
       </div>
 
       <div className="card p-6">

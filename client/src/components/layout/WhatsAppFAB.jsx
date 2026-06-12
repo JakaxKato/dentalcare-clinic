@@ -1,3 +1,4 @@
+import { MessageCircle } from 'lucide-react';
 import { CLINIC } from '../../config/clinic';
 
 const WhatsAppFAB = () => {
@@ -13,7 +14,7 @@ const WhatsAppFAB = () => {
       aria-label="Chat WhatsApp"
       className="fixed bottom-6 right-6 z-30 w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg flex items-center justify-center transition hover:scale-110"
     >
-      <span className="text-2xl">💬</span>
+      <MessageCircle className="w-7 h-7" />
     </a>
   );
 };

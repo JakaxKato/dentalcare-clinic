@@ -28,6 +28,8 @@ export const serviceService = {
 
 export const appointmentService = {
   create: (data) => api.post('/appointments', data).then((r) => r.data.data),
+  availability: (params) =>
+    api.get('/appointments/availability', { params }).then((r) => r.data.data),
   list: (params = {}) => api.get('/appointments', { params }).then((r) => r.data.data),
   mine: () => api.get('/appointments/my-appointments').then((r) => r.data.data),
   get: (id) => api.get(`/appointments/${id}`).then((r) => r.data.data),
@@ -77,6 +79,15 @@ export const prescriptionService = {
   get: (id) => api.get(`/prescriptions/${id}`).then((r) => r.data.data),
   update: (id, data) => api.put(`/prescriptions/${id}`, data).then((r) => r.data.data),
   remove: (id) => api.delete(`/prescriptions/${id}`).then((r) => r.data),
+};
+
+export const paymentService = {
+  getDpStatus: (appointmentId) =>
+    api.get(`/payments/appointment/${appointmentId}/dp`).then((r) => r.data.data),
+  createDp: (appointmentId) =>
+    api.post(`/payments/appointment/${appointmentId}/dp`).then((r) => r.data.data),
+  confirmDpDev: (appointmentId) =>
+    api.post(`/payments/appointment/${appointmentId}/dp/confirm`).then((r) => r.data.data),
 };
 
 export const invoiceService = {

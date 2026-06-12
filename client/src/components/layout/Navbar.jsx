@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { CLINIC } from '../../config/clinic';
+import ToothIcon from '../common/ToothIcon';
 
 const links = [
   { to: '/', label: 'Beranda' },
@@ -29,8 +31,8 @@ const Navbar = () => {
     <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-100">
       <div className="container-app flex items-center justify-between h-16">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-lg bg-brand-600 text-white flex items-center justify-center font-bold">
-            🦷
+          <div className="w-9 h-9 rounded-lg bg-brand-600 text-white flex items-center justify-center">
+            <ToothIcon className="w-5 h-5" strokeWidth={2} />
           </div>
           <span className="font-extrabold text-lg text-slate-800">{CLINIC.shortName}</span>
         </Link>
@@ -73,7 +75,7 @@ const Navbar = () => {
           className="lg:hidden p-2 rounded-md text-slate-700 hover:bg-slate-100"
           aria-label="Toggle menu"
         >
-          <span className="text-2xl">{open ? '✕' : '☰'}</span>
+          {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
 
