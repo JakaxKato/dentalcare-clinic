@@ -103,7 +103,7 @@ const Hero = () => (
             ))}
           </Swiper>
         </div>
-        <div className="absolute -bottom-4 -left-4 lg:-left-8 card p-4 flex items-center gap-3 max-w-[220px]">
+        <div className="absolute -bottom-4 -left-4 lg:-left-8 card p-4 flex items-center gap-3 max-w-[220px] z-10">
           <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
             <ShieldCheck className="w-5 h-5" />
           </div>
