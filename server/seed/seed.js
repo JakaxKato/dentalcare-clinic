@@ -48,7 +48,7 @@ const services = [
     description: 'Perawatan ortodonti untuk merapikan susunan gigi menggunakan behel metal, ceramic, atau clear aligner.',
     priceRange: { min: 6000000, max: 25000000 },
     duration: 60,
-    image: 'https://images.unsplash.com/photo-1564420179856-2c0c54ed6cd6?w=800',
+    image: 'https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=800',
   },
   {
     title: 'Cabut Gigi & Bedah Minor',
