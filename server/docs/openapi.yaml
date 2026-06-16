@@ -1,0 +1,507 @@
+openapi: 3.0.3
+info:
+  title: DentalCare Clinic API
+  version: 1.0.0
+  description: |
+    REST API untuk DentalCare Clinic Management System.
+    Semua endpoint privat membutuhkan header `Authorization: Bearer <JWT>`.
+  contact:
+    name: DentalCare Support
+    email: support@dentalcare.id
+servers:
+  - url: http://localhost:5000
+    description: Local dev
+  - url: https://api.your-clinic.com
+    description: Production
+tags:
+  - name: Auth
+  - name: Users
+  - name: Dentists
+  - name: Services
+  - name: Appointments
+  - name: Prescriptions
+  - name: Invoices
+  - name: Payments
+  - name: Articles
+  - name: Testimonials
+  - name: Upload
+  - name: Clinic Settings
+  - name: System
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      type: object
+      properties:
+        success: { type: boolean, example: false }
+        message: { type: string }
+    SuccessEmpty:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+    User:
+      type: object
+      properties:
+        _id: { type: string }
+        name: { type: string }
+        email: { type: string, format: email }
+        role: { type: string, enum: [patient, dentist, admin] }
+        phone: { type: string }
+        dateOfBirth: { type: string, format: date }
+        gender: { type: string, enum: [male, female] }
+        address: { type: string }
+        medicalHistory:
+          type: object
+          properties:
+            bloodType: { type: string }
+            allergies: { type: array, items: { type: string } }
+            conditions: { type: array, items: { type: string } }
+            medications: { type: array, items: { type: string } }
+            notes: { type: string }
+    AuthResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        token: { type: string }
+        user: { $ref: '#/components/schemas/User' }
+    Appointment:
+      type: object
+      properties:
+        _id: { type: string }
+        patient: { type: string }
+        dentist: { type: string }
+        service: { type: string }
+        date: { type: string, format: date-time }
+        status: { type: string, enum: [pending, confirmed, completed, cancelled] }
+        notes: { type: string }
+        odontogram:
+          type: array
+          items:
+            type: object
+            properties:
+              tooth: { type: string }
+              status: { type: string }
+              note: { type: string }
+    Service:
+      type: object
+      properties:
+        _id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        price: { type: number }
+        duration: { type: integer, description: minutes }
+        image: { type: string }
+    Prescription:
+      type: object
+      properties:
+        _id: { type: string }
+        appointment: { type: string }
+        patient: { type: string }
+        dentist: { type: string }
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              drug: { type: string }
+              dose: { type: string }
+              frequency: { type: string }
+              duration: { type: string }
+              instruction: { type: string }
+        notes: { type: string }
+        createdAt: { type: string, format: date-time }
+    Invoice:
+      type: object
+      properties:
+        _id: { type: string }
+        invoiceNumber: { type: string, example: INV-202606-0001 }
+        patient: { type: string }
+        appointment: { type: string }
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              description: { type: string }
+              qty: { type: integer }
+              price: { type: number }
+        subtotal: { type: number }
+        discount: { type: number }
+        tax: { type: number }
+        total: { type: number }
+        amountPaid: { type: number }
+        status: { type: string, enum: [unpaid, partial, paid, refunded, cancelled] }
+        paidAt: { type: string, format: date-time }
+    ClinicSettings:
+      type: object
+      properties:
+        name: { type: string }
+        tagline: { type: string }
+        logoUrl: { type: string }
+        primaryColor: { type: string }
+        accentColor: { type: string }
+        address: { type: string }
+        phone: { type: string }
+        whatsapp: { type: string }
+        email: { type: string }
+        mapsEmbedUrl: { type: string }
+        operatingHours:
+          type: array
+          items:
+            type: object
+            properties:
+              day: { type: string }
+              open: { type: string }
+              close: { type: string }
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/health:
+    get:
+      tags: [System]
+      summary: Health check (DB + uptime)
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  status: { type: string, example: ok }
+                  uptime: { type: number }
+                  database: { type: string, example: connected }
+
+  /api/auth/register:
+    post:
+      tags: [Auth]
+      summary: Daftar pasien baru
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name: { type: string }
+                email: { type: string, format: email }
+                password: { type: string, minLength: 6 }
+                phone: { type: string }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/AuthResponse' } }
+
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/AuthResponse' } }
+        '401': { description: Invalid credentials }
+
+  /api/auth/me:
+    get:
+      tags: [Auth]
+      summary: Profil user yang sedang login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/User' } }
+
+  /api/auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Kirim email reset password (token TTL 30 menit)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        '200': { description: OK (selalu success demi keamanan) }
+
+  /api/auth/reset-password/{token}:
+    post:
+      tags: [Auth]
+      summary: Reset password dengan token
+      security: []
+      parameters:
+        - in: path
+          name: token
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password: { type: string, minLength: 6 }
+      responses:
+        '200': { description: OK }
+        '400': { description: Token invalid/expired }
+
+  /api/users:
+    get:
+      tags: [Users]
+      summary: List user (admin)
+      responses:
+        '200': { description: OK }
+
+  /api/users/me/medical-history:
+    put:
+      tags: [Users]
+      summary: Update rekam medis pasien (self)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/User' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/User' } }
+
+  /api/dentists:
+    get:
+      tags: [Dentists]
+      summary: Daftar dokter (publik)
+      security: []
+      responses: { '200': { description: OK } }
+
+  /api/services:
+    get:
+      tags: [Services]
+      summary: Daftar layanan (publik)
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Service' }
+
+  /api/appointments:
+    get:
+      tags: [Appointments]
+      summary: List appointment (filter per role)
+      responses: { '200': { description: OK } }
+    post:
+      tags: [Appointments]
+      summary: Buat appointment baru
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Appointment' }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/Appointment' } }
+
+  /api/appointments/{id}:
+    get:
+      tags: [Appointments]
+      summary: Detail appointment
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses: { '200': { description: OK } }
+    put:
+      tags: [Appointments]
+      summary: Update status / catatan
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Appointment' }
+      responses: { '200': { description: OK } }
+
+  /api/appointments/{id}/odontogram:
+    put:
+      tags: [Appointments]
+      summary: Update odontogram (dokter)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses: { '200': { description: OK } }
+
+  /api/prescriptions:
+    get:
+      tags: [Prescriptions]
+      summary: Daftar resep (filter per role)
+      responses: { '200': { description: OK } }
+    post:
+      tags: [Prescriptions]
+      summary: Buat resep (dokter)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Prescription' }
+      responses: { '201': { description: Created } }
+
+  /api/invoices:
+    get:
+      tags: [Invoices]
+      summary: Daftar invoice
+      responses: { '200': { description: OK } }
+    post:
+      tags: [Invoices]
+      summary: Buat invoice (admin/dokter)
+      responses: { '201': { description: Created } }
+
+  /api/invoices/{id}/pdf:
+    get:
+      tags: [Invoices]
+      summary: Download PDF invoice
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: PDF stream
+          content:
+            application/pdf:
+              schema: { type: string, format: binary }
+
+  /api/payments/dp:
+    post:
+      tags: [Payments]
+      summary: Buat transaksi DP via Midtrans Snap
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [invoiceId]
+              properties:
+                invoiceId: { type: string }
+      responses:
+        '200':
+          description: Snap token + redirect URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  snapToken: { type: string }
+                  redirectUrl: { type: string }
+
+  /api/payments/notification:
+    post:
+      tags: [Payments]
+      summary: Webhook notifikasi Midtrans
+      security: []
+      responses: { '200': { description: OK } }
+
+  /api/articles:
+    get:
+      tags: [Articles]
+      summary: Daftar artikel (publik)
+      security: []
+      responses: { '200': { description: OK } }
+
+  /api/testimonials:
+    get:
+      tags: [Testimonials]
+      summary: Daftar testimoni (publik)
+      security: []
+      responses: { '200': { description: OK } }
+
+  /api/upload:
+    post:
+      tags: [Upload]
+      summary: Upload gambar (Cloudinary atau local disk fallback)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file: { type: string, format: binary }
+      responses:
+        '200':
+          description: URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url: { type: string }
+
+  /api/clinic-settings:
+    get:
+      tags: [Clinic Settings]
+      summary: Ambil pengaturan klinik (white-label)
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ClinicSettings' } }
+    put:
+      tags: [Clinic Settings]
+      summary: Update pengaturan klinik (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ClinicSettings' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ClinicSettings' } }

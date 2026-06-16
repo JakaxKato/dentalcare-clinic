@@ -1,8 +1,13 @@
 # 🦷 DentalCare Clinic Management System
 
-Sistem manajemen klinik dokter gigi full-stack berbasis **MERN** (MongoDB, Express, React, Node.js) — modern, responsif, aman, dan siap dikembangkan.
+Sistem manajemen klinik dokter gigi full-stack berbasis **MERN** (MongoDB, Express, React, Node.js) — modern, responsif, aman, dan **siap dijual sebagai produk**.
 
-![Tech](https://img.shields.io/badge/Stack-MERN-blue) ![License](https://img.shields.io/badge/License-MIT-green)
+![Tech](https://img.shields.io/badge/Stack-MERN-blue) ![License](https://img.shields.io/badge/License-Commercial-orange) ![PWA](https://img.shields.io/badge/PWA-installable-blueviolet) ![Docker](https://img.shields.io/badge/Docker-ready-blue)
+
+📦 **Production-ready**: Docker + CI/CD + Swagger docs + backup script
+💼 **Sales-ready**: lihat [`marketing/`](marketing/) untuk pricing, sales playbook, dan landing page produk
+🚀 **Deploy guide**: [`DEPLOYMENT.md`](DEPLOYMENT.md)
+📖 **API docs**: jalankan server lalu buka `http://localhost:5000/api/docs`
 
 ---
 
@@ -142,6 +147,31 @@ npm run dev:server   # http://localhost:5000
 # Terminal 2
 npm run dev:client   # http://localhost:5173
 ```
+
+---
+
+## 🐳 Production Deploy (Docker)
+
+```bash
+cp server/.env.production.example server/.env
+cp client/.env.production.example client/.env
+# isi env dengan kredensial real
+docker compose up -d --build
+```
+
+Akses client di `http://localhost`, API di `http://localhost:5000`, Swagger di `http://localhost:5000/api/docs`.
+
+Detail lengkap (VPS, Vercel+Railway, reverse proxy, backup): **[DEPLOYMENT.md](DEPLOYMENT.md)**.
+
+---
+
+## 💼 Sales & Pricing
+
+Folder [`marketing/`](marketing/) berisi:
+- **[SALES.md](marketing/SALES.md)** — positioning, diferensiasi, handling objection
+- **[PRICING.md](marketing/PRICING.md)** — paket Basic (Rp 4,9jt) / Pro (Rp 9,9jt) / Enterprise (Rp 24,9jt+)
+- **[DEMO_SCRIPT.md](marketing/DEMO_SCRIPT.md)** — script demo 15 menit ke prospek
+- **[landing/index.html](marketing/landing/index.html)** — landing page produk standalone, deploy ke Vercel / GitHub Pages
 
 ---
 

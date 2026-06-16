@@ -77,6 +77,23 @@ app.use('/api/auth/reset-password', authLimiter);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// API documentation (Swagger UI) — disabled in test to keep boot lean
+if (process.env.NODE_ENV !== 'test' && process.env.DISABLE_SWAGGER !== 'true') {
+  try {
+    const swaggerUi = require('swagger-ui-express');
+    const YAML = require('yamljs');
+    const openapi = YAML.load(path.join(__dirname, 'docs', 'openapi.yaml'));
+    app.use(
+      '/api/docs',
+      swaggerUi.serve,
+      swaggerUi.setup(openapi, { customSiteTitle: 'DentalCare API Docs' })
+    );
+    app.get('/api/docs.json', (req, res) => res.json(openapi));
+  } catch (err) {
+    console.warn('[swagger] disabled:', err.message);
+  }
+}
+
 // Health check — includes database connectivity status
 app.get('/api/health', (req, res) => {
   const dbStates = ['disconnected', 'connected', 'connecting', 'disconnecting'];

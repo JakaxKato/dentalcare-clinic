@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>DentalCare — Sistem Manajemen Klinik Gigi Siap Pakai</title>
+<meta name="description" content="Sistem manajemen klinik gigi modern: booking online, odontogram, resep, invoice, WhatsApp reminder. One-time license, no monthly fee." />
+<meta property="og:title" content="DentalCare — Sistem Klinik Gigi Siap Pakai" />
+<meta property="og:description" content="One-time license. Setup 1 minggu. Branding milik klinik." />
+<meta property="og:type" content="website" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: { extend: { colors: { brand: { 50: '#eff6ff', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1' } } } }
+  };
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%); }
+</style>
+</head>
+<body class="font-sans text-slate-800 antialiased">
+
+<!-- Nav -->
+<nav class="fixed top-0 inset-x-0 bg-white/90 backdrop-blur z-50 border-b border-slate-200">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-2 font-bold text-xl text-brand-700">
+      <span>🦷</span><span>DentalCare</span>
+    </a>
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+      <a href="#fitur" class="hover:text-brand-600">Fitur</a>
+      <a href="#harga" class="hover:text-brand-600">Harga</a>
+      <a href="#demo" class="hover:text-brand-600">Demo</a>
+      <a href="#kontak" class="hover:text-brand-600">Kontak</a>
+    </div>
+    <a href="#kontak" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2 rounded-lg text-sm font-semibold">Konsultasi Gratis</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="gradient-hero text-white pt-32 pb-20">
+  <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+    <div>
+      <p class="inline-block bg-white/15 px-3 py-1 rounded-full text-xs font-semibold mb-4">🎉 Khusus untuk klinik gigi Indonesia</p>
+      <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+        Sistem Klinik Gigi Siap Pakai — Booking, Rekam Medis & Invoice dalam Satu App
+      </h1>
+      <p class="text-lg text-white/90 mb-8">
+        Pasien booking online. Dokter isi odontogram & resep. Admin kelola invoice & WhatsApp reminder otomatis. Bayar sekali, kode milik klinik, tanpa biaya bulanan vendor.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a href="#harga" class="bg-white text-brand-700 px-6 py-3 rounded-lg font-semibold hover:bg-slate-50">Lihat Paket Harga</a>
+        <a href="#demo" class="bg-white/10 ring-1 ring-white/30 text-white px-6 py-3 rounded-lg font-semibold hover:bg-white/20">Tonton Demo</a>
+      </div>
+      <p class="text-white/80 text-sm mt-6">✓ Setup 1-7 hari · ✓ Branding milik klinik · ✓ Data on-premise</p>
+    </div>
+    <div class="bg-white/10 ring-1 ring-white/20 rounded-2xl p-6 backdrop-blur">
+      <div class="bg-white text-slate-800 rounded-lg p-6 shadow-2xl">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-3 h-3 rounded-full bg-red-400"></div>
+          <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+          <div class="w-3 h-3 rounded-full bg-green-400"></div>
+          <div class="ml-auto text-xs text-slate-400">demo.dentalcare.id</div>
+        </div>
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between border-b pb-2"><span class="font-semibold">Dashboard Dokter</span><span class="text-brand-600">drg. Sarah</span></div>
+          <div class="bg-brand-50 p-3 rounded">
+            <div class="font-medium">10:00 — Andi Pratama</div>
+            <div class="text-xs text-slate-500">Scaling + checkup · 30 menit</div>
+          </div>
+          <div class="bg-slate-50 p-3 rounded">
+            <div class="font-medium">11:00 — Siti Aminah</div>
+            <div class="text-xs text-slate-500">Tambal komposit · 45 menit</div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 pt-2">
+            <div class="text-center"><div class="text-lg font-bold text-brand-700">12</div><div class="text-xs text-slate-500">Hari ini</div></div>
+            <div class="text-center"><div class="text-lg font-bold text-brand-700">86</div><div class="text-xs text-slate-500">Pasien aktif</div></div>
+            <div class="text-center"><div class="text-lg font-bold text-emerald-600">94%</div><div class="text-xs text-slate-500">Hadir</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Problem -->
+<section class="py-20 bg-slate-50">
+  <div class="max-w-5xl mx-auto px-6 text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4">Apakah klinik Anda mengalami ini?</h2>
+    <p class="text-slate-600 max-w-2xl mx-auto mb-12">Sebagian besar klinik gigi independen masih kehilangan revenue karena masalah operasional yang sebenarnya bisa diotomatisasi.</p>
+    <div class="grid md:grid-cols-3 gap-6 text-left">
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div class="text-3xl mb-3">📕</div>
+        <h3 class="font-bold mb-2">Buku & Excel</h3>
+        <p class="text-sm text-slate-600">Jadwal sering bentrok. Rekam medis hilang saat pindah dokter.</p>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div class="text-3xl mb-3">📵</div>
+        <h3 class="font-bold mb-2">Reminder Manual</h3>
+        <p class="text-sm text-slate-600">Admin lupa, no-show 20-30% per minggu — Rp jutaan revenue hilang.</p>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div class="text-3xl mb-3">💸</div>
+        <h3 class="font-bold mb-2">Invoice Tulis Tangan</h3>
+        <p class="text-sm text-slate-600">Sulit lacak piutang, payment gateway tidak jelas, audit ribet.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Fitur -->
+<section id="fitur" class="py-20">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">Semua yang Klinik Gigi Butuhkan</h2>
+      <p class="text-slate-600 max-w-2xl mx-auto">Bukan template umum — dirancang khusus untuk alur kerja klinik gigi Indonesia.</p>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Each feature -->
+      <div class="p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+        <div class="text-3xl mb-3">🦷</div>
+        <h3 class="font-bold mb-2">Odontogram FDI 32 Gigi</h3>
+        <p class="text-sm text-slate-600">Interaktif, klik per gigi, simpan riwayat tindakan.</p>
+      </div>
+      <div class="p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+        <div class="text-3xl mb-3">📅</div>
+        <h3 class="font-bold mb-2">Booking Online + Calendar Dokter</h3>
+        <p class="text-sm text-slate-600">Cek bentrok jadwal otomatis. FullCalendar view.</p>
+      </div>
+      <div class="p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+        <div class="text-3xl mb-3">📋</div>
+        <h3 class="font-bold mb-2">Rekam Medis Lengkap</h3>
+        <p class="text-sm text-slate-600">Golongan darah, alergi, kondisi sistemik, obat.</p>
+      </div>
+      <div class="p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+        <div class="text-3xl mb-3">℞</div>
+        <h3 class="font-bold mb-2">Resep Multi-Item + Print</h3>
+        <p class="text-sm text-slate-600">Dosis, frekuensi, durasi, instruksi. PDF siap print.</p>
+      </div>
+      <div class="p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+        <div class="text-3xl mb-3">🧾</div>
+        <h3 class="font-bold mb-2">Invoice + PDF Otomatis</h3>
+        <p class="text-sm text-slate-600">Auto-numbering, diskon, pajak, multi-payment status.</p>
+      </div>
+      <div class="p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+        <div class="text-3xl mb-3">💬</div>
+        <h3 class="font-bold mb-2">WhatsApp Reminder H-1</h3>
+        <p class="text-sm text-slate-600">Cron 09:00 broadcast otomatis via Fonnte. Kurangi no-show.</p>
+      </div>
+      <div class="p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+        <div class="text-3xl mb-3">💳</div>
+        <h3 class="font-bold mb-2">Payment Gateway DP</h3>
+        <p class="text-sm text-slate-600">Midtrans Snap. DP online sebelum hari H, anti no-show.</p>
+      </div>
+      <div class="p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+        <div class="text-3xl mb-3">🎨</div>
+        <h3 class="font-bold mb-2">White-Label Branding</h3>
+        <p class="text-sm text-slate-600">Logo, warna, nama, jam, peta — ganti dari admin UI.</p>
+      </div>
+      <div class="p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+        <div class="text-3xl mb-3">📱</div>
+        <h3 class="font-bold mb-2">PWA Installable</h3>
+        <p class="text-sm text-slate-600">Add to Home Screen di HP, offline shell, dark mode.</p>
+      </div>
+      <div class="p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+        <div class="text-3xl mb-3">📊</div>
+        <h3 class="font-bold mb-2">Dashboard Statistik</h3>
+        <p class="text-sm text-slate-600">Top services, revenue, no-show rate, export CSV.</p>
+      </div>
+      <div class="p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+        <div class="text-3xl mb-3">🛡️</div>
+        <h3 class="font-bold mb-2">Production Security</h3>
+        <p class="text-sm text-slate-600">Helmet, rate-limit, sanitize, JWT, HTTPS-ready.</p>
+      </div>
+      <div class="p-6 rounded-xl border border-slate-200 hover:shadow-md transition">
+        <div class="text-3xl mb-3">🐳</div>
+        <h3 class="font-bold mb-2">Docker-Ready</h3>
+        <p class="text-sm text-slate-600">docker-compose up — running di VPS dalam 10 menit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="harga" class="py-20 bg-slate-50">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">Bayar Sekali, Pakai Selamanya</h2>
+      <p class="text-slate-600">Tanpa subscription bulanan. Hosting & domain milik klinik.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+
+      <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+        <h3 class="text-xl font-bold mb-1">Basic</h3>
+        <p class="text-slate-500 text-sm mb-6">Klinik 1 dokter</p>
+        <div class="mb-6">
+          <span class="text-4xl font-bold">Rp 4,9jt</span>
+          <span class="text-slate-500 text-sm"> · one-time</span>
+        </div>
+        <ul class="text-sm space-y-2 mb-8 flex-1">
+          <li>✓ Instance produksi</li>
+          <li>✓ White-label branding</li>
+          <li>✓ Odontogram + rekam medis</li>
+          <li>✓ Resep + invoice PDF</li>
+          <li>✓ Email reset password</li>
+          <li>✓ 1× revisi minor 30 hari</li>
+        </ul>
+        <a href="#kontak" class="text-center bg-slate-100 hover:bg-slate-200 px-6 py-3 rounded-lg font-semibold">Pilih Basic</a>
+      </div>
+
+      <div class="bg-brand-600 text-white p-8 rounded-2xl shadow-xl border-2 border-brand-700 flex flex-col relative scale-[1.02]">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-400 text-amber-900 px-3 py-1 rounded-full text-xs font-bold">PALING POPULER</div>
+        <h3 class="text-xl font-bold mb-1">Pro</h3>
+        <p class="text-white/80 text-sm mb-6">Klinik 2-5 dokter</p>
+        <div class="mb-6">
+          <span class="text-4xl font-bold">Rp 9,9jt</span>
+          <span class="text-white/80 text-sm"> · one-time</span>
+        </div>
+        <ul class="text-sm space-y-2 mb-8 flex-1">
+          <li>✓ Semua fitur Basic</li>
+          <li>✓ WhatsApp reminder H-1</li>
+          <li>✓ Payment gateway DP (Midtrans)</li>
+          <li>✓ Calendar view dokter</li>
+          <li>✓ Dashboard statistik lengkap</li>
+          <li>✓ Dark mode + PWA</li>
+          <li>✓ Setup di server klien</li>
+          <li>✓ Support email 6 bulan</li>
+        </ul>
+        <a href="#kontak" class="text-center bg-white text-brand-700 hover:bg-slate-50 px-6 py-3 rounded-lg font-semibold">Pilih Pro</a>
+      </div>
+
+      <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+        <h3 class="text-xl font-bold mb-1">Enterprise</h3>
+        <p class="text-slate-500 text-sm mb-6">Multi-cabang / chain</p>
+        <div class="mb-6">
+          <span class="text-4xl font-bold">Rp 24,9jt+</span>
+          <span class="text-slate-500 text-sm"> · custom</span>
+        </div>
+        <ul class="text-sm space-y-2 mb-8 flex-1">
+          <li>✓ Semua fitur Pro</li>
+          <li>✓ Multi-cabang</li>
+          <li>✓ SSO + role tambahan</li>
+          <li>✓ Migrasi data legacy</li>
+          <li>✓ Custom workflow</li>
+          <li>✓ Audit log + backup</li>
+          <li>✓ Support 12 bulan, &lt;2 jam</li>
+          <li>✓ 4× feature request</li>
+        </ul>
+        <a href="#kontak" class="text-center bg-slate-100 hover:bg-slate-200 px-6 py-3 rounded-lg font-semibold">Konsultasi</a>
+      </div>
+
+    </div>
+    <p class="text-center text-slate-500 text-sm mt-8">Garansi bug 30 hari · Migrasi data tersedia (add-on) · Bayar via transfer / Midtrans</p>
+  </div>
+</section>
+
+<!-- Demo CTA -->
+<section id="demo" class="py-20">
+  <div class="max-w-4xl mx-auto px-6 text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4">Coba Demo Live Sekarang</h2>
+    <p class="text-slate-600 mb-8">Akses semua role (admin, dokter, pasien) di instance demo. Reset otomatis tiap malam.</p>
+    <div class="bg-slate-100 rounded-2xl p-8 max-w-2xl mx-auto text-left">
+      <div class="grid grid-cols-3 gap-4 text-sm">
+        <div><div class="font-semibold mb-1">Admin</div><div class="text-slate-600">admin@dentalcare.id</div><div class="text-slate-500">admin123</div></div>
+        <div><div class="font-semibold mb-1">Dokter</div><div class="text-slate-600">dentist1@dentalcare.id</div><div class="text-slate-500">dentist123</div></div>
+        <div><div class="font-semibold mb-1">Pasien</div><div class="text-slate-600">patient@dentalcare.id</div><div class="text-slate-500">patient123</div></div>
+      </div>
+    </div>
+    <a href="https://demo.dentalcare.id" class="inline-block mt-8 bg-brand-600 hover:bg-brand-700 text-white px-8 py-4 rounded-lg font-semibold">Buka Demo →</a>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="py-20 bg-slate-50">
+  <div class="max-w-3xl mx-auto px-6">
+    <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">Pertanyaan Umum</h2>
+    <div class="space-y-4">
+      <details class="bg-white p-6 rounded-xl border border-slate-200">
+        <summary class="font-semibold cursor-pointer">Apakah bayar bulanan?</summary>
+        <p class="text-slate-600 text-sm mt-3">Tidak. Lisensi one-time. Yang bulanan opsional: hosting managed (Rp 750rb/bln) atau Fonnte WhatsApp (~Rp 25rb/bln) — itupun klinik bayar langsung ke provider, bukan ke kami.</p>
+      </details>
+      <details class="bg-white p-6 rounded-xl border border-slate-200">
+        <summary class="font-semibold cursor-pointer">Data pasien di mana?</summary>
+        <p class="text-slate-600 text-sm mt-3">MongoDB milik klinik — bisa di Atlas (akun klinik sendiri) atau VPS klinik. Kami tidak menyimpan data klinik di server kami. Kompatibel dengan UU PDP 27/2022.</p>
+      </details>
+      <details class="bg-white p-6 rounded-xl border border-slate-200">
+        <summary class="font-semibold cursor-pointer">Klinik kami tidak punya tim IT.</summary>
+        <p class="text-slate-600 text-sm mt-3">Paket Pro & Enterprise include setup + training admin. Tinggal dipakai. Add-on managed hosting Rp 750rb/bln untuk update, backup, monitoring.</p>
+      </details>
+      <details class="bg-white p-6 rounded-xl border border-slate-200">
+        <summary class="font-semibold cursor-pointer">Berapa lama setup?</summary>
+        <p class="text-slate-600 text-sm mt-3">Basic 2-3 hari kerja, Pro 5-7 hari kerja, Enterprise 14-30 hari kerja tergantung scope kustomisasi.</p>
+      </details>
+      <details class="bg-white p-6 rounded-xl border border-slate-200">
+        <summary class="font-semibold cursor-pointer">Bisa integrasi BPJS?</summary>
+        <p class="text-slate-600 text-sm mt-3">Bisa, di paket Enterprise dengan scope custom. Hubungi tim sales untuk diskusi requirement spesifik.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- Kontak -->
+<section id="kontak" class="py-20 gradient-hero text-white">
+  <div class="max-w-3xl mx-auto px-6 text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4">Konsultasi Gratis 30 Menit</h2>
+    <p class="text-white/90 mb-8">Kami bantu hitung ROI sistem untuk klinik Anda, lalu siapkan quotation sesuai kebutuhan.</p>
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="https://wa.me/628123456789?text=Halo%20saya%20tertarik%20DentalCare" class="bg-emerald-500 hover:bg-emerald-600 px-8 py-4 rounded-lg font-semibold">💬 WhatsApp Sales</a>
+      <a href="mailto:sales@dentalcare.id" class="bg-white text-brand-700 hover:bg-slate-50 px-8 py-4 rounded-lg font-semibold">✉ Email Sales</a>
+    </div>
+    <p class="text-white/70 text-sm mt-8">© 2026 DentalCare. Lisensi komersial.</p>
+  </div>
+</section>
+
+</body>
+</html>
