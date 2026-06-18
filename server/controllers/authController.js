@@ -40,11 +40,9 @@ const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
-  if (!user || !(await user.matchPassword(password))) {
+  // Single generic message to prevent account enumeration via timing or wording.
+  if (!user || !user.isActive || !(await user.matchPassword(password))) {
     throw new ApiError(401, 'Invalid email or password');
-  }
-  if (!user.isActive) {
-    throw new ApiError(403, 'Account is deactivated');
   }
 
   user.password = undefined;
@@ -105,8 +103,8 @@ const resetPassword = asyncHandler(async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
 
-  if (!password || password.length < 6) {
-    throw new ApiError(400, 'Password must be at least 6 characters');
+  if (!password || password.length < 8) {
+    throw new ApiError(400, 'Password must be at least 8 characters');
   }
 
   const user = await User.findOne({

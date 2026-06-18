@@ -27,7 +27,7 @@ const PatientProfile = () => {
     currentMedications: csvJoin(user.medicalHistory?.currentMedications),
     notes: user.medicalHistory?.notes || '',
   });
-  const [pwd, setPwd] = useState({ next: '', confirm: '' });
+  const [pwd, setPwd] = useState({ current: '', next: '', confirm: '' });
   const [loading, setLoading] = useState(false);
   const [odontogram, setOdontogram] = useState({ teeth: [], takenAt: null });
 
@@ -78,13 +78,14 @@ const PatientProfile = () => {
 
   const submitPwd = async (e) => {
     e.preventDefault();
+    if (!pwd.current) return toast.error('Masukkan password saat ini');
     if (pwd.next !== pwd.confirm) return toast.error('Konfirmasi password tidak cocok');
-    if (pwd.next.length < 6) return toast.error('Password minimal 6 karakter');
+    if (pwd.next.length < 8) return toast.error('Password minimal 8 karakter');
     setLoading(true);
     try {
-      await userService.update(user._id, { password: pwd.next });
+      await userService.update(user._id, { currentPassword: pwd.current, password: pwd.next });
       toast.success('Password berhasil diubah');
-      setPwd({ next: '', confirm: '' });
+      setPwd({ current: '', next: '', confirm: '' });
     } catch (err) {
       toast.error(extractMessage(err));
     } finally {
@@ -200,8 +201,9 @@ const PatientProfile = () => {
 
       <form onSubmit={submitPwd} className="card p-6 space-y-4">
         <h3 className="font-semibold">Ubah Password</h3>
-        <Input label="Password Baru" type="password" name="next" value={pwd.next} onChange={handlePwd} required />
-        <Input label="Konfirmasi Password" type="password" name="confirm" value={pwd.confirm} onChange={handlePwd} required />
+        <Input label="Password Saat Ini" type="password" name="current" value={pwd.current} onChange={handlePwd} required autoComplete="current-password" />
+        <Input label="Password Baru" type="password" name="next" value={pwd.next} onChange={handlePwd} required autoComplete="new-password" />
+        <Input label="Konfirmasi Password" type="password" name="confirm" value={pwd.confirm} onChange={handlePwd} required autoComplete="new-password" />
         <button disabled={loading} className="btn-secondary">Ubah Password</button>
       </form>
     </div>

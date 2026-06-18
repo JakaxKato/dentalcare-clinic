@@ -13,6 +13,7 @@ const DEFAULT_DP_PERCENT = Number(process.env.DP_PERCENT || 30);
 const MIN_DP_AMOUNT = Number(process.env.DP_MIN_AMOUNT || 25000);
 const getDpAmount = (priceRange) =>
   computeDp(priceRange, DEFAULT_DP_PERCENT, MIN_DP_AMOUNT);
+const isProductionRuntime = () => process.env.NODE_ENV === 'production';
 
 // @desc    Create DP Snap token for an appointment (patient)
 // @route   POST /api/payments/appointment/:id/dp
@@ -75,6 +76,9 @@ const createDpTransaction = asyncHandler(async (req, res) => {
     snapToken = tx.token;
     redirectUrl = tx.redirect_url;
   } else {
+    if (isProductionRuntime()) {
+      throw new ApiError(503, 'Midtrans is not configured');
+    }
     console.log('[midtrans] keys not set - returning a development transaction token.');
     snapToken = `DEV-${orderId}`;
   }
@@ -102,6 +106,9 @@ const createDpTransaction = asyncHandler(async (req, res) => {
 // @desc    DEV-only manual confirm
 // @route   POST /api/payments/appointment/:id/dp/confirm
 const confirmDpDev = asyncHandler(async (req, res) => {
+  if (isProductionRuntime()) {
+    throw new ApiError(403, 'Development payment confirmation is disabled in production');
+  }
   if (hasMidtrans()) throw new ApiError(400, 'Use Midtrans notification webhook');
 
   const appt = await Appointment.findById(req.params.id);

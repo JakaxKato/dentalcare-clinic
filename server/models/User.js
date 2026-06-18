@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       match: [/^\S+@\S+\.\S+$/, 'Invalid email format'],
     },
-    password: { type: String, required: [true, 'Password is required'], minlength: 6, select: false },
+    password: { type: String, required: [true, 'Password is required'], minlength: 8, select: false },
     phone: { type: String, trim: true },
     role: {
       type: String,
@@ -43,9 +43,11 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+const BCRYPT_ROUNDS = Math.max(10, Math.min(14, parseInt(process.env.BCRYPT_ROUNDS, 10) || 12));
+
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
-  const salt = await bcrypt.genSalt(10);
+  const salt = await bcrypt.genSalt(BCRYPT_ROUNDS);
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });

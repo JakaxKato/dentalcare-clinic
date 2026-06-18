@@ -24,6 +24,9 @@ const sendMail = async ({ to, subject, html, text }) => {
   const from = process.env.SMTP_FROM || 'no-reply@dentalcare.local';
 
   if (!transport) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('SMTP is not configured');
+    }
     console.log('\n[mailer] SMTP not configured — printing email to console (dev mode):');
     console.log(`  To:      ${to}`);
     console.log(`  Subject: ${subject}`);

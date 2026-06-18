@@ -17,7 +17,10 @@ const protect = asyncHandler(async (req, res, next) => {
 
   let decoded;
   try {
-    decoded = jwt.verify(token, process.env.JWT_SECRET);
+    decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      algorithms: ['HS256'],
+      issuer: process.env.JWT_ISSUER || 'dentalcare',
+    });
   } catch (err) {
     throw new ApiError(401, 'Not authorized, token invalid or expired');
   }

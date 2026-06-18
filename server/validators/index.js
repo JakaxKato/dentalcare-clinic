@@ -15,7 +15,7 @@ const validateRegister = (req, _res, next) => {
   const { name, email, password } = req.body;
   if (!isNonEmpty(name)) throw new ApiError(400, 'Name is required');
   if (!isEmail(email)) throw new ApiError(400, 'Valid email is required');
-  if (!password || password.length < 6) throw new ApiError(400, 'Password must be at least 6 characters');
+  if (!password || password.length < 8) throw new ApiError(400, 'Password must be at least 8 characters');
   next();
 };
 
@@ -101,8 +101,8 @@ const validateUserUpdate = (req, _res, next) => {
   if (req.body.name !== undefined && !isNonEmpty(req.body.name)) {
     throw new ApiError(400, 'Name cannot be empty');
   }
-  if (req.body.password !== undefined && req.body.password.length < 6) {
-    throw new ApiError(400, 'Password must be at least 6 characters');
+  if (req.body.password !== undefined && req.body.password.length < 8) {
+    throw new ApiError(400, 'Password must be at least 8 characters');
   }
   next();
 };

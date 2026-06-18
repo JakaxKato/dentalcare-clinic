@@ -30,7 +30,15 @@ const clinicSettingsRoutes = require('./routes/clinicSettingsRoutes');
 
 const app = express();
 
-app.set('trust proxy', 1);
+const parseTrustProxy = (value) => {
+  if (!value) return false;
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+  const numeric = Number(value);
+  return Number.isNaN(numeric) ? value : numeric;
+};
+
+app.set('trust proxy', parseTrustProxy(process.env.TRUST_PROXY));
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(compression());
@@ -41,14 +49,15 @@ app.use(
     origin: (origin, cb) => {
       if (!origin) return cb(null, true);
       if (allowedOrigins.includes(origin)) return cb(null, true);
-      return cb(new Error(`CORS blocked: ${origin}`));
+      // Soft-fail: don't surface origin in error response/logs.
+      return cb(null, false);
     },
     credentials: true,
   })
 );
 
-app.use(express.json({ limit: '5mb' }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(mongoSanitize({ replaceWith: '_' }));
 if (process.env.NODE_ENV !== 'test') app.use(morgan('dev'));
 
@@ -57,6 +66,11 @@ const apiLimiter = rateLimit({
   max: 300,
   standardHeaders: true,
   legacyHeaders: false,
+  // Skip webhook + health so Midtrans retries and uptime probes never hit 429.
+  skip: (req) =>
+    req.path === '/payments/notification' ||
+    req.path === '/payments/notification/' ||
+    req.path === '/health',
   message: { success: false, message: 'Too many requests, please try again later.' },
 });
 
@@ -77,8 +91,13 @@ app.use('/api/auth/reset-password', authLimiter);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// API documentation (Swagger UI) — disabled in test to keep boot lean
-if (process.env.NODE_ENV !== 'test' && process.env.DISABLE_SWAGGER !== 'true') {
+// API documentation (Swagger UI). Default ON in dev, OFF in production unless
+// ENABLE_SWAGGER=true is explicitly set, to avoid leaking the API surface.
+const swaggerEnabled =
+  process.env.NODE_ENV !== 'test' &&
+  process.env.DISABLE_SWAGGER !== 'true' &&
+  (process.env.NODE_ENV !== 'production' || process.env.ENABLE_SWAGGER === 'true');
+if (swaggerEnabled) {
   try {
     const swaggerUi = require('swagger-ui-express');
     const YAML = require('yamljs');

@@ -1,6 +1,10 @@
 const notFound = (req, res, next) => {
   res.status(404);
-  next(new Error(`Not found: ${req.method} ${req.originalUrl}`));
+  const message =
+    process.env.NODE_ENV === 'production'
+      ? 'Not found'
+      : `Not found: ${req.method} ${req.originalUrl}`;
+  next(new Error(message));
 };
 
 const errorHandler = (err, req, res, _next) => {

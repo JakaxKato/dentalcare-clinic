@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const Article = require('../models/Article');
 const ApiError = require('../utils/ApiError');
+const { escapeRegex } = require('../utils/sanitize');
 
 // @desc    List articles (public sees only published)
 // @route   GET /api/articles
@@ -8,8 +9,13 @@ const listArticles = asyncHandler(async (req, res) => {
   const filter = {};
   const isStaff = req.user && ['admin', 'dentist'].includes(req.user.role);
   if (!isStaff) filter.published = true;
-  if (req.query.tag) filter.tags = req.query.tag;
-  if (req.query.search) filter.title = { $regex: req.query.search, $options: 'i' };
+  if (typeof req.query.tag === 'string' && req.query.tag.trim()) {
+    filter.tags = req.query.tag.trim().slice(0, 60);
+  }
+  if (typeof req.query.search === 'string' && req.query.search.trim()) {
+    const safe = escapeRegex(req.query.search.trim()).slice(0, 80);
+    filter.title = { $regex: safe, $options: 'i' };
+  }
 
   const articles = await Article.find(filter)
     .populate('authorId', 'name avatar')

@@ -14,7 +14,10 @@ const optionalAuth = async (req, _res, next) => {
   const auth = req.headers.authorization;
   if (auth && auth.startsWith('Bearer ')) {
     try {
-      const decoded = jwt.verify(auth.split(' ')[1], process.env.JWT_SECRET);
+      const decoded = jwt.verify(auth.split(' ')[1], process.env.JWT_SECRET, {
+        algorithms: ['HS256'],
+        issuer: process.env.JWT_ISSUER || 'dentalcare',
+      });
       const user = await User.findById(decoded.id).select('-password');
       if (user && user.isActive) req.user = user;
     } catch (_) { /* ignore */ }

@@ -1,5 +1,3 @@
-version: "3.9"
-
 # ============================================================
 # DentalCare — Single-host production stack
 # ============================================================
@@ -41,7 +39,7 @@ services:
       mongo:
         condition: service_healthy
     ports:
-      - "5000:5000"
+      - "127.0.0.1:5000:5000"
     volumes:
       - server_uploads:/app/uploads
 
@@ -49,7 +47,7 @@ services:
     build:
       context: ./client
       args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:5000}
+        VITE_API_URL: ${VITE_API_URL:-/api}
         VITE_MIDTRANS_CLIENT_KEY: ${VITE_MIDTRANS_CLIENT_KEY:-}
         VITE_MIDTRANS_IS_PRODUCTION: ${VITE_MIDTRANS_IS_PRODUCTION:-false}
     restart: unless-stopped
