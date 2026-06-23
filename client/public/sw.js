@@ -1,6 +1,6 @@
-const CACHE_NAME = 'dentalcare-shell-v1';
+const CACHE_NAME = 'dentalcare-shell-v2';
 const APP_SHELL = [
-  '/',
+  '/index.html',
   '/manifest.webmanifest',
   '/tooth.svg',
   '/pwa-icon-192.png',
@@ -23,6 +23,12 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'CLEAR_CACHE') {
+    event.waitUntil(caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key)))));
+  }
+});
+
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   const url = new URL(request.url);
@@ -35,11 +41,13 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+          }
           return response;
         })
-        .catch(async () => (await caches.match(request)) || caches.match('/'))
+        .catch(async () => (await caches.match(request)) || caches.match('/index.html'))
     );
     return;
   }
