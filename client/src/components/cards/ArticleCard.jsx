@@ -3,25 +3,25 @@ import { Newspaper } from 'lucide-react';
 import { formatDateShort } from '../../utils/format';
 
 const ArticleCard = ({ article }) => (
-  <Link to={`/blog/${article.slug}`} className="card overflow-hidden group hover:shadow-lg transition flex flex-col">
-    <div className="aspect-[16/9] bg-slate-100 overflow-hidden">
+  <Link to={`/blog/${article.slug}`} className="card group flex flex-col overflow-hidden transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand-900/10">
+    <div className="aspect-[16/9] overflow-hidden bg-brand-50">
       {article.coverImage ? (
-        <img src={article.coverImage} alt={article.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition" />
+        <img src={article.coverImage} alt={article.title} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
       ) : (
-        <div className="w-full h-full flex items-center justify-center text-slate-400">
-          <Newspaper className="w-12 h-12" strokeWidth={1.4} />
+        <div className="flex h-full w-full items-center justify-center text-brand-700">
+          <Newspaper className="h-12 w-12" strokeWidth={1.4} />
         </div>
       )}
     </div>
-    <div className="p-5 flex-1 flex flex-col">
-      <div className="flex flex-wrap gap-1.5 mb-2">
+    <div className="flex flex-1 flex-col p-5">
+      <div className="mb-2 flex flex-wrap gap-1.5">
         {(article.tags || []).slice(0, 3).map((t) => (
-          <span key={t} className="text-xs px-2 py-0.5 bg-brand-50 text-brand-700 rounded-full">#{t}</span>
+          <span key={t} className="rounded-full bg-brand-100 px-2.5 py-1 text-xs font-semibold text-brand-800">#{t}</span>
         ))}
       </div>
-      <h3 className="font-semibold text-slate-800 group-hover:text-brand-700 line-clamp-2">{article.title}</h3>
-      <p className="text-sm text-slate-500 mt-2 line-clamp-3 flex-1">{article.excerpt}</p>
-      <p className="text-xs text-slate-400 mt-3">{formatDateShort(article.createdAt)}</p>
+      <h3 className="line-clamp-2 font-bold text-slate-950 group-hover:text-brand-800">{article.title}</h3>
+      <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-slate-500">{article.excerpt}</p>
+      <p className="mt-3 text-xs font-medium text-slate-400">{formatDateShort(article.createdAt)}</p>
     </div>
   </Link>
 );

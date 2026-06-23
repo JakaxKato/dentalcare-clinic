@@ -1,6 +1,6 @@
 // Central clinic branding config.
 // Values can be overridden via Vite env vars (see client/.env.example).
-// For a different clinic deployment, update env vars — no code changes required for the core identity fields.
+// For a different clinic deployment, update env vars. No code changes required for the core identity fields.
 export const CLINIC = {
   name: import.meta.env.VITE_CLINIC_NAME || 'Smile Dental Studio',
   shortName: import.meta.env.VITE_CLINIC_SHORT_NAME || 'Smile Dental',
@@ -19,9 +19,9 @@ export const CLINIC = {
     },
   },
   hours: {
-    summary: 'Senin – Minggu: 09.00 – 20.00',
+    summary: 'Senin - Minggu: 09.00 - 20.00',
     lines: [
-      'Senin – Minggu: 09.00 – 20.00',
+      'Senin - Minggu: 09.00 - 20.00',
       'Buka setiap hari',
       'Hari Libur Nasional: Konfirmasi dahulu via WhatsApp',
     ],
@@ -31,7 +31,7 @@ export const CLINIC = {
   stats: {
     years: '10+',
     patients: '5K+',
-    rating: '5.0★',
+    rating: '5.0/5',
   },
 };
 

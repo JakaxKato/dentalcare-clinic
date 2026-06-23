@@ -21,13 +21,13 @@ const clinicSettingsSchema = new mongoose.Schema(
     faviconUrl: { type: String, default: '', trim: true, maxlength: 500 },
     primaryColor: {
       type: String,
-      default: '#1782f5',
+      default: '#f59e0b',
       trim: true,
       match: /^#([0-9a-fA-F]{3}){1,2}$/,
     },
     accentColor: {
       type: String,
-      default: '#14b8a6',
+      default: '#facc15',
       trim: true,
       match: /^#([0-9a-fA-F]{3}){1,2}$/,
     },

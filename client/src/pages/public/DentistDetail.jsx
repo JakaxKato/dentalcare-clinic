@@ -33,20 +33,20 @@ const DentistDetail = () => {
   const { user, profile } = data;
 
   return (
-    <div className="container-app py-12 grid lg:grid-cols-3 gap-10">
+    <div className="container-app grid gap-10 py-12 lg:grid-cols-3">
       <div className="lg:col-span-1">
         <div className="card p-6 text-center">
-          <div className="w-32 h-32 mx-auto rounded-full overflow-hidden bg-brand-100 mb-4">
+          <div className="mx-auto mb-4 h-32 w-32 overflow-hidden rounded-[2rem] bg-brand-100 ring-4 ring-brand-50">
             {user.avatar ? (
-              <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+              <img src={user.avatar} alt={user.name} className="h-full w-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-brand-600">
-                <UserCircle2 className="w-20 h-20" strokeWidth={1.4} />
+              <div className="flex h-full w-full items-center justify-center text-brand-700">
+                <UserCircle2 className="h-20 w-20" strokeWidth={1.4} />
               </div>
             )}
           </div>
           <h2 className="text-xl font-bold">{user.name}</h2>
-          <p className="text-brand-600 mt-1">{profile?.specialization || 'General Dentistry'}</p>
+          <p className="mt-1 font-semibold text-brand-700">{profile?.specialization || 'General Dentistry'}</p>
           {profile?.experienceYears > 0 && (
             <p className="text-sm text-slate-500 mt-1">{profile.experienceYears} tahun pengalaman</p>
           )}
@@ -56,14 +56,14 @@ const DentistDetail = () => {
         </div>
       </div>
 
-      <div className="lg:col-span-2 space-y-6">
+      <div className="space-y-6 lg:col-span-2">
         {profile?.bio && (
           <div className="card p-6">
             <h3 className="font-semibold mb-2">Tentang Dokter</h3>
             <p className="text-slate-700 leading-relaxed">{profile.bio}</p>
           </div>
         )}
-        <div className="grid sm:grid-cols-2 gap-6">
+        <div className="grid gap-6 sm:grid-cols-2">
           {profile?.education && (
             <div className="card p-6">
               <h3 className="font-semibold mb-1">Pendidikan</h3>
@@ -81,7 +81,7 @@ const DentistDetail = () => {
               <h3 className="font-semibold mb-2">Hari Praktik</h3>
               <div className="flex flex-wrap gap-2">
                 {profile.availableDays.map((d) => (
-                  <span key={d} className="badge bg-brand-50 text-brand-700">{d}</span>
+                  <span key={d} className="badge bg-brand-100 text-brand-800">{d}</span>
                 ))}
               </div>
             </div>

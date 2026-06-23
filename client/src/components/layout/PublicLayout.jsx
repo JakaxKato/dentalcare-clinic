@@ -4,7 +4,7 @@ import Footer from './Footer';
 import WhatsAppFAB from './WhatsAppFAB';
 
 const PublicLayout = () => (
-  <div className="min-h-screen flex flex-col">
+  <div className="flex min-h-[100dvh] flex-col">
     <Navbar />
     <main className="flex-1">
       <Outlet />

@@ -21,8 +21,8 @@ const settingsSchema = z.object({
   tagline: z.string().trim().max(200),
   logoUrl: optionalUrl,
   faviconUrl: optionalUrl,
-  primaryColor: z.string().regex(HEX_RE, 'Format warna harus berupa hex, contoh #1782f5'),
-  accentColor: z.string().regex(HEX_RE, 'Format warna harus berupa hex, contoh #14b8a6'),
+  primaryColor: z.string().regex(HEX_RE, 'Format warna harus berupa hex, contoh #f59e0b'),
+  accentColor: z.string().regex(HEX_RE, 'Format warna harus berupa hex, contoh #facc15'),
   address: z.string().trim().max(500),
   mapEmbedUrl: optionalUrl,
   phone: z.string().trim().max(50),
@@ -41,8 +41,8 @@ const defaultValues = {
   tagline: '',
   logoUrl: '',
   faviconUrl: '',
-  primaryColor: '#1782f5',
-  accentColor: '#14b8a6',
+  primaryColor: '#f59e0b',
+  accentColor: '#facc15',
   address: '',
   mapEmbedUrl: '',
   phone: '',
@@ -154,7 +154,7 @@ const AdminSettings = () => {
               <input
                 id="primary-color-picker"
                 type="color"
-                value={HEX_RE.test(primaryColor || '') ? primaryColor : '#1782f5'}
+                value={HEX_RE.test(primaryColor || '') ? primaryColor : '#f59e0b'}
                 onChange={(event) =>
                   setValue('primaryColor', event.target.value, {
                     shouldDirty: true,
@@ -165,7 +165,7 @@ const AdminSettings = () => {
               />
               <Input
                 className="flex-1"
-                placeholder="#1782f5"
+                placeholder="#f59e0b"
                 error={errors.primaryColor?.message}
                 {...register('primaryColor')}
               />
@@ -177,7 +177,7 @@ const AdminSettings = () => {
               <input
                 id="accent-color-picker"
                 type="color"
-                value={HEX_RE.test(accentColor || '') ? accentColor : '#14b8a6'}
+                value={HEX_RE.test(accentColor || '') ? accentColor : '#facc15'}
                 onChange={(event) =>
                   setValue('accentColor', event.target.value, {
                     shouldDirty: true,
@@ -188,7 +188,7 @@ const AdminSettings = () => {
               />
               <Input
                 className="flex-1"
-                placeholder="#14b8a6"
+                placeholder="#facc15"
                 error={errors.accentColor?.message}
                 {...register('accentColor')}
               />

@@ -29,14 +29,15 @@ const Contact = () => {
 
   return (
     <div className="container-app py-12">
-      <div className="grid lg:grid-cols-2 gap-10">
+      <div className="grid gap-10 lg:grid-cols-2">
         <div>
-          <h1 className="text-4xl">Hubungi Kami</h1>
-          <p className="text-slate-600 mt-3">Punya pertanyaan? Tim kami siap membantu Anda.</p>
+          <span className="section-kicker mb-4">Kontak</span>
+          <h1 className="text-4xl md:text-5xl">Hubungi Kami</h1>
+          <p className="section-copy mt-3">Punya pertanyaan? Tim kami siap membantu Anda.</p>
 
           <div className="space-y-4 mt-8">
             <div className="card p-5 flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0">
+              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-brand-100 text-brand-800">
                 <MapPin className="w-5 h-5" />
               </div>
               <div>
@@ -47,7 +48,7 @@ const Contact = () => {
               </div>
             </div>
             <div className="card p-5 flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0">
+              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-brand-100 text-brand-800">
                 <Phone className="w-5 h-5" />
               </div>
               <div>
@@ -65,7 +66,7 @@ const Contact = () => {
               </div>
             </div>
             <div className="card p-5 flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0">
+              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-brand-100 text-brand-800">
                 <Clock className="w-5 h-5" />
               </div>
               <div>
@@ -77,7 +78,7 @@ const Contact = () => {
             </div>
           </div>
 
-          <div className="mt-6 rounded-2xl overflow-hidden shadow-md">
+          <div className="mt-6 overflow-hidden rounded-[1.75rem] border border-white shadow-lg shadow-brand-900/10">
             <iframe
               title={`Lokasi ${clinicName}`}
               src={settings.mapEmbedUrl || CLINIC.mapEmbedSrc}
@@ -88,7 +89,7 @@ const Contact = () => {
         </div>
 
         <div>
-          <form onSubmit={submit} className="card p-6 space-y-4">
+          <form onSubmit={submit} className="card space-y-4 p-6">
             <h2 className="text-xl font-semibold">Kirim Pesan</h2>
             <Input label="Nama" name="name" value={form.name} onChange={handle} required />
             <Input label="Email" type="email" name="email" value={form.email} onChange={handle} required />

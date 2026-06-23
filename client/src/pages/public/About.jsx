@@ -9,11 +9,11 @@ const About = () => {
 
   return (
     <div className="container-app py-12">
-      <div className="grid lg:grid-cols-2 gap-10 items-center">
+      <div className="grid items-center gap-10 lg:grid-cols-2">
         <div>
-          <span className="text-brand-600 font-medium text-sm">Tentang Kami</span>
-          <h1 className="text-4xl mt-2">Klinik Gigi Modern dengan Sentuhan Personal</h1>
-          <p className="text-slate-600 mt-4 leading-relaxed">
+          <span className="section-kicker">Tentang Kami</span>
+          <h1 className="mt-4 text-4xl leading-tight md:text-5xl">Klinik Gigi Modern dengan Sentuhan Personal</h1>
+          <p className="section-copy mt-4">
             {clinicName} adalah klinik gigi keluarga yang mengutamakan perawatan modern,
             transparan, dan nyaman. Tim dokter kami siap mendampingi pasien anak hingga
             dewasa dalam menjaga kesehatan gigi jangka panjang.
@@ -27,15 +27,15 @@ const About = () => {
               'Booking online dan informasi biaya yang transparan',
             ].map((point) => (
               <li key={point} className="flex items-start gap-3">
-                <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
-                  <Check className="w-3.5 h-3.5" strokeWidth={3} />
+                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-800">
+                  <Check className="h-3.5 w-3.5" strokeWidth={3} />
                 </span>
                 <span className="text-slate-700">{point}</span>
               </li>
             ))}
           </ul>
         </div>
-        <div className="aspect-square rounded-3xl overflow-hidden shadow-xl">
+        <div className="aspect-square overflow-hidden rounded-[2rem] border border-white shadow-xl shadow-brand-900/10">
           <img
             src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=900"
             alt={`Suasana ${clinicName}`}
@@ -44,7 +44,7 @@ const About = () => {
         </div>
       </div>
 
-      <section className="mt-16 grid md:grid-cols-3 gap-6">
+      <section className="mt-16 grid gap-6 md:grid-cols-3">
         {[
           {
             title: 'Visi',
@@ -63,17 +63,17 @@ const About = () => {
           },
         ].map((item) => (
           <div key={item.title} className="card p-6">
-            <h3 className="text-xl font-bold text-brand-700">{item.title}</h3>
-            <p className="text-slate-600 mt-2">{item.description}</p>
+            <h3 className="text-xl font-bold text-brand-800">{item.title}</h3>
+            <p className="mt-2 text-slate-600">{item.description}</p>
           </div>
         ))}
       </section>
 
       <section className="mt-16">
-        <h2 className="text-3xl text-center mb-8">Lokasi Klinik</h2>
-        <div className="card p-6 max-w-2xl mx-auto text-center">
-          <h3 className="text-lg font-bold text-brand-700">{clinicName}</h3>
-          <p className="text-slate-600 mt-2 text-sm">
+        <h2 className="section-heading mb-8 text-center">Lokasi Klinik</h2>
+        <div className="card mx-auto max-w-2xl p-6 text-center">
+          <h3 className="text-lg font-bold text-brand-800">{clinicName}</h3>
+          <p className="mt-2 text-sm text-slate-600">
             {settings.address || CLINIC.address.primary.line}
           </p>
           <p className="text-slate-500 text-xs mt-3 whitespace-pre-line">{hours}</p>

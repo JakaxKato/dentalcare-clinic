@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper/modules';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import {
   CalendarCheck,
   MessageCircle,
@@ -51,70 +51,60 @@ const Hero = () => {
   const clinicName = settings.clinicName || CLINIC.name;
 
   return (
-  <section className="relative bg-gradient-to-br from-brand-50 via-white to-accent-400/10 dark:via-slate-950 dark:to-slate-900">
-    <div className="container-app py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
+  <section className="relative isolate overflow-hidden">
+    <div className="absolute left-[-12rem] top-[-10rem] -z-10 h-96 w-96 rounded-full bg-brand-200/45 blur-3xl" />
+    <div className="absolute right-[-12rem] top-24 -z-10 h-[28rem] w-[28rem] rounded-full bg-brand-100/70 blur-3xl" />
+    <div className="container-app grid items-center gap-12 py-14 lg:grid-cols-2 lg:py-20">
       <div>
-        <span className="inline-block bg-brand-100 text-brand-700 text-sm font-medium px-3 py-1 rounded-full mb-4">
+        <span className="section-kicker mb-5">
           {settings.tagline || CLINIC.tagline}
         </span>
-        <h1 className="text-4xl md:text-5xl lg:text-6xl text-slate-900 leading-tight">
-          Senyum Sehat & <span className="text-brand-600">Percaya Diri</span> untuk Keluarga Anda
+        <h1 className="max-w-3xl text-4xl leading-[1.03] text-slate-950 md:text-6xl lg:text-7xl">
+          Senyum sehat yang terasa <span className="text-brand-700">hangat, tenang, dan percaya diri</span>.
         </h1>
-        <p className="mt-5 text-lg text-slate-600 max-w-lg">
-          {clinicName} menggabungkan teknologi modern dengan sentuhan personal:
-          booking online, dokter berpengalaman, dan suasana nyaman untuk semua usia.
+        <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
+          {clinicName} menggabungkan teknologi modern, dokter berpengalaman, dan proses booking yang ringan untuk keluarga Anda.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link to="/appointment" className="btn-primary">
-            <CalendarCheck className="w-5 h-5" /> Book Appointment
+            <CalendarCheck className="h-5 w-5" /> Book Appointment
           </Link>
           <Link to="/services" className="btn-secondary">Lihat Layanan</Link>
         </div>
-        <div className="mt-10 grid grid-cols-3 gap-4 max-w-md">
+        <div className="mt-10 grid max-w-lg grid-cols-3 gap-3">
           {[
-            { v: CLINIC.stats.years, l: 'Tahun Pengalaman' },
-            { v: CLINIC.stats.patients, l: 'Pasien Puas' },
+            { v: CLINIC.stats.years, l: 'Tahun pengalaman' },
+            { v: CLINIC.stats.patients, l: 'Pasien puas' },
             { v: CLINIC.stats.rating, l: 'Rating Google' },
           ].map((s) => (
-            <div key={s.l}>
-              <p className="text-2xl font-bold text-slate-900">{s.v}</p>
-              <p className="text-xs text-slate-500">{s.l}</p>
+            <div key={s.l} className="rounded-3xl border border-brand-100 bg-white/78 p-4 shadow-sm shadow-brand-900/5 backdrop-blur">
+              <p className="text-2xl font-extrabold text-slate-950">{s.v}</p>
+              <p className="mt-1 text-xs font-medium text-slate-500">{s.l}</p>
             </div>
           ))}
         </div>
       </div>
 
       <div className="relative">
-        <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-brand-200 to-accent-400/40">
-          <Swiper
-            modules={[Autoplay, EffectFade, Pagination]}
-            effect="fade"
-            fadeEffect={{ crossFade: true }}
-            speed={1200}
-            loop
-            autoplay={{ delay: 4500, disableOnInteraction: false }}
-            pagination={{ clickable: true }}
-            className="w-full h-full"
-          >
-            {HERO_SLIDES.map((slide) => (
-              <SwiperSlide key={slide.src}>
-                <img
-                  src={slide.src}
-                  alt={slide.alt}
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+        <div className="absolute -right-5 -top-5 h-24 w-24 rounded-full bg-brand-300/80 blur-2xl" />
+        <div className="relative overflow-hidden rounded-[2rem] border border-white bg-brand-100 shadow-[0_30px_90px_rgba(146,64,14,0.18)]">
+          <div className="aspect-[4/5]">
+            <img
+              src={HERO_SLIDES[0].src}
+              alt={HERO_SLIDES[0].alt}
+              className="h-full w-full object-cover"
+              loading="eager"
+            />
+          </div>
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-900/18 via-transparent to-white/8" />
         </div>
-        <div className="absolute -bottom-4 -left-4 lg:-left-8 card p-4 flex items-center gap-3 max-w-[220px] z-10">
-          <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
-            <ShieldCheck className="w-5 h-5" />
+        <div className="card absolute -bottom-5 left-4 z-10 flex max-w-[240px] items-center gap-3 p-4 lg:-left-8">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-200 text-brand-800">
+            <ShieldCheck className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-xs text-slate-500">Sertifikasi</p>
-            <p className="text-sm font-semibold">PDGI Resmi</p>
+            <p className="text-xs font-medium text-slate-500">Standar perawatan</p>
+            <p className="text-sm font-bold text-slate-950">Dokter berlisensi PDGI</p>
           </div>
         </div>
       </div>
@@ -134,18 +124,24 @@ const Features = () => {
   const { settings } = useClinic();
   return (
   <section className="container-app py-16">
-    <div className="text-center max-w-2xl mx-auto mb-12">
-      <h2 className="text-3xl">Mengapa Memilih {settings.clinicName || CLINIC.shortName}?</h2>
-      <p className="text-slate-600 mt-3">Komitmen kami adalah memberikan perawatan gigi berkualitas dengan pengalaman yang menyenangkan.</p>
+    <div className="mx-auto mb-12 max-w-2xl text-center">
+      <span className="section-kicker mb-4">Pengalaman Klinik</span>
+      <h2 className="section-heading">Mengapa Memilih {settings.clinicName || CLINIC.shortName}?</h2>
+      <p className="section-copy mt-3">Perawatan gigi yang rapi, transparan, dan terasa lebih tenang sejak pertama masuk.</p>
     </div>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {FEATURES.map(({ Icon, t, d }) => (
-        <div key={t} className="card p-6 text-center hover:shadow-lg transition">
-          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center">
-            <Icon className="w-7 h-7" />
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+      {FEATURES.map(({ Icon, t, d }, index) => (
+        <div
+          key={t}
+          className={`card p-6 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand-900/10 ${
+            index === 0 ? 'lg:col-span-2 lg:text-left' : 'text-left'
+          }`}
+        >
+          <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-100 text-brand-800">
+            <Icon className="h-7 w-7" />
           </div>
-          <h3 className="font-semibold text-slate-800">{t}</h3>
-          <p className="text-sm text-slate-600 mt-2">{d}</p>
+          <h3 className="text-lg font-bold text-slate-950">{t}</h3>
+          <p className="mt-2 text-sm leading-relaxed text-slate-600">{d}</p>
         </div>
       ))}
     </div>
@@ -155,12 +151,15 @@ const Features = () => {
 
 const Gallery = () => (
   <section className="container-app py-16">
-    <div className="flex items-end justify-between mb-8">
+    <div className="mb-8 flex items-end justify-between">
       <div>
-        <h2 className="text-3xl flex items-center gap-3">
-          <ImageIcon className="w-7 h-7 text-brand-600" /> Galeri Klinik
+        <h2 className="section-heading flex items-center gap-3">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-100 text-brand-800">
+            <ImageIcon className="h-6 w-6" />
+          </span>
+          Galeri Klinik
         </h2>
-        <p className="text-slate-600 mt-1">Suasana klinik, ruang tindakan, dan fasilitas pendukung.</p>
+        <p className="section-copy mt-2">Suasana klinik, ruang tindakan, dan fasilitas pendukung.</p>
       </div>
     </div>
     <Swiper
@@ -180,11 +179,11 @@ const Gallery = () => (
     >
       {GALLERY_IMAGES.map((src) => (
         <SwiperSlide key={src}>
-          <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-md group">
+          <div className="group aspect-[4/3] overflow-hidden rounded-[1.75rem] border border-white bg-brand-50 shadow-md shadow-brand-900/10">
             <img
               src={src}
               alt="Galeri klinik"
-              className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+              className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
               loading="lazy"
             />
           </div>
@@ -224,13 +223,13 @@ const Home = () => {
       <Features />
 
       <section className="container-app py-16">
-        <div className="flex items-end justify-between mb-8">
+        <div className="mb-8 flex items-end justify-between">
           <div>
-            <h2 className="text-3xl">Layanan Unggulan</h2>
-            <p className="text-slate-600 mt-1">Perawatan dari rutin hingga estetik untuk seluruh keluarga.</p>
+            <h2 className="section-heading">Layanan Unggulan</h2>
+            <p className="section-copy mt-2">Perawatan dari rutin hingga estetik untuk seluruh keluarga.</p>
           </div>
-          <Link to="/services" className="hidden md:inline-flex items-center gap-1 text-brand-600 hover:underline text-sm">
-            Lihat semua layanan <ArrowRight className="w-4 h-4" />
+          <Link to="/services" className="hidden items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800 md:inline-flex">
+            Lihat semua layanan <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
         {loading ? (
@@ -262,15 +261,15 @@ const Home = () => {
 
       <Gallery />
 
-      <section className="bg-slate-50 py-16">
+      <section className="border-y border-brand-100/70 bg-white/58 py-16 backdrop-blur">
         <div className="container-app">
-          <div className="flex items-end justify-between mb-8">
+          <div className="mb-8 flex items-end justify-between">
             <div>
-              <h2 className="text-3xl">Dokter Kami</h2>
-              <p className="text-slate-600 mt-1">Tim dokter gigi tersertifikasi dan berpengalaman.</p>
+              <h2 className="section-heading">Dokter Kami</h2>
+              <p className="section-copy mt-2">Tim dokter gigi tersertifikasi dan berpengalaman.</p>
             </div>
-            <Link to="/dentists" className="hidden md:inline-flex items-center gap-1 text-brand-600 hover:underline text-sm">
-              Semua dokter <ArrowRight className="w-4 h-4" />
+            <Link to="/dentists" className="hidden items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800 md:inline-flex">
+              Semua dokter <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           {loading ? (
@@ -285,9 +284,9 @@ const Home = () => {
 
       {testimonials.length > 0 && (
         <section className="container-app py-16">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-3xl">Apa Kata Pasien Kami</h2>
-            <p className="text-slate-600 mt-3">Kepercayaan Anda adalah kebanggaan kami.</p>
+          <div className="mx-auto mb-12 max-w-2xl text-center">
+            <h2 className="section-heading">Apa Kata Pasien Kami</h2>
+            <p className="section-copy mt-3">Kepercayaan Anda adalah kebanggaan kami.</p>
           </div>
           <Swiper
             modules={[Autoplay, Pagination]}
@@ -305,8 +304,8 @@ const Home = () => {
           >
             {testimonials.map((t) => (
               <SwiperSlide key={t._id}>
-                <div className="card p-6 h-full">
-                  <div className="flex gap-0.5 text-amber-400 mb-3">
+                <div className="card h-full p-6">
+                  <div className="mb-3 flex gap-0.5 text-amber-400">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                         key={i}
@@ -314,8 +313,8 @@ const Home = () => {
                       />
                     ))}
                   </div>
-                  <p className="text-slate-700 text-sm italic">"{t.message}"</p>
-                  <p className="mt-4 font-semibold text-slate-800 text-sm">— {t.patientName}</p>
+                  <p className="text-sm italic leading-relaxed text-slate-700">"{t.message}"</p>
+                  <p className="mt-4 text-sm font-semibold text-slate-950">{t.patientName}</p>
                 </div>
               </SwiperSlide>
             ))}
@@ -323,26 +322,26 @@ const Home = () => {
         </section>
       )}
 
-      <section className="bg-brand-600 text-white py-16">
-        <div className="container-app text-center">
-          <h2 className="text-3xl md:text-4xl text-white">Siap Memulai Perawatan?</h2>
-          <p className="mt-3 text-brand-100 max-w-xl mx-auto">
+      <section className="container-app py-16">
+        <div className="overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-300 via-brand-200 to-white p-8 text-center shadow-xl shadow-brand-900/10 md:p-12">
+          <h2 className="text-3xl text-slate-950 md:text-4xl">Siap Memulai Perawatan?</h2>
+          <p className="mx-auto mt-3 max-w-xl text-slate-700">
             Booking online dalam 2 menit, atau hubungi kami via WhatsApp untuk konsultasi.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
               to="/appointment"
-              className="inline-flex items-center gap-2 bg-white text-brand-700 hover:bg-slate-50 px-6 py-3 rounded-xl font-semibold"
+              className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-6 py-3 font-semibold text-white transition hover:bg-slate-800 active:translate-y-px"
             >
-              <CalendarCheck className="w-5 h-5" /> Book Appointment
+              <CalendarCheck className="h-5 w-5" /> Book Appointment
             </Link>
             <a
               href={`https://wa.me/${(settings.whatsapp || CLINIC.whatsappNumber).replace(/\D/g, '')}?text=${encodeURIComponent(`Halo ${settings.clinicName || CLINIC.name}, saya ingin konsultasi.`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 px-6 py-3 rounded-xl font-semibold"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-semibold text-slate-950 transition hover:bg-brand-50 active:translate-y-px"
             >
-              <MessageCircle className="w-5 h-5" /> WhatsApp Kami
+              <MessageCircle className="h-5 w-5" /> WhatsApp Kami
             </a>
           </div>
         </div>
@@ -350,13 +349,13 @@ const Home = () => {
 
       {articles.length > 0 && (
         <section className="container-app py-16">
-          <div className="flex items-end justify-between mb-8">
+          <div className="mb-8 flex items-end justify-between">
             <div>
-              <h2 className="text-3xl">Artikel Terbaru</h2>
-              <p className="text-slate-600 mt-1">Tips kesehatan gigi untuk Anda.</p>
+              <h2 className="section-heading">Artikel Terbaru</h2>
+              <p className="section-copy mt-2">Tips kesehatan gigi untuk Anda.</p>
             </div>
-            <Link to="/blog" className="hidden md:inline-flex items-center gap-1 text-brand-600 hover:underline text-sm">
-              Semua artikel <ArrowRight className="w-4 h-4" />
+            <Link to="/blog" className="hidden items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800 md:inline-flex">
+              Semua artikel <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="grid md:grid-cols-3 gap-6">

@@ -132,26 +132,27 @@ const Appointment = () => {
   if (loading) return <Loader fullScreen />;
 
   return (
-    <div className="container-app py-12 max-w-3xl">
-      <h1 className="text-4xl">Booking Appointment</h1>
-      <p className="text-slate-600 mt-2">Pilih dokter, layanan, dan jadwal yang sesuai untuk Anda.</p>
+    <div className="container-app max-w-3xl py-12">
+      <span className="section-kicker mb-4">Booking</span>
+      <h1 className="text-4xl md:text-5xl">Booking Appointment</h1>
+      <p className="section-copy mt-3">Pilih dokter, layanan, dan jadwal yang sesuai untuk Anda.</p>
 
       {submitted ? (
-        <div className="card p-8 mt-8 text-center">
-          <div className="w-16 h-16 mx-auto rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
-            <CheckCircle2 className="w-9 h-9" />
+        <div className="card mt-8 p-8 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-brand-100 text-brand-800">
+            <CheckCircle2 className="h-9 w-9" />
           </div>
-          <h2 className="text-2xl mt-4">Booking Berhasil!</h2>
-          <p className="text-slate-600 mt-2">
+          <h2 className="mt-4 text-2xl">Booking Berhasil!</h2>
+          <p className="mt-2 text-slate-600">
             Appointment Anda akan dikonfirmasi oleh tim klinik dalam 1x24 jam. Periksa status di dashboard.
           </p>
-          <div className="flex gap-3 justify-center mt-6">
+          <div className="mt-6 flex justify-center gap-3">
             <Link to="/patient/appointments" className="btn-primary">Lihat Appointment Saya</Link>
             <Link to="/" className="btn-secondary">Ke Beranda</Link>
           </div>
         </div>
       ) : (
-        <form onSubmit={submit} className="card p-6 lg:p-8 mt-8 space-y-5">
+        <form onSubmit={submit} className="card mt-8 space-y-5 p-6 lg:p-8">
           <Select
             label="Dokter Gigi"
             name="dentistId"
@@ -168,9 +169,9 @@ const Appointment = () => {
           </Select>
 
           {selectedDentist?.profile && (
-            <div className="rounded-lg bg-sky-50 border border-sky-100 px-4 py-3 text-sm text-sky-900">
-              <p className="font-medium inline-flex items-center gap-2">
-                <CalendarClock className="w-4 h-4" /> Jadwal praktik
+            <div className="rounded-2xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-900">
+              <p className="inline-flex items-center gap-2 font-semibold">
+                <CalendarClock className="h-4 w-4" /> Jadwal praktik
               </p>
               <p className="mt-1">
                 {selectedDentist.profile.availableDays.map((day) => DAY_LABELS[day] || day).join(', ')}
@@ -195,7 +196,7 @@ const Appointment = () => {
             ))}
           </Select>
 
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
             <Input
               type="date"
               label="Tanggal"
@@ -224,12 +225,12 @@ const Appointment = () => {
           </div>
 
           {availabilityLoading && (
-            <p className="text-sm text-slate-500 inline-flex items-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin" /> Memeriksa jadwal dokter...
+            <p className="inline-flex items-center gap-2 text-sm text-slate-500">
+              <Loader2 className="h-4 w-4 animate-spin" /> Memeriksa jadwal dokter...
             </p>
           )}
           {availability && !availabilityLoading && availability.slots.length === 0 && (
-            <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3">
+            <p className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
               Dokter tidak praktik atau seluruh slot pada tanggal ini sudah terisi.
             </p>
           )}
@@ -244,7 +245,7 @@ const Appointment = () => {
           />
 
           {!user && (
-            <div className="bg-amber-50 border border-amber-200 text-amber-900 text-sm rounded-lg p-3">
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
               Anda perlu <Link to="/login" className="underline font-medium">login</Link> atau{' '}
               <Link to="/register" className="underline font-medium">register</Link> sebagai pasien untuk menyelesaikan booking.
             </div>

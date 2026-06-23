@@ -27,11 +27,12 @@ const Blog = () => {
 
   return (
     <div className="container-app py-12">
-      <div className="text-center max-w-2xl mx-auto mb-10">
-        <h1 className="text-4xl">Artikel & Edukasi</h1>
-        <p className="text-slate-600 mt-3">Tips kesehatan gigi langsung dari dokter berpengalaman.</p>
+      <div className="mx-auto mb-10 max-w-2xl text-center">
+        <span className="section-kicker mb-4">Edukasi</span>
+        <h1 className="text-4xl md:text-5xl">Artikel & Edukasi</h1>
+        <p className="section-copy mt-3">Tips kesehatan gigi langsung dari dokter berpengalaman.</p>
       </div>
-      <div className="max-w-md mx-auto mb-8">
+      <div className="mx-auto mb-8 max-w-md">
         <input
           type="text"
           placeholder="Cari artikel atau tag..."

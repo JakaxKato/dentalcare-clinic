@@ -21,9 +21,10 @@ const Dentists = () => {
 
   return (
     <div className="container-app py-12">
-      <div className="text-center max-w-2xl mx-auto mb-10">
-        <h1 className="text-4xl">Tim Dokter Kami</h1>
-        <p className="text-slate-600 mt-3">Bertemu dengan dokter gigi spesialis berpengalaman dan ramah.</p>
+      <div className="mx-auto mb-10 max-w-2xl text-center">
+        <span className="section-kicker mb-4">Dokter</span>
+        <h1 className="text-4xl md:text-5xl">Tim Dokter Kami</h1>
+        <p className="section-copy mt-3">Bertemu dengan dokter gigi spesialis berpengalaman dan ramah.</p>
       </div>
       {loading ? (
         <CardGridSkeleton />
