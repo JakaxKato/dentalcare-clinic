@@ -1,11 +1,18 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 const STORAGE_KEY = 'dc_theme';
+const VERSION_KEY = 'dc_theme_version';
+const THEME_VERSION = 'yellow-white-v1';
 
 const getInitialTheme = () => {
+  const savedVersion = localStorage.getItem(VERSION_KEY);
+  if (savedVersion !== THEME_VERSION) {
+    localStorage.removeItem(STORAGE_KEY);
+    return 'light';
+  }
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved === 'light' || saved === 'dark') return saved;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return 'light';
 };
 
 const ThemeContext = createContext({
@@ -22,6 +29,7 @@ export const ThemeProvider = ({ children }) => {
     document.documentElement.classList.toggle('dark', isDark);
     document.documentElement.style.colorScheme = theme;
     localStorage.setItem(STORAGE_KEY, theme);
+    localStorage.setItem(VERSION_KEY, THEME_VERSION);
   }, [theme]);
 
   const value = useMemo(

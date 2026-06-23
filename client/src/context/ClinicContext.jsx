@@ -18,6 +18,11 @@ const DEFAULTS = {
   operatingHours: CLINIC.hours.lines.join('\n'),
   footerNote: '',
 };
+const SETTINGS_STORAGE_KEY = 'dc_clinic_settings';
+const SETTINGS_VERSION_KEY = 'dc_clinic_settings_version';
+const SETTINGS_VERSION = 'yellow-white-v1';
+const LEGACY_PRIMARY_COLOR = '#1782f5';
+const LEGACY_ACCENT_COLOR = '#14b8a6';
 
 const ClinicContext = createContext({
   settings: DEFAULTS,
@@ -97,10 +102,26 @@ const applyDocumentSettings = (settings) => {
   themeColor.content = settings.primaryColor || DEFAULTS.primaryColor;
 };
 
+const normalizeDesignSettings = (settings = {}) => {
+  const merged = { ...DEFAULTS, ...settings };
+  const primary = String(merged.primaryColor || '').toLowerCase();
+  const accent = String(merged.accentColor || '').toLowerCase();
+
+  if (primary === LEGACY_PRIMARY_COLOR) merged.primaryColor = DEFAULTS.primaryColor;
+  if (accent === LEGACY_ACCENT_COLOR) merged.accentColor = DEFAULTS.accentColor;
+
+  return merged;
+};
+
 const readCachedSettings = () => {
   try {
-    const cached = localStorage.getItem('dc_clinic_settings');
-    return cached ? { ...DEFAULTS, ...JSON.parse(cached) } : DEFAULTS;
+    const cachedVersion = localStorage.getItem(SETTINGS_VERSION_KEY);
+    if (cachedVersion !== SETTINGS_VERSION) {
+      localStorage.removeItem(SETTINGS_STORAGE_KEY);
+      return DEFAULTS;
+    }
+    const cached = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    return cached ? normalizeDesignSettings(JSON.parse(cached)) : DEFAULTS;
   } catch {
     return DEFAULTS;
   }
@@ -111,9 +132,10 @@ export const ClinicProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const applySettings = useCallback((nextSettings) => {
-    const merged = { ...DEFAULTS, ...nextSettings };
+    const merged = normalizeDesignSettings(nextSettings);
     setSettings(merged);
-    localStorage.setItem('dc_clinic_settings', JSON.stringify(merged));
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(merged));
+    localStorage.setItem(SETTINGS_VERSION_KEY, SETTINGS_VERSION);
     applyDocumentSettings(merged);
     return merged;
   }, []);
