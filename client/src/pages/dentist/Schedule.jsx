@@ -1,20 +1,26 @@
-import { useEffect, useState } from 'react';
-import { CalendarOff, Plus, Trash2, AlertTriangle } from 'lucide-react';
-import Loader from '../../components/common/Loader';
-import EmptyState from '../../components/common/EmptyState';
-import Modal from '../../components/common/Modal';
-import { dentistLeaveService } from '../../services';
-import { useToast } from '../../context/ToastContext';
-import { extractMessage } from '../../services/api';
+import { useEffect, useState } from "react";
+import { CalendarOff, Plus, Trash2, AlertTriangle } from "lucide-react";
+import Loader from "../../components/common/Loader";
+import EmptyState from "../../components/common/EmptyState";
+import Modal from "../../components/common/Modal";
+import { dentistLeaveService } from "../../services";
+import { useToast } from "../../context/ToastContext";
+import { extractMessage } from "../../services/api";
 
-const REASONS = ['Cuti', 'Sakit', 'Seminar/Pelatihan', 'Urusan Keluarga', 'Lainnya'];
+const REASONS = [
+  "Cuti",
+  "Sakit",
+  "Seminar/Pelatihan",
+  "Urusan Keluarga",
+  "Lainnya",
+];
 
 const todayStr = () => new Date().toISOString().slice(0, 10);
 
 const formatDateRange = (start, end) => {
-  const opts = { day: 'numeric', month: 'long', year: 'numeric' };
-  const s = new Date(start).toLocaleDateString('id-ID', opts);
-  const e = new Date(end).toLocaleDateString('id-ID', opts);
+  const opts = { day: "numeric", month: "long", year: "numeric" };
+  const s = new Date(start).toLocaleDateString("id-ID", opts);
+  const e = new Date(end).toLocaleDateString("id-ID", opts);
   return s === e ? s : `${s} - ${e}`;
 };
 
@@ -30,7 +36,12 @@ const isUpcoming = (leave) => {
   return new Date(leave.startDate) > today;
 };
 
-const emptyForm = { startDate: todayStr(), endDate: todayStr(), reason: 'Cuti', note: '' };
+const emptyForm = {
+  startDate: todayStr(),
+  endDate: todayStr(),
+  reason: "Cuti",
+  note: "",
+};
 
 const DentistSchedule = () => {
   const toast = useToast();
@@ -51,7 +62,9 @@ const DentistSchedule = () => {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const handleOpen = () => {
     setForm(emptyForm);
@@ -62,7 +75,7 @@ const DentistSchedule = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.endDate < form.startDate) {
-      toast.error('Tanggal selesai tidak boleh sebelum tanggal mulai');
+      toast.error("Tanggal selesai tidak boleh sebelum tanggal mulai");
       return;
     }
     setSaving(true);
@@ -73,7 +86,7 @@ const DentistSchedule = () => {
         setConflicts(res.conflicts);
         toast.info(`Cuti disimpan. ${res.conflicts.message}`);
       } else {
-        toast.success('Jadwal cuti berhasil ditambahkan');
+        toast.success("Jadwal cuti berhasil ditambahkan");
       }
       load();
       if (!res.conflicts) setShowModal(false);
@@ -85,11 +98,11 @@ const DentistSchedule = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Yakin ingin membatalkan cuti ini?')) return;
+    if (!window.confirm("Yakin ingin membatalkan cuti ini?")) return;
     setDeletingId(id);
     try {
       await dentistLeaveService.remove(id);
-      toast.success('Jadwal cuti dibatalkan');
+      toast.success("Jadwal cuti dibatalkan");
       load();
     } catch (err) {
       toast.error(extractMessage(err));
@@ -98,9 +111,9 @@ const DentistSchedule = () => {
     }
   };
 
-  const activeLeaves   = leaves.filter(isActiveLeave);
+  const activeLeaves = leaves.filter(isActiveLeave);
   const upcomingLeaves = leaves.filter(isUpcoming);
-  const pastLeaves     = leaves.filter((l) => !isActiveLeave(l) && !isUpcoming(l));
+  const pastLeaves = leaves.filter((l) => !isActiveLeave(l) && !isUpcoming(l));
 
   if (loading) return <Loader />;
 
@@ -109,9 +122,12 @@ const DentistSchedule = () => {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold">Jadwal Cuti &amp; Ketidakhadiran</h2>
+          <h2 className="text-2xl font-bold">
+            Jadwal Cuti &amp; Ketidakhadiran
+          </h2>
           <p className="mt-1 text-sm text-stone-500">
-            Kelola tanggal cuti Anda. Pasien tidak dapat booking pada periode ini.
+            Kelola tanggal cuti Anda. Pasien tidak dapat booking pada periode
+            ini.
           </p>
         </div>
         <button onClick={handleOpen} className="btn-primary gap-2">
@@ -128,7 +144,10 @@ const DentistSchedule = () => {
               Anda sedang dalam periode cuti
             </p>
             {activeLeaves.map((l) => (
-              <p key={l._id} className="text-sm text-amber-700 dark:text-amber-400">
+              <p
+                key={l._id}
+                className="text-sm text-amber-700 dark:text-amber-400"
+              >
                 {formatDateRange(l.startDate, l.endDate)} - {l.reason}
               </p>
             ))}
@@ -139,7 +158,9 @@ const DentistSchedule = () => {
       {/* Upcoming */}
       <div className="card overflow-hidden">
         <div className="border-b border-stone-100 px-6 py-4 dark:border-stone-800">
-          <h3 className="font-semibold text-stone-900 dark:text-stone-100">Jadwal Mendatang</h3>
+          <h3 className="font-semibold text-stone-900 dark:text-stone-100">
+            Jadwal Mendatang
+          </h3>
         </div>
         {upcomingLeaves.length === 0 ? (
           <EmptyState
@@ -150,7 +171,13 @@ const DentistSchedule = () => {
         ) : (
           <ul className="divide-y divide-stone-100 dark:divide-stone-800">
             {upcomingLeaves.map((l) => (
-              <LeaveRow key={l._id} leave={l} onDelete={handleDelete} deletingId={deletingId} canDelete />
+              <LeaveRow
+                key={l._id}
+                leave={l}
+                onDelete={handleDelete}
+                deletingId={deletingId}
+                canDelete
+              />
             ))}
           </ul>
         )}
@@ -160,11 +187,19 @@ const DentistSchedule = () => {
       {pastLeaves.length > 0 && (
         <div className="card overflow-hidden">
           <div className="border-b border-stone-100 px-6 py-4 dark:border-stone-800">
-            <h3 className="font-semibold text-stone-500 dark:text-stone-400">Riwayat Cuti</h3>
+            <h3 className="font-semibold text-stone-500 dark:text-stone-400">
+              Riwayat Cuti
+            </h3>
           </div>
           <ul className="divide-y divide-stone-100 dark:divide-stone-800">
             {pastLeaves.slice(0, 10).map((l) => (
-              <LeaveRow key={l._id} leave={l} onDelete={handleDelete} deletingId={deletingId} canDelete={false} />
+              <LeaveRow
+                key={l._id}
+                leave={l}
+                onDelete={handleDelete}
+                deletingId={deletingId}
+                canDelete={false}
+              />
             ))}
           </ul>
         </div>
@@ -172,7 +207,7 @@ const DentistSchedule = () => {
 
       {/* Modal: add leave */}
       <Modal
-        isOpen={showModal}
+        open={showModal}
         onClose={() => setShowModal(false)}
         title="Tambah Jadwal Cuti"
       >
@@ -185,7 +220,9 @@ const DentistSchedule = () => {
                 className="input"
                 min={todayStr()}
                 value={form.startDate}
-                onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, startDate: e.target.value }))
+                }
                 required
               />
             </div>
@@ -196,7 +233,9 @@ const DentistSchedule = () => {
                 className="input"
                 min={form.startDate || todayStr()}
                 value={form.endDate}
-                onChange={(e) => setForm((f) => ({ ...f, endDate: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, endDate: e.target.value }))
+                }
                 required
               />
             </div>
@@ -207,9 +246,13 @@ const DentistSchedule = () => {
             <select
               className="input"
               value={form.reason}
-              onChange={(e) => setForm((f) => ({ ...f, reason: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, reason: e.target.value }))
+              }
             >
-              {REASONS.map((r) => <option key={r}>{r}</option>)}
+              {REASONS.map((r) => (
+                <option key={r}>{r}</option>
+              ))}
             </select>
           </div>
 
@@ -233,20 +276,32 @@ const DentistSchedule = () => {
                 <ul className="mt-1 list-disc pl-4 space-y-0.5">
                   {conflicts.appointments.map((a) => (
                     <li key={a._id}>
-                      {a.patient} - {new Date(a.date).toLocaleDateString('id-ID')} {a.time}
+                      {a.patient} -{" "}
+                      {new Date(a.date).toLocaleDateString("id-ID")} {a.time}
                     </li>
                   ))}
                 </ul>
-                <p className="mt-2 text-xs">Cuti sudah disimpan. Hubungi admin untuk reschedule appointment di atas.</p>
+                <p className="mt-2 text-xs">
+                  Cuti sudah disimpan. Hubungi admin untuk reschedule
+                  appointment di atas.
+                </p>
               </div>
             </div>
           )}
 
           <div className="flex gap-3 pt-2">
-            <button type="submit" className="btn-primary flex-1" disabled={saving}>
-              {saving ? 'Menyimpan...' : 'Simpan Cuti'}
+            <button
+              type="submit"
+              className="btn-primary flex-1"
+              disabled={saving}
+            >
+              {saving ? "Menyimpan..." : "Simpan Cuti"}
             </button>
-            <button type="button" className="btn-secondary" onClick={() => setShowModal(false)}>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => setShowModal(false)}
+            >
               Batal
             </button>
           </div>
@@ -263,11 +318,13 @@ const LeaveRow = ({ leave, onDelete, deletingId, canDelete }) => {
   return (
     <li className="flex flex-wrap items-center justify-between gap-3 px-6 py-4">
       <div className="flex items-start gap-3">
-        <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
-          isActive
-            ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
-            : 'bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-500'
-        }`}>
+        <div
+          className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+            isActive
+              ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
+              : "bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-500"
+          }`}
+        >
           <CalendarOff className="h-4 w-4" />
         </div>
         <div>
@@ -281,9 +338,13 @@ const LeaveRow = ({ leave, onDelete, deletingId, canDelete }) => {
               </span>
             )}
           </div>
-          <p className="text-sm text-stone-500 dark:text-stone-400">{leave.reason}</p>
+          <p className="text-sm text-stone-500 dark:text-stone-400">
+            {leave.reason}
+          </p>
           {leave.note && (
-            <p className="mt-0.5 text-xs text-stone-400 dark:text-stone-500 italic">{leave.note}</p>
+            <p className="mt-0.5 text-xs text-stone-400 dark:text-stone-500 italic">
+              {leave.note}
+            </p>
           )}
         </div>
       </div>
@@ -294,7 +355,7 @@ const LeaveRow = ({ leave, onDelete, deletingId, canDelete }) => {
           className="btn-ghost text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 gap-1.5 text-sm"
         >
           <Trash2 className="h-4 w-4" />
-          {isDeleting ? 'Membatalkan...' : 'Batalkan'}
+          {isDeleting ? "Membatalkan..." : "Batalkan"}
         </button>
       )}
     </li>
