@@ -1,59 +1,63 @@
-import { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { lazy, Suspense } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 
-import PublicLayout from './components/layout/PublicLayout';
-import PatientLayout from './components/layout/PatientLayout';
-import DentistLayout from './components/layout/DentistLayout';
-import AdminLayout from './components/layout/AdminLayout';
-import ProtectedRoute from './routes/ProtectedRoute';
-import Loader from './components/common/Loader';
+import PublicLayout from "./components/layout/PublicLayout";
+import PatientLayout from "./components/layout/PatientLayout";
+import DentistLayout from "./components/layout/DentistLayout";
+import AdminLayout from "./components/layout/AdminLayout";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import Loader from "./components/common/Loader";
 
 // Public (lazy loaded)
-const Home = lazy(() => import('./pages/public/Home'));
-const About = lazy(() => import('./pages/public/About'));
-const Services = lazy(() => import('./pages/public/Services'));
-const ServiceDetail = lazy(() => import('./pages/public/ServiceDetail'));
-const Dentists = lazy(() => import('./pages/public/Dentists'));
-const DentistDetail = lazy(() => import('./pages/public/DentistDetail'));
-const Appointment = lazy(() => import('./pages/public/Appointment'));
-const Blog = lazy(() => import('./pages/public/Blog'));
-const ArticleDetail = lazy(() => import('./pages/public/ArticleDetail'));
-const Contact = lazy(() => import('./pages/public/Contact'));
-const NotFound = lazy(() => import('./pages/public/NotFound'));
+const Home = lazy(() => import("./pages/public/Home"));
+const About = lazy(() => import("./pages/public/About"));
+const Services = lazy(() => import("./pages/public/Services"));
+const ServiceDetail = lazy(() => import("./pages/public/ServiceDetail"));
+const Dentists = lazy(() => import("./pages/public/Dentists"));
+const DentistDetail = lazy(() => import("./pages/public/DentistDetail"));
+const Appointment = lazy(() => import("./pages/public/Appointment"));
+const Blog = lazy(() => import("./pages/public/Blog"));
+const ArticleDetail = lazy(() => import("./pages/public/ArticleDetail"));
+const Contact = lazy(() => import("./pages/public/Contact"));
+const NotFound = lazy(() => import("./pages/public/NotFound"));
 
 // Auth (lazy loaded)
-const Login = lazy(() => import('./pages/auth/Login'));
-const Register = lazy(() => import('./pages/auth/Register'));
-const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'));
-const ResetPassword = lazy(() => import('./pages/auth/ResetPassword'));
+const Login = lazy(() => import("./pages/auth/Login"));
+const Register = lazy(() => import("./pages/auth/Register"));
+const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
 
 // Patient (lazy loaded)
-const PatientDashboard = lazy(() => import('./pages/patient/Dashboard'));
-const PatientAppointments = lazy(() => import('./pages/patient/Appointments'));
-const PatientProfile = lazy(() => import('./pages/patient/Profile'));
-const PatientTestimonials = lazy(() => import('./pages/patient/Testimonials'));
-const PatientPrescriptions = lazy(() => import('./pages/patient/Prescriptions'));
+const PatientDashboard = lazy(() => import("./pages/patient/Dashboard"));
+const PatientAppointments = lazy(() => import("./pages/patient/Appointments"));
+const PatientProfile = lazy(() => import("./pages/patient/Profile"));
+const PatientTestimonials = lazy(() => import("./pages/patient/Testimonials"));
+const PatientPrescriptions = lazy(
+  () => import("./pages/patient/Prescriptions"),
+);
 
 // Dentist (lazy loaded)
-const DentistDashboard = lazy(() => import('./pages/dentist/Dashboard'));
-const DentistAppointments = lazy(() => import('./pages/dentist/Appointments'));
-const DentistTreatment = lazy(() => import('./pages/dentist/Treatment'));
+const DentistDashboard = lazy(() => import("./pages/dentist/Dashboard"));
+const DentistAppointments = lazy(() => import("./pages/dentist/Appointments"));
+const DentistTreatment = lazy(() => import("./pages/dentist/Treatment"));
+const DentistSchedule = lazy(() => import("./pages/dentist/Schedule"));
 
 // Admin (lazy loaded)
-const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
-const AdminDentists = lazy(() => import('./pages/admin/Dentists'));
-const AdminServices = lazy(() => import('./pages/admin/Services'));
-const AdminAppointments = lazy(() => import('./pages/admin/Appointments'));
-const AdminPatients = lazy(() => import('./pages/admin/Patients'));
-const AdminArticles = lazy(() => import('./pages/admin/Articles'));
-const AdminTestimonials = lazy(() => import('./pages/admin/Testimonials'));
-const AdminSettings = lazy(() => import('./pages/admin/Settings'));
+const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
+const AdminDentists = lazy(() => import("./pages/admin/Dentists"));
+const AdminServices = lazy(() => import("./pages/admin/Services"));
+const AdminAppointments = lazy(() => import("./pages/admin/Appointments"));
+const AdminPatients = lazy(() => import("./pages/admin/Patients"));
+const AdminArticles = lazy(() => import("./pages/admin/Articles"));
+const AdminTestimonials = lazy(() => import("./pages/admin/Testimonials"));
+const AdminSettings = lazy(() => import("./pages/admin/Settings"));
+const AdminLeaves = lazy(() => import("./pages/admin/Leaves"));
 
 // Shared (lazy loaded)
-const InvoiceList = lazy(() => import('./pages/shared/InvoiceList'));
+const InvoiceList = lazy(() => import("./pages/shared/InvoiceList"));
 
 // Print (lazy loaded)
-const PrescriptionPrint = lazy(() => import('./pages/print/PrescriptionPrint'));
+const PrescriptionPrint = lazy(() => import("./pages/print/PrescriptionPrint"));
 
 const App = () => (
   <Suspense fallback={<Loader />}>
@@ -78,7 +82,7 @@ const App = () => (
       <Route
         path="/patient"
         element={
-          <ProtectedRoute roles={['patient']}>
+          <ProtectedRoute roles={["patient"]}>
             <PatientLayout />
           </ProtectedRoute>
         }
@@ -95,7 +99,7 @@ const App = () => (
       <Route
         path="/dentist"
         element={
-          <ProtectedRoute roles={['dentist']}>
+          <ProtectedRoute roles={["dentist"]}>
             <DentistLayout />
           </ProtectedRoute>
         }
@@ -104,13 +108,14 @@ const App = () => (
         <Route path="dashboard" element={<DentistDashboard />} />
         <Route path="appointments" element={<DentistAppointments />} />
         <Route path="treatment/:id" element={<DentistTreatment />} />
+        <Route path="schedule" element={<DentistSchedule />} />
         <Route path="invoices" element={<InvoiceList />} />
       </Route>
 
       <Route
         path="/admin"
         element={
-          <ProtectedRoute roles={['admin']}>
+          <ProtectedRoute roles={["admin"]}>
             <AdminLayout />
           </ProtectedRoute>
         }
@@ -124,13 +129,14 @@ const App = () => (
         <Route path="invoices" element={<InvoiceList isAdmin />} />
         <Route path="articles" element={<AdminArticles />} />
         <Route path="testimonials" element={<AdminTestimonials />} />
+        <Route path="leaves" element={<AdminLeaves />} />
         <Route path="settings" element={<AdminSettings />} />
       </Route>
 
       <Route
         path="/print/prescription/:id"
         element={
-          <ProtectedRoute roles={['patient', 'dentist', 'admin']}>
+          <ProtectedRoute roles={["patient", "dentist", "admin"]}>
             <PrescriptionPrint />
           </ProtectedRoute>
         }

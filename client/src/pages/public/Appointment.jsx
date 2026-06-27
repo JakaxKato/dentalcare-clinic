@@ -1,29 +1,33 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { CalendarClock, CheckCircle2, Loader2 } from 'lucide-react';
-import { Input, Select, Textarea } from '../../components/common/Input';
-import { useAuth } from '../../context/AuthContext';
-import { useToast } from '../../context/ToastContext';
-import { dentistService, serviceService, appointmentService } from '../../services';
-import { extractMessage } from '../../services/api';
-import Loader from '../../components/common/Loader';
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { CalendarClock, CheckCircle2, Loader2 } from "lucide-react";
+import { Input, Select, Textarea } from "../../components/common/Input";
+import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
+import {
+  dentistService,
+  serviceService,
+  appointmentService,
+} from "../../services";
+import { extractMessage } from "../../services/api";
+import Loader from "../../components/common/Loader";
 
 const DAY_LABELS = {
-  Mon: 'Sen',
-  Tue: 'Sel',
-  Wed: 'Rab',
-  Thu: 'Kam',
-  Fri: 'Jum',
-  Sat: 'Sab',
-  Sun: 'Min',
+  Mon: "Sen",
+  Tue: "Sel",
+  Wed: "Rab",
+  Thu: "Kam",
+  Fri: "Jum",
+  Sat: "Sab",
+  Sun: "Min",
 };
 
 const clinicToday = () =>
-  new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Asia/Jakarta',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
+  new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Jakarta",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
   }).format(new Date());
 
 const Appointment = () => {
@@ -39,14 +43,14 @@ const Appointment = () => {
   const [submitted, setSubmitted] = useState(false);
   const [availability, setAvailability] = useState(null);
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
-  const [availabilityError, setAvailabilityError] = useState('');
+  const [availabilityError, setAvailabilityError] = useState("");
 
   const [form, setForm] = useState({
-    dentistId: searchParams.get('dentist') || '',
-    serviceId: searchParams.get('service') || '',
-    appointmentDate: '',
-    appointmentTime: '',
-    complaint: '',
+    dentistId: searchParams.get("dentist") || "",
+    serviceId: searchParams.get("service") || "",
+    appointmentDate: "",
+    appointmentTime: "",
+    complaint: "",
   });
   const { dentistId, serviceId, appointmentDate } = form;
 
@@ -56,20 +60,22 @@ const Appointment = () => {
         setDentists(dentistList);
         setServices(serviceList);
       })
-      .catch((err) => toast.error(extractMessage(err, 'Gagal memuat data booking')))
+      .catch((err) =>
+        toast.error(extractMessage(err, "Gagal memuat data booking")),
+      )
       .finally(() => setLoading(false));
   }, [toast]);
 
   useEffect(() => {
     if (!dentistId || !serviceId || !appointmentDate) {
       setAvailability(null);
-      setAvailabilityError('');
+      setAvailabilityError("");
       return;
     }
 
     let active = true;
     setAvailabilityLoading(true);
-    setAvailabilityError('');
+    setAvailabilityError("");
     appointmentService
       .availability({ dentistId, serviceId, date: appointmentDate })
       .then((data) => {
@@ -78,7 +84,7 @@ const Appointment = () => {
       .catch((err) => {
         if (active) {
           setAvailability(null);
-          setAvailabilityError(extractMessage(err, 'Gagal memuat slot'));
+          setAvailabilityError(extractMessage(err, "Gagal memuat slot"));
         }
       })
       .finally(() => {
@@ -92,7 +98,7 @@ const Appointment = () => {
 
   const selectedDentist = useMemo(
     () => dentists.find((entry) => entry.user._id === form.dentistId),
-    [dentists, form.dentistId]
+    [dentists, form.dentistId],
   );
 
   const handleChange = (event) => {
@@ -100,8 +106,8 @@ const Appointment = () => {
     setForm((current) => ({
       ...current,
       [name]: value,
-      ...(['dentistId', 'serviceId', 'appointmentDate'].includes(name)
-        ? { appointmentTime: '' }
+      ...(["dentistId", "serviceId", "appointmentDate"].includes(name)
+        ? { appointmentTime: "" }
         : {}),
     }));
   };
@@ -109,21 +115,21 @@ const Appointment = () => {
   const submit = async (event) => {
     event.preventDefault();
     if (!user) {
-      toast.info('Silakan login terlebih dahulu untuk membuat appointment');
-      navigate('/login', { state: { from: '/appointment' } });
+      toast.info("Silakan login terlebih dahulu untuk membuat appointment");
+      navigate("/login", { state: { from: "/appointment" } });
       return;
     }
-    if (user.role !== 'patient') {
-      toast.error('Hanya pasien yang dapat membuat appointment');
+    if (user.role !== "patient") {
+      toast.error("Hanya pasien yang dapat membuat appointment");
       return;
     }
     setSubmitting(true);
     try {
       await appointmentService.create(form);
       setSubmitted(true);
-      toast.success('Appointment berhasil dibuat. Menunggu konfirmasi.');
+      toast.success("Appointment berhasil dibuat. Menunggu konfirmasi.");
     } catch (err) {
-      toast.error(extractMessage(err, 'Gagal membuat appointment'));
+      toast.error(extractMessage(err, "Gagal membuat appointment"));
     } finally {
       setSubmitting(false);
     }
@@ -135,7 +141,9 @@ const Appointment = () => {
     <div className="container-app max-w-3xl py-12">
       <span className="section-kicker mb-4">Booking</span>
       <h1 className="text-4xl md:text-5xl">Booking Appointment</h1>
-      <p className="section-copy mt-3">Pilih dokter, layanan, dan jadwal yang sesuai untuk Anda.</p>
+      <p className="section-copy mt-3">
+        Pilih dokter, layanan, dan jadwal yang sesuai untuk Anda.
+      </p>
 
       {submitted ? (
         <div className="card mt-8 p-8 text-center">
@@ -144,11 +152,16 @@ const Appointment = () => {
           </div>
           <h2 className="mt-4 text-2xl">Booking Berhasil!</h2>
           <p className="mt-2 text-stone-600">
-            Appointment Anda akan dikonfirmasi oleh tim klinik dalam 1x24 jam. Periksa status di dashboard.
+            Appointment Anda akan dikonfirmasi oleh tim klinik dalam 1x24 jam.
+            Periksa status di dashboard.
           </p>
           <div className="mt-6 flex justify-center gap-3">
-            <Link to="/patient/appointments" className="btn-primary">Lihat Appointment Saya</Link>
-            <Link to="/" className="btn-secondary">Ke Beranda</Link>
+            <Link to="/patient/appointments" className="btn-primary">
+              Lihat Appointment Saya
+            </Link>
+            <Link to="/" className="btn-secondary">
+              Ke Beranda
+            </Link>
           </div>
         </div>
       ) : (
@@ -163,7 +176,8 @@ const Appointment = () => {
             <option value="">Pilih dokter</option>
             {dentists.map((entry) => (
               <option key={entry.user._id} value={entry.user._id}>
-                {entry.user.name} - {entry.profile?.specialization || 'General Dentistry'}
+                {entry.user.name} -{" "}
+                {entry.profile?.specialization || "General Dentistry"}
               </option>
             ))}
           </Select>
@@ -174,9 +188,12 @@ const Appointment = () => {
                 <CalendarClock className="h-4 w-4" /> Jadwal praktik
               </p>
               <p className="mt-1">
-                {selectedDentist.profile.availableDays.map((day) => DAY_LABELS[day] || day).join(', ')}
-                {' | '}
-                {selectedDentist.profile.workingHours?.start} - {selectedDentist.profile.workingHours?.end}
+                {selectedDentist.profile.availableDays
+                  .map((day) => DAY_LABELS[day] || day)
+                  .join(", ")}
+                {" | "}
+                {selectedDentist.profile.workingHours?.start} -{" "}
+                {selectedDentist.profile.workingHours?.end}
               </p>
             </div>
           )}
@@ -216,24 +233,40 @@ const Appointment = () => {
               error={availabilityError}
             >
               <option value="">
-                {availabilityLoading ? 'Memuat slot...' : 'Pilih jam'}
+                {availabilityLoading ? "Memuat slot..." : "Pilih jam"}
               </option>
               {(availability?.slots || []).map((time) => (
-                <option key={time} value={time}>{time}</option>
+                <option key={time} value={time}>
+                  {time}
+                </option>
               ))}
             </Select>
           </div>
 
           {availabilityLoading && (
             <p className="inline-flex items-center gap-2 text-sm text-stone-500">
-              <Loader2 className="h-4 w-4 animate-spin" /> Memeriksa jadwal dokter...
+              <Loader2 className="h-4 w-4 animate-spin" /> Memeriksa jadwal
+              dokter...
             </p>
           )}
-          {availability && !availabilityLoading && availability.slots.length === 0 && (
-            <p className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
-              Dokter tidak praktik atau seluruh slot pada tanggal ini sudah terisi.
-            </p>
-          )}
+          {availability &&
+            !availabilityLoading &&
+            availability.slots.length === 0 && (
+              <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-800/40 dark:bg-amber-900/20">
+                {availability.leaveBlock ? (
+                  <p className="text-sm text-amber-800 dark:text-amber-300">
+                    <strong>Dokter sedang tidak praktek</strong> pada tanggal
+                    ini ({availability.leaveBlock.reason}). Pilih tanggal lain
+                    atau dokter yang berbeda.
+                  </p>
+                ) : (
+                  <p className="text-sm text-amber-800 dark:text-amber-300">
+                    Seluruh slot pada tanggal ini sudah terisi. Silakan pilih
+                    tanggal lain.
+                  </p>
+                )}
+              </div>
+            )}
 
           <Textarea
             label="Keluhan / Catatan (opsional)"
@@ -246,8 +279,15 @@ const Appointment = () => {
 
           {!user && (
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-              Anda perlu <Link to="/login" className="underline font-medium">login</Link> atau{' '}
-              <Link to="/register" className="underline font-medium">register</Link> sebagai pasien untuk menyelesaikan booking.
+              Anda perlu{" "}
+              <Link to="/login" className="underline font-medium">
+                login
+              </Link>{" "}
+              atau{" "}
+              <Link to="/register" className="underline font-medium">
+                register
+              </Link>{" "}
+              sebagai pasien untuk menyelesaikan booking.
             </div>
           )}
 
@@ -256,7 +296,7 @@ const Appointment = () => {
             disabled={submitting || !form.appointmentTime}
             className="btn-primary w-full"
           >
-            {submitting ? 'Mengirim...' : 'Konfirmasi Booking'}
+            {submitting ? "Mengirim..." : "Konfirmasi Booking"}
           </button>
         </form>
       )}
