@@ -94,17 +94,17 @@ const AdminArticles = () => {
       {items.length === 0 ? (
         <EmptyState icon={Newspaper} title="Belum ada artikel" />
       ) : (
-        <div className="card divide-y divide-slate-100">
+        <div className="card divide-y divide-stone-100">
           {items.map((a) => (
             <div key={a._id} className="p-4 flex flex-wrap items-center gap-4 justify-between">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <p className="font-semibold">{a.title}</p>
-                  <span className={`badge ${a.published ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'}`}>
+                  <span className={`badge ${a.published ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-200 text-stone-600'}`}>
                     {a.published ? 'Published' : 'Draft'}
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-stone-500 mt-1">
                   {(a.tags || []).map((t) => `#${t}`).join(' ')} · {formatDate(a.createdAt)}
                 </p>
               </div>

@@ -15,8 +15,8 @@ const statusStyle = {
   paid: 'bg-green-100 text-green-700',
   partial: 'bg-yellow-100 text-yellow-700',
   unpaid: 'bg-red-100 text-red-700',
-  refunded: 'bg-slate-100 text-slate-700',
-  cancelled: 'bg-slate-100 text-slate-500',
+  refunded: 'bg-stone-100 text-stone-700',
+  cancelled: 'bg-stone-100 text-stone-500',
 };
 
 const InvoiceList = ({ isAdmin = false }) => {
@@ -75,7 +75,7 @@ const InvoiceList = ({ isAdmin = false }) => {
       ) : (
         <div className="card overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-left text-xs text-slate-500 uppercase">
+            <thead className="bg-stone-50 text-left text-xs text-stone-500 uppercase">
               <tr>
                 <th className="px-4 py-3">No.</th>
                 <th className="px-4 py-3">Tanggal</th>
@@ -87,13 +87,13 @@ const InvoiceList = ({ isAdmin = false }) => {
                 <th className="px-4 py-3"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-stone-100">
               {list.map((inv) => (
                 <tr key={inv._id}>
                   <td className="px-4 py-3 font-mono text-xs">{inv.invoiceNumber}</td>
                   <td className="px-4 py-3">{formatDate(inv.createdAt)}</td>
                   {isAdmin && <td className="px-4 py-3">{inv.patientId?.name}</td>}
-                  <td className="px-4 py-3 text-slate-600">{inv.appointmentId?.serviceId?.title || '-'}</td>
+                  <td className="px-4 py-3 text-stone-600">{inv.appointmentId?.serviceId?.title || '-'}</td>
                   <td className="px-4 py-3 text-right font-semibold">{formatIDR(inv.total)}</td>
                   <td className="px-4 py-3 text-right">
                     <span>{formatIDR(inv.amountPaid)}</span>
@@ -139,9 +139,9 @@ const InvoiceList = ({ isAdmin = false }) => {
               hint="Isi total pembayaran kumulatif, termasuk DP."
             />
             <label className="block">
-              <span className="block text-sm font-medium text-slate-700 mb-1">Metode Pembayaran</span>
+              <span className="block text-sm font-medium text-stone-700 mb-1">Metode Pembayaran</span>
               <select
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 value={payment.paymentMethod}
                 onChange={(e) => setPayment({ ...payment, paymentMethod: e.target.value })}
               >

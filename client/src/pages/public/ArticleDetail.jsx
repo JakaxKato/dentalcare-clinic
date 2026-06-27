@@ -44,7 +44,7 @@ const ArticleDetail = () => {
         ))}
       </div>
       <h1 className="text-4xl mt-3">{article.title}</h1>
-      <div className="flex items-center gap-3 mt-4 text-sm text-slate-500">
+      <div className="flex items-center gap-3 mt-4 text-sm text-stone-500">
         <span>{article.authorId?.name || settings.clinicName || CLINIC.shortName}</span>
         <span>•</span>
         <span>{formatDate(article.createdAt)}</span>
@@ -54,7 +54,7 @@ const ArticleDetail = () => {
           <img src={article.coverImage} alt={article.title} className="w-full h-full object-cover" />
         </div>
       )}
-      <div className="prose prose-slate max-w-none mt-8 whitespace-pre-line text-slate-700 leading-relaxed">
+      <div className="prose prose-slate max-w-none mt-8 whitespace-pre-line text-stone-700 leading-relaxed">
         {article.content}
       </div>
     </article>

@@ -48,7 +48,7 @@ const DentistDetail = () => {
           <h2 className="text-xl font-bold">{user.name}</h2>
           <p className="mt-1 font-semibold text-brand-700">{profile?.specialization || 'General Dentistry'}</p>
           {profile?.experienceYears > 0 && (
-            <p className="text-sm text-slate-500 mt-1">{profile.experienceYears} tahun pengalaman</p>
+            <p className="text-sm text-stone-500 mt-1">{profile.experienceYears} tahun pengalaman</p>
           )}
           <Link to={`/appointment?dentist=${user._id}`} className="btn-primary w-full mt-5">
             Book Konsultasi
@@ -60,20 +60,20 @@ const DentistDetail = () => {
         {profile?.bio && (
           <div className="card p-6">
             <h3 className="font-semibold mb-2">Tentang Dokter</h3>
-            <p className="text-slate-700 leading-relaxed">{profile.bio}</p>
+            <p className="text-stone-700 leading-relaxed">{profile.bio}</p>
           </div>
         )}
         <div className="grid gap-6 sm:grid-cols-2">
           {profile?.education && (
             <div className="card p-6">
               <h3 className="font-semibold mb-1">Pendidikan</h3>
-              <p className="text-slate-700">{profile.education}</p>
+              <p className="text-stone-700">{profile.education}</p>
             </div>
           )}
           {profile?.consultationFee > 0 && (
             <div className="card p-6">
               <h3 className="font-semibold mb-1">Biaya Konsultasi</h3>
-              <p className="text-slate-700">{formatCurrency(profile.consultationFee)}</p>
+              <p className="text-stone-700">{formatCurrency(profile.consultationFee)}</p>
             </div>
           )}
           {profile?.availableDays && profile.availableDays.length > 0 && (
@@ -89,7 +89,7 @@ const DentistDetail = () => {
           {profile?.workingHours && (
             <div className="card p-6">
               <h3 className="font-semibold mb-1">Jam Praktik</h3>
-              <p className="text-slate-700">
+              <p className="text-stone-700">
                 {profile.workingHours.start} - {profile.workingHours.end}
               </p>
             </div>

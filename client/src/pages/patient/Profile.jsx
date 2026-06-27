@@ -105,12 +105,12 @@ const PatientProfile = () => {
         <div className="grid grid-cols-2 gap-3">
           <Input label="Tanggal Lahir" type="date" name="dateOfBirth" value={form.dateOfBirth} onChange={handle} />
           <label className="block">
-            <span className="block text-sm font-medium text-slate-700 mb-1">Jenis Kelamin</span>
+            <span className="block text-sm font-medium text-stone-700 mb-1">Jenis Kelamin</span>
             <select
               name="gender"
               value={form.gender}
               onChange={handle}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               <option value="">—</option>
               <option value="male">Laki-laki</option>
@@ -119,13 +119,13 @@ const PatientProfile = () => {
           </label>
         </div>
         <label className="block">
-          <span className="block text-sm font-medium text-slate-700 mb-1">Alamat</span>
+          <span className="block text-sm font-medium text-stone-700 mb-1">Alamat</span>
           <textarea
             rows={2}
             name="address"
             value={form.address}
             onChange={handle}
-            className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </label>
         <Input label="URL Avatar (opsional)" name="avatar" value={form.avatar} onChange={handle} />
@@ -134,14 +134,14 @@ const PatientProfile = () => {
 
       <form onSubmit={submitMed} className="card p-6 space-y-4">
         <h3 className="font-semibold">Rekam Medis</h3>
-        <p className="text-xs text-slate-500">Informasi ini membantu dokter memberikan perawatan yang aman.</p>
+        <p className="text-xs text-stone-500">Informasi ini membantu dokter memberikan perawatan yang aman.</p>
         <label className="block">
-          <span className="block text-sm font-medium text-slate-700 mb-1">Golongan Darah</span>
+          <span className="block text-sm font-medium text-stone-700 mb-1">Golongan Darah</span>
           <select
             name="bloodType"
             value={med.bloodType}
             onChange={handleMed}
-            className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           >
             <option value="">—</option>
             {['A', 'B', 'AB', 'O', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map((b) => (
@@ -171,13 +171,13 @@ const PatientProfile = () => {
           placeholder="Metformin 500mg, ..."
         />
         <label className="block">
-          <span className="block text-sm font-medium text-slate-700 mb-1">Catatan Tambahan</span>
+          <span className="block text-sm font-medium text-stone-700 mb-1">Catatan Tambahan</span>
           <textarea
             rows={3}
             name="notes"
             value={med.notes}
             onChange={handleMed}
-            className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </label>
         <button disabled={loading} className="btn-primary">Simpan Rekam Medis</button>
@@ -187,13 +187,13 @@ const PatientProfile = () => {
         <div className="flex items-center justify-between">
           <h3 className="font-semibold">Odontogram Terkini</h3>
           {odontogram.takenAt && (
-            <span className="text-xs text-slate-500">
+            <span className="text-xs text-stone-500">
               Update: {new Date(odontogram.takenAt).toLocaleDateString('id-ID')}
             </span>
           )}
         </div>
         {odontogram.teeth.length === 0 ? (
-          <p className="text-sm text-slate-500">Belum ada data odontogram. Akan diisi oleh dokter saat perawatan.</p>
+          <p className="text-sm text-stone-500">Belum ada data odontogram. Akan diisi oleh dokter saat perawatan.</p>
         ) : (
           <Odontogram value={odontogram.teeth} readOnly />
         )}

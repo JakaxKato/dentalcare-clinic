@@ -42,7 +42,7 @@ const Contact = () => {
               </div>
               <div>
                 <h3 className="font-semibold">{clinicName}</h3>
-                <p className="text-slate-600 text-sm">
+                <p className="text-stone-600 text-sm">
                   {settings.address || CLINIC.address.primary.line}
                 </p>
               </div>
@@ -53,7 +53,7 @@ const Contact = () => {
               </div>
               <div>
                 <h3 className="font-semibold">Telepon / WhatsApp</h3>
-                <p className="text-slate-600 text-sm">
+                <p className="text-stone-600 text-sm">
                   <a
                     href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(`Halo ${clinicName}, saya ingin bertanya.`)}`}
                     target="_blank"
@@ -71,7 +71,7 @@ const Contact = () => {
               </div>
               <div>
                 <h3 className="font-semibold">Jam Operasional</h3>
-                <p className="text-slate-600 text-sm whitespace-pre-line">
+                <p className="text-stone-600 text-sm whitespace-pre-line">
                   {settings.operatingHours || CLINIC.hours.summary}
                 </p>
               </div>
@@ -106,7 +106,7 @@ const Contact = () => {
                     {f.q}
                     <ChevronDown className="w-4 h-4 text-brand-600 group-open:rotate-180 transition" />
                   </summary>
-                  <p className="text-slate-600 text-sm mt-2">{f.a}</p>
+                  <p className="text-stone-600 text-sm mt-2">{f.a}</p>
                 </details>
               ))}
             </div>

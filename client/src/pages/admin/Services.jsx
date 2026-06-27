@@ -100,12 +100,12 @@ const AdminServices = () => {
             <div key={s._id} className="card p-5 flex flex-col">
               <div className="flex justify-between items-start gap-2">
                 <h3 className="font-semibold">{s.title}</h3>
-                <span className={`badge ${s.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'}`}>
+                <span className={`badge ${s.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-200 text-stone-600'}`}>
                   {s.isActive ? 'Aktif' : 'Nonaktif'}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-1">{formatPriceRange(s.priceRange)} · {s.duration} mnt</p>
-              <p className="text-sm text-slate-600 mt-2 line-clamp-3 flex-1">{s.description}</p>
+              <p className="text-xs text-stone-500 mt-1">{formatPriceRange(s.priceRange)} · {s.duration} mnt</p>
+              <p className="text-sm text-stone-600 mt-2 line-clamp-3 flex-1">{s.description}</p>
               <div className="flex gap-2 mt-4">
                 <button onClick={() => openEdit(s)} className="btn-secondary text-xs flex-1">Edit</button>
                 <button onClick={() => remove(s._id)} className="btn-danger text-xs">Hapus</button>

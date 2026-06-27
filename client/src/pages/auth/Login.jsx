@@ -53,7 +53,7 @@ const Login = () => {
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md card p-8">
         <h1 className="text-2xl font-bold text-center">Masuk ke Akun Anda</h1>
-        <p className="text-slate-600 text-sm text-center mt-2">
+        <p className="text-stone-600 text-sm text-center mt-2">
           Selamat datang kembali di {settings.clinicName}!
         </p>
         <form onSubmit={handleSubmit(submit)} className="mt-6 space-y-4" noValidate>
@@ -82,20 +82,20 @@ const Login = () => {
             Lupa password?
           </Link>
         </p>
-        <p className="text-sm text-center text-slate-600 mt-2">
+        <p className="text-sm text-center text-stone-600 mt-2">
           Belum punya akun?{' '}
           <Link to="/register" className="text-brand-600 font-medium hover:underline">
             Daftar
           </Link>
         </p>
-        <div className="mt-6 p-3 bg-slate-50 rounded-lg text-xs text-slate-600">
+        <div className="mt-6 p-3 bg-stone-50 rounded-lg text-xs text-stone-600">
           <p className="font-semibold mb-1">Akun demo untuk preview:</p>
           <ul className="space-y-0.5">
             <li>admin@dentalcare.id / password123 (Admin)</li>
             <li>sarah@dentalcare.id / password123 (Dokter)</li>
             <li>patient@dentalcare.id / password123 (Pasien)</li>
           </ul>
-          <p className="text-[10px] text-slate-400 mt-2 italic">
+          <p className="text-[10px] text-stone-400 mt-2 italic">
             Akun demo hanya untuk preview. Pada produksi, akun dibuat melalui alur resmi klinik.
           </p>
         </div>

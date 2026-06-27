@@ -77,15 +77,15 @@ const DentistAppointments = () => {
       {appts.length === 0 ? (
         <EmptyState icon={CalendarDays} title="Tidak ada appointment" />
       ) : (
-        <div className="card divide-y divide-slate-100">
+        <div className="card divide-y divide-stone-100">
           {appts.map((a) => (
             <div key={a._id} className="p-4 flex flex-wrap items-center gap-3 justify-between">
               <div className="min-w-0 flex-1">
                 <p className="font-semibold">{a.patientId?.name}</p>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-stone-500">
                   {a.serviceId?.title} · {formatDateTime(a.appointmentDate, a.appointmentTime)}
                 </p>
-                {a.complaint && <p className="text-xs text-slate-500 mt-1 italic">"{a.complaint}"</p>}
+                {a.complaint && <p className="text-xs text-stone-500 mt-1 italic">"{a.complaint}"</p>}
               </div>
               <div className="flex items-center gap-2 flex-wrap">
                 <StatusBadge status={a.status} />
@@ -118,7 +118,7 @@ const DentistAppointments = () => {
             {active.complaint && <Info label="Keluhan" value={active.complaint} />}
 
             {active.status === 'confirmed' && (
-              <div className="border-t border-slate-100 pt-4 space-y-3">
+              <div className="border-t border-stone-100 pt-4 space-y-3">
                 <h4 className="font-semibold">Catatan Tindakan</h4>
                 <Textarea label="Diagnosis" value={notes.diagnosis} onChange={(e) => setNotes({ ...notes, diagnosis: e.target.value })} />
                 <Textarea label="Tindakan Dilakukan" value={notes.treatmentNotes} onChange={(e) => setNotes({ ...notes, treatmentNotes: e.target.value })} />
@@ -133,7 +133,7 @@ const DentistAppointments = () => {
             )}
 
             {(active.diagnosis || active.treatmentNotes || active.recommendation) && active.status === 'completed' && (
-              <div className="border-t border-slate-100 pt-4 space-y-2">
+              <div className="border-t border-stone-100 pt-4 space-y-2">
                 <Info label="Diagnosis" value={active.diagnosis} />
                 <Info label="Tindakan" value={active.treatmentNotes} />
                 <Info label="Rekomendasi" value={active.recommendation} />
@@ -148,7 +148,7 @@ const DentistAppointments = () => {
 
 const Info = ({ label, value }) => (
   <div>
-    <p className="text-xs text-slate-500">{label}</p>
+    <p className="text-xs text-stone-500">{label}</p>
     <p className="font-medium whitespace-pre-line">{value || '-'}</p>
   </div>
 );

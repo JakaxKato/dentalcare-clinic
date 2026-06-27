@@ -11,7 +11,7 @@ const StarRow = ({ rating = 0 }) => (
     {[1, 2, 3, 4, 5].map((n) => (
       <Star
         key={n}
-        className={`w-4 h-4 ${n <= rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`}
+        className={`w-4 h-4 ${n <= rating ? 'fill-amber-400 text-amber-400' : 'text-stone-300'}`}
       />
     ))}
   </div>
@@ -71,7 +71,7 @@ const AdminTestimonials = () => {
                   {t.isApproved ? 'Disetujui' : 'Pending'}
                 </span>
               </div>
-              <p className="text-sm text-slate-700 mt-3 italic">"{t.message}"</p>
+              <p className="text-sm text-stone-700 mt-3 italic">"{t.message}"</p>
               <div className="flex gap-2 mt-4">
                 <button onClick={() => toggle(t)} className="btn-secondary text-xs flex-1">
                   {t.isApproved ? 'Sembunyikan' : 'Setujui'}

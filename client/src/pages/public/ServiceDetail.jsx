@@ -46,15 +46,15 @@ const ServiceDetail = () => {
         <div className="mt-3 inline-flex rounded-full bg-brand-100 px-3 py-1 text-sm font-semibold text-brand-800">
           Durasi sesi: {service.duration} menit
         </div>
-        <div className="prose prose-slate mt-6 max-w-none whitespace-pre-line leading-relaxed text-slate-700">
+        <div className="prose prose-slate mt-6 max-w-none whitespace-pre-line leading-relaxed text-stone-700">
           {service.description}
         </div>
       </div>
       <aside className="lg:col-span-1">
         <div className="card p-6 sticky top-24">
-          <p className="text-sm text-slate-500">Estimasi Biaya</p>
+          <p className="text-sm text-stone-500">Estimasi Biaya</p>
           <p className="mt-1 text-2xl font-extrabold text-brand-800">{formatPriceRange(service.priceRange)}</p>
-          <p className="mt-1 text-xs text-slate-500">*Konfirmasi akhir setelah pemeriksaan dokter.</p>
+          <p className="mt-1 text-xs text-stone-500">*Konfirmasi akhir setelah pemeriksaan dokter.</p>
           <Link to={`/appointment?service=${service._id}`} className="btn-primary mt-5 w-full">
             Book Layanan Ini
           </Link>

@@ -28,7 +28,7 @@ const PrescriptionPrint = () => {
   const clinicName = import.meta.env.VITE_CLINIC_NAME || 'DentalCare Clinic';
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 p-6 sm:p-10 max-w-2xl mx-auto print:p-4">
+    <div className="min-h-screen bg-white text-stone-900 p-6 sm:p-10 max-w-2xl mx-auto print:p-4">
       <style>{`@media print { .no-print { display: none; } body { background: white; } }`}</style>
 
       <div className="no-print mb-4 flex justify-end">
@@ -37,41 +37,41 @@ const PrescriptionPrint = () => {
         </button>
       </div>
 
-      <div className="border-b-2 border-slate-300 pb-4 mb-4">
+      <div className="border-b-2 border-stone-300 pb-4 mb-4">
         <h1 className="text-2xl font-bold">{clinicName}</h1>
-        <p className="text-sm text-slate-600">drg. {dentist.name}</p>
+        <p className="text-sm text-stone-600">drg. {dentist.name}</p>
       </div>
 
       <h2 className="text-center text-lg font-bold tracking-wide mb-6">RESEP / PRESCRIPTION</h2>
 
       <div className="grid grid-cols-2 gap-4 text-sm mb-6">
         <div>
-          <p className="text-slate-500">Pasien</p>
+          <p className="text-stone-500">Pasien</p>
           <p className="font-semibold">{patient.name}</p>
-          {patient.phone && <p className="text-xs text-slate-600">{patient.phone}</p>}
+          {patient.phone && <p className="text-xs text-stone-600">{patient.phone}</p>}
         </div>
         <div className="text-right">
-          <p className="text-slate-500">Tanggal</p>
+          <p className="text-stone-500">Tanggal</p>
           <p className="font-semibold">{formatDate(data.createdAt)}</p>
         </div>
       </div>
 
       {appt?.serviceId?.title && (
-        <p className="text-sm mb-3"><span className="text-slate-500">Layanan:</span> {appt.serviceId.title}</p>
+        <p className="text-sm mb-3"><span className="text-stone-500">Layanan:</span> {appt.serviceId.title}</p>
       )}
       {appt?.diagnosis && (
-        <p className="text-sm mb-4"><span className="text-slate-500">Diagnosis:</span> {appt.diagnosis}</p>
+        <p className="text-sm mb-4"><span className="text-stone-500">Diagnosis:</span> {appt.diagnosis}</p>
       )}
 
-      <div className="border-t border-slate-200 pt-4">
-        <Pill className="w-7 h-7 mb-3 text-slate-700" />
+      <div className="border-t border-stone-200 pt-4">
+        <Pill className="w-7 h-7 mb-3 text-stone-700" />
         <ol className="space-y-4 list-decimal list-inside">
           {data.items.map((it, i) => (
             <li key={i} className="text-sm">
               <span className="font-semibold">{it.drugName}</span>
-              <div className="ml-6 mt-1 text-slate-700 space-y-0.5">
+              <div className="ml-6 mt-1 text-stone-700 space-y-0.5">
                 {it.dosage && <p>S. {it.dosage} {it.frequency && `, ${it.frequency}`} {it.duration && `, selama ${it.duration}`}</p>}
-                {it.instructions && <p className="italic text-slate-600">— {it.instructions}</p>}
+                {it.instructions && <p className="italic text-stone-600">— {it.instructions}</p>}
               </div>
             </li>
           ))}
@@ -79,14 +79,14 @@ const PrescriptionPrint = () => {
       </div>
 
       {data.generalNotes && (
-        <div className="border-t border-slate-200 mt-6 pt-4 text-sm">
-          <p className="text-slate-500 mb-1">Catatan:</p>
+        <div className="border-t border-stone-200 mt-6 pt-4 text-sm">
+          <p className="text-stone-500 mb-1">Catatan:</p>
           <p className="whitespace-pre-line">{data.generalNotes}</p>
         </div>
       )}
 
       <div className="mt-12 text-right text-sm">
-        <p className="text-slate-500">Hormat kami,</p>
+        <p className="text-stone-500">Hormat kami,</p>
         <div className="h-16" />
         <p className="font-semibold underline">drg. {dentist.name}</p>
       </div>

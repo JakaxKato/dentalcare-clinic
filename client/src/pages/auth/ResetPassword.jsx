@@ -38,7 +38,7 @@ const ResetPassword = () => {
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md card p-8">
         <h1 className="text-2xl font-bold text-center">Reset Password</h1>
-        <p className="text-slate-600 text-sm text-center mt-2">Masukkan password baru Anda.</p>
+        <p className="text-stone-600 text-sm text-center mt-2">Masukkan password baru Anda.</p>
         <form onSubmit={submit} className="mt-6 space-y-4">
           <Input
             label="Password baru"
@@ -64,7 +64,7 @@ const ResetPassword = () => {
             {loading ? 'Memproses...' : 'Simpan Password Baru'}
           </button>
         </form>
-        <p className="text-sm text-center text-slate-600 mt-5">
+        <p className="text-sm text-center text-stone-600 mt-5">
           <Link to="/login" className="text-brand-600 font-medium hover:underline">Kembali ke login</Link>
         </p>
       </div>

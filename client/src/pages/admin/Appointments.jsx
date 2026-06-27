@@ -237,7 +237,7 @@ const AdminAppointments = () => {
       ) : (
         <div className="card overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-slate-600">
+            <thead className="bg-stone-50 text-stone-600">
               <tr>
                 <th className="px-3 py-3 text-left">Jadwal</th>
                 <th className="px-3 py-3 text-left">Pasien</th>
@@ -247,7 +247,7 @@ const AdminAppointments = () => {
                 <th className="px-3 py-3 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-stone-100">
               {appts.map((a) => (
                 <tr key={a._id}>
                   <td className="px-3 py-3 whitespace-nowrap">{formatDateTime(a.appointmentDate, a.appointmentTime)}</td>
@@ -334,7 +334,7 @@ const AdminAppointments = () => {
 
 const Info = ({ label, value }) => (
   <div>
-    <p className="text-xs text-slate-500">{label}</p>
+    <p className="text-xs text-stone-500">{label}</p>
     <p className="font-medium whitespace-pre-line capitalize-first">{value || '-'}</p>
   </div>
 );

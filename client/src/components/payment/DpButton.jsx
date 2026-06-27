@@ -90,7 +90,7 @@ const DpButton = ({ appointmentId, onPaid }) => {
   };
 
   if (loading) {
-    return <span className="text-xs text-slate-400 inline-flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Memuat…</span>;
+    return <span className="text-xs text-stone-400 inline-flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Memuat…</span>;
   }
   if (!info) return null;
 

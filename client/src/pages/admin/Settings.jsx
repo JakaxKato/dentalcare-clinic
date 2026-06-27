@@ -106,7 +106,7 @@ const AdminSettings = () => {
     <form onSubmit={handleSubmit(submit)} className="space-y-6 max-w-4xl" noValidate>
       <div>
         <h1 className="text-2xl font-bold">Pengaturan Klinik</h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-stone-500">
           Ubah identitas, warna, dan informasi kontak tanpa mengedit source code.
         </p>
       </div>
@@ -161,7 +161,7 @@ const AdminSettings = () => {
                     shouldValidate: true,
                   })
                 }
-                className="h-10 w-14 rounded border border-slate-300 bg-white cursor-pointer"
+                className="h-10 w-14 rounded border border-stone-300 bg-white cursor-pointer"
               />
               <Input
                 className="flex-1"
@@ -184,7 +184,7 @@ const AdminSettings = () => {
                     shouldValidate: true,
                   })
                 }
-                className="h-10 w-14 rounded border border-slate-300 bg-white cursor-pointer"
+                className="h-10 w-14 rounded border border-stone-300 bg-white cursor-pointer"
               />
               <Input
                 className="flex-1"

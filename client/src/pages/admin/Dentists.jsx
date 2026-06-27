@@ -104,7 +104,7 @@ const AdminDentists = () => {
       ) : (
         <div className="card overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-slate-600">
+            <thead className="bg-stone-50 text-stone-600">
               <tr>
                 <th className="px-4 py-3 text-left">Nama</th>
                 <th className="px-4 py-3 text-left">Spesialisasi</th>
@@ -113,14 +113,14 @@ const AdminDentists = () => {
                 <th className="px-4 py-3 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-stone-100">
               {items.map((d) => (
                 <tr key={d.user._id}>
                   <td className="px-4 py-3 font-medium">{d.user.name}</td>
-                  <td className="px-4 py-3 text-slate-600">{d.profile?.specialization || '-'}</td>
-                  <td className="px-4 py-3 text-slate-600">{d.user.email}</td>
+                  <td className="px-4 py-3 text-stone-600">{d.profile?.specialization || '-'}</td>
+                  <td className="px-4 py-3 text-stone-600">{d.user.email}</td>
                   <td className="px-4 py-3">
-                    <span className={`badge ${d.user.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'}`}>
+                    <span className={`badge ${d.user.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-200 text-stone-600'}`}>
                       {d.user.isActive ? 'Aktif' : 'Nonaktif'}
                     </span>
                   </td>

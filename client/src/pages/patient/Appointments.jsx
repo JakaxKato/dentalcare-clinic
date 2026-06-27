@@ -55,7 +55,7 @@ const PatientAppointments = () => {
             key={s}
             onClick={() => setFilter(s)}
             className={`px-3 py-1.5 rounded-full text-sm font-medium ${
-              filter === s ? 'bg-brand-600 text-white' : 'bg-white text-slate-700 border border-slate-200'
+              filter === s ? 'bg-brand-600 text-white' : 'bg-white text-stone-700 border border-stone-200'
             }`}
           >
             {s === 'all' ? 'Semua' : s}
@@ -66,15 +66,15 @@ const PatientAppointments = () => {
       {filtered.length === 0 ? (
         <EmptyState icon={CalendarDays} title="Tidak ada appointment" description="Coba filter lain atau buat booking baru." />
       ) : (
-        <div className="card divide-y divide-slate-100">
+        <div className="card divide-y divide-stone-100">
           {filtered.map((a) => (
             <div key={a._id} className="p-4 flex flex-wrap items-center gap-4 justify-between">
               <div className="min-w-0 flex-1">
                 <p className="font-semibold">{a.serviceId?.title || '-'}</p>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-stone-500">
                   {a.dentistId?.name || '-'} · {formatDateTime(a.appointmentDate, a.appointmentTime)}
                 </p>
-                {a.complaint && <p className="text-xs text-slate-500 mt-1">"{a.complaint}"</p>}
+                {a.complaint && <p className="text-xs text-stone-500 mt-1">"{a.complaint}"</p>}
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <StatusBadge status={a.status} />
@@ -102,7 +102,7 @@ const PatientAppointments = () => {
               <Info label="Dokter" value={selected.dentistId?.name} />
               <Info label="Tanggal" value={formatDateTime(selected.appointmentDate, selected.appointmentTime)} />
               <div>
-                <p className="text-xs text-slate-500">Status</p>
+                <p className="text-xs text-stone-500">Status</p>
                 <StatusBadge status={selected.status} />
               </div>
             </div>
@@ -119,7 +119,7 @@ const PatientAppointments = () => {
 
 const Info = ({ label, value }) => (
   <div>
-    <p className="text-xs text-slate-500">{label}</p>
+    <p className="text-xs text-stone-500">{label}</p>
     <p className="font-medium">{value || '-'}</p>
   </div>
 );

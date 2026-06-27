@@ -42,7 +42,7 @@ export const ToastProvider = ({ children }) => {
                 ? 'bg-rose-600 text-white'
                 : t.type === 'warning'
                 ? 'bg-amber-500 text-white'
-                : 'bg-slate-800 text-white'
+                : 'bg-stone-800 text-white'
             }`}
           >
             {t.message}

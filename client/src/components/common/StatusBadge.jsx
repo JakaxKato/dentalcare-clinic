@@ -17,7 +17,7 @@ const StatusBadge = ({ status }) => {
       ? 'badge-completed'
       : status === 'cancelled'
       ? 'badge-cancelled'
-      : 'badge bg-slate-100 text-slate-700';
+      : 'badge bg-stone-100 text-stone-700';
   return <span className={className}>{labels[status] || status}</span>;
 };
 

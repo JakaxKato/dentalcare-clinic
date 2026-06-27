@@ -143,7 +143,7 @@ const Appointment = () => {
             <CheckCircle2 className="h-9 w-9" />
           </div>
           <h2 className="mt-4 text-2xl">Booking Berhasil!</h2>
-          <p className="mt-2 text-slate-600">
+          <p className="mt-2 text-stone-600">
             Appointment Anda akan dikonfirmasi oleh tim klinik dalam 1x24 jam. Periksa status di dashboard.
           </p>
           <div className="mt-6 flex justify-center gap-3">
@@ -225,7 +225,7 @@ const Appointment = () => {
           </div>
 
           {availabilityLoading && (
-            <p className="inline-flex items-center gap-2 text-sm text-slate-500">
+            <p className="inline-flex items-center gap-2 text-sm text-stone-500">
               <Loader2 className="h-4 w-4 animate-spin" /> Memeriksa jadwal dokter...
             </p>
           )}

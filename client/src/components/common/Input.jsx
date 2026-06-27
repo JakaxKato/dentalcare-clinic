@@ -17,7 +17,7 @@ export const Input = forwardRef(function Input(
         className={`input ${error ? 'border-rose-400 focus:ring-rose-200' : ''}`}
         {...props}
       />
-      {hint && !error && <p className="text-xs text-slate-500 mt-1">{hint}</p>}
+      {hint && !error && <p className="text-xs text-stone-500 mt-1">{hint}</p>}
       {error && <p id={`${inputId}-error`} className="text-xs text-rose-600 mt-1">{error}</p>}
     </div>
   );
@@ -41,7 +41,7 @@ export const Textarea = forwardRef(function Textarea(
         className={`input resize-y ${error ? 'border-rose-400 focus:ring-rose-200' : ''}`}
         {...props}
       />
-      {hint && !error && <p className="text-xs text-slate-500 mt-1">{hint}</p>}
+      {hint && !error && <p className="text-xs text-stone-500 mt-1">{hint}</p>}
       {error && <p id={`${inputId}-error`} className="text-xs text-rose-600 mt-1">{error}</p>}
     </div>
   );

@@ -21,17 +21,17 @@ class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
+        <div className="min-h-screen flex items-center justify-center bg-stone-50 px-4">
           <div className="text-center max-w-md">
             <div className="text-6xl mb-4">😵</div>
-            <h1 className="text-2xl font-bold text-slate-800 mb-2">
+            <h1 className="text-2xl font-bold text-stone-800 mb-2">
               Oops! Terjadi Kesalahan
             </h1>
-            <p className="text-slate-600 mb-6">
+            <p className="text-stone-600 mb-6">
               Aplikasi mengalami error yang tidak terduga. Silakan muat ulang halaman.
             </p>
             {import.meta.env.DEV && this.state.error && (
-              <pre className="text-left text-xs bg-slate-100 rounded-lg p-4 mb-6 overflow-auto max-h-40 text-rose-600">
+              <pre className="text-left text-xs bg-stone-100 rounded-lg p-4 mb-6 overflow-auto max-h-40 text-rose-600">
                 {this.state.error.toString()}
               </pre>
             )}

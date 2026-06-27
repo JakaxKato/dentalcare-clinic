@@ -194,24 +194,24 @@ const DentistTreatment = () => {
     <div className="space-y-4 max-w-5xl">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <button onClick={() => navigate(-1)} className="text-sm text-slate-500 hover:text-slate-700 inline-flex items-center gap-1">
+          <button onClick={() => navigate(-1)} className="text-sm text-stone-500 hover:text-stone-700 inline-flex items-center gap-1">
             <ArrowLeft className="w-4 h-4" /> Kembali
           </button>
           <h2 className="text-2xl font-bold mt-1">Treatment — {appt.patientId?.name}</h2>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-stone-500">
             {appt.serviceId?.title} · {formatDateTime(appt.appointmentDate, appt.appointmentTime)}
           </p>
         </div>
         <StatusBadge status={appt.status} />
       </div>
 
-      <div className="flex gap-1 border-b border-slate-200">
+      <div className="flex gap-1 border-b border-stone-200">
         {tabs.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
-              tab === t.key ? 'border-brand-600 text-brand-700' : 'border-transparent text-slate-500 hover:text-slate-700'
+              tab === t.key ? 'border-brand-600 text-brand-700' : 'border-transparent text-stone-500 hover:text-stone-700'
             }`}
           >
             {t.label}
@@ -230,13 +230,13 @@ const DentistTreatment = () => {
           </div>
 
           {appt.patientId?.medicalHistory && (
-            <div className="border-t border-slate-100 pt-4">
+            <div className="border-t border-stone-100 pt-4">
               <h4 className="font-semibold text-sm mb-2">Rekam Medis Pasien</h4>
               <MedicalHistoryView mh={appt.patientId.medicalHistory} />
             </div>
           )}
 
-          <div className="border-t border-slate-100 pt-4 space-y-3">
+          <div className="border-t border-stone-100 pt-4 space-y-3">
             <h4 className="font-semibold">Catatan Tindakan</h4>
             <Textarea label="Diagnosis" value={notes.diagnosis} onChange={(e) => setNotes({ ...notes, diagnosis: e.target.value })} />
             <Textarea label="Tindakan Dilakukan" value={notes.treatmentNotes} onChange={(e) => setNotes({ ...notes, treatmentNotes: e.target.value })} />
@@ -246,7 +246,7 @@ const DentistTreatment = () => {
                 {saving ? 'Menyimpan...' : 'Simpan & Tandai Selesai'}
               </button>
             ) : (
-              <p className="text-xs text-slate-500">Catatan dapat disimpan saat status appointment <em>confirmed</em>.</p>
+              <p className="text-xs text-stone-500">Catatan dapat disimpan saat status appointment <em>confirmed</em>.</p>
             )}
           </div>
         </div>
@@ -254,7 +254,7 @@ const DentistTreatment = () => {
 
       {tab === 'odontogram' && (
         <div className="card p-6 space-y-4">
-          <p className="text-sm text-slate-600">Klik gigi untuk menandai kondisi. Bisa pilih lebih dari satu.</p>
+          <p className="text-sm text-stone-600">Klik gigi untuk menandai kondisi. Bisa pilih lebih dari satu.</p>
           <Odontogram value={odontogram} onChange={setOdontogram} />
           <button onClick={saveOdontogram} disabled={saving} className="btn-primary">
             {saving ? 'Menyimpan...' : 'Simpan Odontogram'}
@@ -289,7 +289,7 @@ const DentistTreatment = () => {
 
 const Info = ({ label, value, className = '' }) => (
   <div className={className}>
-    <p className="text-xs text-slate-500">{label}</p>
+    <p className="text-xs text-stone-500">{label}</p>
     <p className="font-medium whitespace-pre-line">{value || '-'}</p>
   </div>
 );
@@ -303,18 +303,18 @@ const MedicalHistoryView = ({ mh }) => {
   ].filter(([, v]) => v && v.length > 0);
 
   if (items.length === 0 && !mh.notes) {
-    return <p className="text-sm text-slate-500 italic">Pasien belum mengisi rekam medis.</p>;
+    return <p className="text-sm text-stone-500 italic">Pasien belum mengisi rekam medis.</p>;
   }
 
   return (
     <div className="space-y-1.5 text-sm">
       {items.map(([k, v]) => (
         <div key={k} className="flex gap-2">
-          <span className="text-slate-500 min-w-[120px]">{k}:</span>
+          <span className="text-stone-500 min-w-[120px]">{k}:</span>
           <span className="font-medium">{v}</span>
         </div>
       ))}
-      {mh.notes && <p className="text-xs text-slate-600 italic mt-2">{mh.notes}</p>}
+      {mh.notes && <p className="text-xs text-stone-600 italic mt-2">{mh.notes}</p>}
     </div>
   );
 };
@@ -336,7 +336,7 @@ const PrescriptionEditor = ({ draft, setDraft, existing, onSave, saving, patient
       <div className="flex justify-between items-start gap-2">
         <div>
           <h3 className="font-semibold">Resep Obat</h3>
-          <p className="text-sm text-slate-500">Untuk {patientName}</p>
+          <p className="text-sm text-stone-500">Untuk {patientName}</p>
         </div>
         {existing && (
           <Link to={`/print/prescription/${existing._id}`} target="_blank" className="btn-ghost text-sm inline-flex items-center gap-1.5">
@@ -347,9 +347,9 @@ const PrescriptionEditor = ({ draft, setDraft, existing, onSave, saving, patient
 
       <div className="space-y-3">
         {draft.items.map((it, i) => (
-          <div key={i} className="border border-slate-200 rounded-lg p-3 space-y-2 bg-slate-50">
+          <div key={i} className="border border-stone-200 rounded-lg p-3 space-y-2 bg-stone-50">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-slate-600">Obat #{i + 1}</span>
+              <span className="text-xs font-medium text-stone-600">Obat #{i + 1}</span>
               {draft.items.length > 1 && (
                 <button onClick={() => removeItem(i)} className="text-xs text-red-600 hover:underline">Hapus</button>
               )}
@@ -363,7 +363,7 @@ const PrescriptionEditor = ({ draft, setDraft, existing, onSave, saving, patient
             <Input label="Petunjuk Pakai" value={it.instructions} onChange={(e) => updateItem(i, 'instructions', e.target.value)} placeholder="Setelah makan" />
           </div>
         ))}
-        <button onClick={addItem} className="btn-ghost text-sm w-full border border-dashed border-slate-300 inline-flex items-center justify-center gap-1.5">
+        <button onClick={addItem} className="btn-ghost text-sm w-full border border-dashed border-stone-300 inline-flex items-center justify-center gap-1.5">
           <Plus className="w-4 h-4" /> Tambah Obat
         </button>
       </div>
@@ -417,7 +417,7 @@ const InvoiceEditor = ({ draft, setDraft, existing, onSave, saving }) => {
         <div>
           <h3 className="font-semibold">Invoice</h3>
           {existing && (
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-stone-500">
               {existing.invoiceNumber} · <span className={
                 existing.paymentStatus === 'paid' ? 'text-green-600' :
                 existing.paymentStatus === 'partial' ? 'text-yellow-600' : 'text-red-600'
@@ -449,7 +449,7 @@ const InvoiceEditor = ({ draft, setDraft, existing, onSave, saving }) => {
             </button>
           </div>
         ))}
-        <button onClick={addItem} className="btn-ghost text-sm w-full border border-dashed border-slate-300 inline-flex items-center justify-center gap-1.5">
+        <button onClick={addItem} className="btn-ghost text-sm w-full border border-dashed border-stone-300 inline-flex items-center justify-center gap-1.5">
           <Plus className="w-4 h-4" /> Tambah Item
         </button>
       </div>
@@ -459,11 +459,11 @@ const InvoiceEditor = ({ draft, setDraft, existing, onSave, saving }) => {
         <Input label="Tax (%)" type="number" min="0" max="100" value={draft.taxRate} onChange={(e) => setDraft({ ...draft, taxRate: e.target.value })} />
       </div>
 
-      <div className="bg-slate-50 rounded-lg p-4 space-y-1 text-sm">
+      <div className="bg-stone-50 rounded-lg p-4 space-y-1 text-sm">
         <div className="flex justify-between"><span>Subtotal</span><span>{formatIDR(totals.subtotal)}</span></div>
         {draft.discount > 0 && <div className="flex justify-between"><span>Diskon</span><span>- {formatIDR(draft.discount)}</span></div>}
         {totals.tax > 0 && <div className="flex justify-between"><span>Tax ({draft.taxRate}%)</span><span>{formatIDR(totals.tax)}</span></div>}
-        <div className="flex justify-between font-bold text-base border-t border-slate-200 pt-2 mt-2">
+        <div className="flex justify-between font-bold text-base border-t border-stone-200 pt-2 mt-2">
           <span>Total</span><span>{formatIDR(totals.total)}</span>
         </div>
         {existing?.downPaymentApplied > 0 && (

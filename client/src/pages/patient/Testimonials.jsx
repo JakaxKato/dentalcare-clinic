@@ -19,7 +19,7 @@ const StarPicker = ({ value, onChange }) => (
         aria-label={`${n} star${n > 1 ? 's' : ''}`}
       >
         <Star
-          className={`w-7 h-7 ${n <= value ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`}
+          className={`w-7 h-7 ${n <= value ? 'fill-amber-400 text-amber-400' : 'text-stone-300'}`}
         />
       </button>
     ))}
@@ -31,7 +31,7 @@ const StarRow = ({ rating = 0 }) => (
     {[1, 2, 3, 4, 5].map((n) => (
       <Star
         key={n}
-        className={`w-5 h-5 ${n <= rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`}
+        className={`w-5 h-5 ${n <= rating ? 'fill-amber-400 text-amber-400' : 'text-stone-300'}`}
       />
     ))}
   </div>
@@ -89,7 +89,7 @@ const PatientTestimonials = () => {
     <div className="space-y-6 max-w-3xl">
       <div>
         <h2 className="text-2xl font-bold">Testimoni Saya</h2>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-stone-500 mt-1">
           Bagikan pengalaman Anda di klinik kami. Testimoni akan tampil di beranda setelah disetujui admin.
         </p>
       </div>
@@ -108,7 +108,7 @@ const PatientTestimonials = () => {
           onChange={(e) => setMessage(e.target.value)}
           maxLength={500}
         />
-        <p className="text-xs text-slate-400">{message.length}/500</p>
+        <p className="text-xs text-stone-400">{message.length}/500</p>
         <button type="submit" disabled={submitting} className="btn-primary">
           {submitting ? 'Mengirim...' : 'Kirim Testimoni'}
         </button>
@@ -127,8 +127,8 @@ const PatientTestimonials = () => {
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
                     <StarRow rating={t.rating} />
-                    <p className="text-sm text-slate-700 italic mt-2">"{t.message}"</p>
-                    <p className="text-xs text-slate-400 mt-3">
+                    <p className="text-sm text-stone-700 italic mt-2">"{t.message}"</p>
+                    <p className="text-xs text-stone-400 mt-3">
                       Dikirim {formatDate(t.createdAt)}
                     </p>
                   </div>

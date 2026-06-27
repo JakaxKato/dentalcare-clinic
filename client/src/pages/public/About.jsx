@@ -30,7 +30,7 @@ const About = () => {
                 <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-800">
                   <Check className="h-3.5 w-3.5" strokeWidth={3} />
                 </span>
-                <span className="text-slate-700">{point}</span>
+                <span className="text-stone-700">{point}</span>
               </li>
             ))}
           </ul>
@@ -64,7 +64,7 @@ const About = () => {
         ].map((item) => (
           <div key={item.title} className="card p-6">
             <h3 className="text-xl font-bold text-brand-800">{item.title}</h3>
-            <p className="mt-2 text-slate-600">{item.description}</p>
+            <p className="mt-2 text-stone-600">{item.description}</p>
           </div>
         ))}
       </section>
@@ -73,10 +73,10 @@ const About = () => {
         <h2 className="section-heading mb-8 text-center">Lokasi Klinik</h2>
         <div className="card mx-auto max-w-2xl p-6 text-center">
           <h3 className="text-lg font-bold text-brand-800">{clinicName}</h3>
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="mt-2 text-sm text-stone-600">
             {settings.address || CLINIC.address.primary.line}
           </p>
-          <p className="text-slate-500 text-xs mt-3 whitespace-pre-line">{hours}</p>
+          <p className="text-stone-500 text-xs mt-3 whitespace-pre-line">{hours}</p>
         </div>
       </section>
     </div>

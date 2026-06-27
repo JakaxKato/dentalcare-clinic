@@ -28,7 +28,7 @@ const ForgotPassword = () => {
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md card p-8">
         <h1 className="text-2xl font-bold text-center">Lupa Password</h1>
-        <p className="text-slate-600 text-sm text-center mt-2">
+        <p className="text-stone-600 text-sm text-center mt-2">
           Masukkan email Anda. Kami akan mengirim tautan reset jika email terdaftar.
         </p>
 
@@ -55,7 +55,7 @@ const ForgotPassword = () => {
           </form>
         )}
 
-        <p className="text-sm text-center text-slate-600 mt-5">
+        <p className="text-sm text-center text-stone-600 mt-5">
           <Link to="/login" className="text-brand-600 font-medium hover:underline">Kembali ke login</Link>
         </p>
       </div>

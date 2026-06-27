@@ -28,11 +28,11 @@ const PatientPrescriptions = () => {
             <div key={p._id} className="card p-4 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="font-semibold">{formatDate(p.createdAt)}</p>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-stone-500">
                   drg. {p.dentistId?.name} · {p.items.length} obat
                 </p>
                 {p.appointmentId?.serviceId?.title && (
-                  <p className="text-xs text-slate-500 mt-1">{p.appointmentId.serviceId.title}</p>
+                  <p className="text-xs text-stone-500 mt-1">{p.appointmentId.serviceId.title}</p>
                 )}
               </div>
               <Link to={`/print/prescription/${p._id}`} target="_blank" className="btn-ghost text-sm inline-flex items-center gap-1.5">
