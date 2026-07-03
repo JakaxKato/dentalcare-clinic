@@ -1,4 +1,4 @@
-const StatCard = ({ label, value, icon, trend }) => (
+const StatCard = ({ label, value, icon }) => (
   <div className="card p-5 flex items-center gap-4">
     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400">
       {icon}

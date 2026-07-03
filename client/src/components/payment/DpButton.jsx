@@ -44,7 +44,7 @@ const DpButton = ({ appointmentId, onPaid }) => {
       const data = await paymentService.getDpStatus(appointmentId);
       setInfo(data);
     } catch (err) {
-      console.error(err);
+      toast.error(extractMessage(err, 'Gagal memuat status DP'));
     } finally {
       setLoading(false);
     }

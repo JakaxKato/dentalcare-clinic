@@ -48,7 +48,14 @@ export const AuthProvider = ({ children }) => {
     return u;
   };
 
-  const logout = () => persist(null, null);
+  const logout = useCallback(() => persist(null, null), [persist]);
+
+  // Listen for 401 interceptor events
+  useEffect(() => {
+    const handler = () => logout();
+    window.addEventListener('auth:unauthorized', handler);
+    return () => window.removeEventListener('auth:unauthorized', handler);
+  }, [logout]);
 
   const updateUser = (u) => persist(u);
 

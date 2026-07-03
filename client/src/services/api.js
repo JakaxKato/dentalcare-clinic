@@ -20,7 +20,7 @@ api.interceptors.response.use(
       if (!path.startsWith('/login') && !path.startsWith('/register')) {
         localStorage.removeItem('dc_token');
         localStorage.removeItem('dc_user');
-        window.location.href = '/login';
+        window.dispatchEvent(new CustomEvent('auth:unauthorized'));
       }
     }
     return Promise.reject(err);

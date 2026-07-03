@@ -28,7 +28,11 @@ const InvoiceList = ({ isAdmin = false }) => {
 
   const load = () => {
     setLoading(true);
-    invoiceService.list().then(setList).finally(() => setLoading(false));
+    invoiceService
+      .list()
+      .then(setList)
+      .catch((err) => toast.error(extractMessage(err, 'Gagal memuat invoice')))
+      .finally(() => setLoading(false));
   };
 
   useEffect(load, []);

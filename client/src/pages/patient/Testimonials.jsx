@@ -50,7 +50,10 @@ const PatientTestimonials = () => {
     testimonialService
       .mine()
       .then(setItems)
-      .catch(() => setItems([]))
+      .catch((err) => {
+        toast.error(extractMessage(err, 'Gagal memuat testimoni'));
+        setItems([]);
+      })
       .finally(() => setLoading(false));
   };
 

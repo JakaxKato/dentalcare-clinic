@@ -383,6 +383,7 @@ const PrescriptionEditor = ({ draft, setDraft, existing, onSave, saving, patient
 const formatIDR = (n) => 'Rp ' + Number(n || 0).toLocaleString('id-ID');
 
 const InvoiceEditor = ({ draft, setDraft, existing, onSave, saving }) => {
+  const toast = useToast();
   const updateItem = (i, key, val) => {
     const items = [...draft.items];
     items[i] = { ...items[i], [key]: val };
@@ -406,8 +407,7 @@ const InvoiceEditor = ({ draft, setDraft, existing, onSave, saving }) => {
     try {
       await invoiceService.downloadPdf(existing._id, `${existing.invoiceNumber}.pdf`);
     } catch (err) {
-      // toast can be added here if injected
-      console.error(err);
+      toast.error('Gagal mengunduh PDF invoice');
     }
   };
 

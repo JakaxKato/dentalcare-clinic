@@ -35,8 +35,8 @@ const DashboardLayout = ({ navItems = [], title = "Dashboard" }) => {
     <div className="min-h-screen bg-stone-50 dark:bg-[#0c0a09] flex">
       <aside
         className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white dark:bg-stone-900 border-r border-stone-200 dark:border-stone-800 transform transition-transform ${
-          sidebarOpen ? "transtone-x-0" : "-transtone-x-full"
-        } lg:transtone-x-0 flex flex-col`}
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:translate-x-0 flex flex-col`}
       >
         <div className="h-16 flex items-center justify-between px-5 border-b border-stone-100 dark:border-stone-800">
           <Link to="/" className="flex items-center gap-2">

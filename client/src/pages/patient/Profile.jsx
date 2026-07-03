@@ -34,7 +34,9 @@ const PatientProfile = () => {
   useEffect(() => {
     odontogramService.forPatient(user._id).then((r) => {
       setOdontogram({ teeth: r.odontogram || [], takenAt: r.takenAt });
-    }).catch(() => {});
+    }).catch(() => {
+      toast.error('Gagal memuat data odontogram');
+    });
   }, [user._id]);
 
   const handle = (e) => setForm({ ...form, [e.target.name]: e.target.value });
