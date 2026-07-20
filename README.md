@@ -383,4 +383,5 @@ Semua endpoint berada di prefix `/api`. JSON request, respons format `{ success,
 
 ## 📝 License
 
-MIT — Bebas digunakan untuk klinik Anda. PR dan saran sangat diterima!
+Commercial Single-Clinic License — lihat file [LICENSE](LICENSE) untuk ketentuan lengkap.
+Untuk multi-clinic, SaaS, atau enterprise: [licensing@dentalcare.id](mailto:licensing@dentalcare.id)
