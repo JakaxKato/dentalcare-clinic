@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
@@ -45,7 +45,7 @@ const PatientTestimonials = () => {
   const [rating, setRating] = useState(5);
   const [message, setMessage] = useState('');
 
-  const load = () => {
+  const load = useCallback(() => {
     setLoading(true);
     testimonialService
       .mine()
@@ -55,9 +55,9 @@ const PatientTestimonials = () => {
         setItems([]);
       })
       .finally(() => setLoading(false));
-  };
+  }, [toast]);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
 
   const submit = async (e) => {
     e.preventDefault();

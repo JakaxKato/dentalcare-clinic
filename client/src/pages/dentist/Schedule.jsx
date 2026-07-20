@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CalendarOff, Plus, Trash2, AlertTriangle } from "lucide-react";
 import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
@@ -53,18 +53,18 @@ const DentistSchedule = () => {
   const [conflicts, setConflicts] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
 
-  const load = () => {
+  const load = useCallback(() => {
     setLoading(true);
     dentistLeaveService
       .list()
       .then((r) => setLeaves(r.data || []))
       .catch((err) => toast.error(extractMessage(err)))
       .finally(() => setLoading(false));
-  };
+  }, [toast]);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   const handleOpen = () => {
     setForm(emptyForm);

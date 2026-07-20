@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CalendarOff, Trash2 } from 'lucide-react';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
@@ -27,13 +27,13 @@ const AdminLeaves = () => {
   const [filterDentist, setFilterDentist] = useState('');
   const [deletingId, setDeletingId] = useState(null);
 
-  const load = () => {
+  const load = useCallback(() => {
     setLoading(true);
     const params = {};
     if (filterDentist) params.dentistId = filterDentist;
     Promise.all([
       dentistLeaveService.list(params).then((r) => r.data || []),
-      dentists.length === 0 ? dentistService.list() : Promise.resolve(dentists),
+      dentistService.list(),
     ])
       .then(([l, d]) => {
         setLeaves(l);
@@ -41,9 +41,9 @@ const AdminLeaves = () => {
       })
       .catch((err) => toast.error(extractMessage(err)))
       .finally(() => setLoading(false));
-  };
+  }, [filterDentist, toast]);
 
-  useEffect(() => { load(); }, [filterDentist]);
+  useEffect(() => { load(); }, [load]);
 
   const handleDelete = async (id) => {
     if (!window.confirm('Yakin ingin membatalkan cuti ini?')) return;

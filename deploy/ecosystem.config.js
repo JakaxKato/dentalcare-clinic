@@ -1,0 +1,22 @@
+module.exports = {
+  apps: [{
+    name: 'dentalcare-api',
+    cwd: './server',
+    script: 'server.js',
+    instances: 2,
+    exec_mode: 'cluster',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 5000,
+    },
+    log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+    error_file: '/var/log/dentalcare/pm2-error.log',
+    out_file: '/var/log/dentalcare/pm2-out.log',
+    merge_logs: true,
+    max_memory_restart: '400M',
+    min_uptime: '10s',
+    max_restarts: 10,
+    restart_delay: 4000,
+    watch: false,
+  }],
+};

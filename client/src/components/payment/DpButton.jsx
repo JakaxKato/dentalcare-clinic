@@ -48,7 +48,7 @@ const DpButton = ({ appointmentId, onPaid }) => {
     } finally {
       setLoading(false);
     }
-  }, [appointmentId]);
+  }, [appointmentId, toast]);
 
   useEffect(() => { load(); }, [load]);
 

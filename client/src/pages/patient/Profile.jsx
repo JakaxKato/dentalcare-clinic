@@ -37,7 +37,7 @@ const PatientProfile = () => {
     }).catch(() => {
       toast.error('Gagal memuat data odontogram');
     });
-  }, [user._id]);
+  }, [user._id, toast]);
 
   const handle = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const handleMed = (e) => setMed({ ...med, [e.target.name]: e.target.value });

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Receipt } from 'lucide-react';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
@@ -26,16 +26,16 @@ const InvoiceList = ({ isAdmin = false }) => {
   const [active, setActive] = useState(null);
   const [payment, setPayment] = useState({ amountPaid: 0, paymentMethod: '' });
 
-  const load = () => {
+  const load = useCallback(() => {
     setLoading(true);
     invoiceService
       .list()
       .then(setList)
       .catch((err) => toast.error(extractMessage(err, 'Gagal memuat invoice')))
       .finally(() => setLoading(false));
-  };
+  }, [toast]);
 
-  useEffect(load, []);
+  useEffect(() => { load(); }, [load]);
 
   const handleDownload = async (inv) => {
     try {
