@@ -6,6 +6,17 @@ const { sendMail } = require('../utils/mailer');
 const ApiError = require('../utils/ApiError');
 
 const RESET_TOKEN_TTL_MS = 30 * 60 * 1000;
+const AUTH_COOKIE = 'dc_access';
+const AUTH_COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: (process.env.APP_ENV || process.env.NODE_ENV) === 'production',
+  sameSite: 'lax',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+  path: '/',
+};
+
+const setAuthCookie = (res, token) => res.cookie(AUTH_COOKIE, token, AUTH_COOKIE_OPTIONS);
+const clearAuthCookie = (res) => res.clearCookie(AUTH_COOKIE, AUTH_COOKIE_OPTIONS);
 
 const hashToken = (raw) => crypto.createHash('sha256').update(raw).digest('hex');
 
@@ -25,13 +36,9 @@ const register = asyncHandler(async (req, res) => {
     role: 'patient',
   });
 
-  res.status(201).json({
-    success: true,
-    data: {
-      user,
-      token: generateToken(user._id, user.role),
-    },
-  });
+  const token = generateToken(user._id, user.role);
+  setAuthCookie(res, token);
+  res.status(201).json({ success: true, data: { user } });
 });
 
 // @desc    Login user
@@ -46,13 +53,16 @@ const login = asyncHandler(async (req, res) => {
   }
 
   user.password = undefined;
-  res.json({
-    success: true,
-    data: {
-      user: user.toJSON(),
-      token: generateToken(user._id, user.role),
-    },
-  });
+  const token = generateToken(user._id, user.role);
+  setAuthCookie(res, token);
+  res.json({ success: true, data: { user: user.toJSON() } });
+});
+
+// @desc    Log out
+// @route   POST /api/auth/logout
+const logout = asyncHandler(async (_req, res) => {
+  clearAuthCookie(res);
+  res.json({ success: true });
 });
 
 // @desc    Get current user
@@ -122,4 +132,4 @@ const resetPassword = asyncHandler(async (req, res) => {
   res.json({ success: true, message: 'Password has been reset. You can now log in.' });
 });
 
-module.exports = { register, login, me, forgotPassword, resetPassword };
+module.exports = { register, login, logout, me, forgotPassword, resetPassword };

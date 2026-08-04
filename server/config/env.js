@@ -1,5 +1,9 @@
 const REQUIRED = ['MONGO_URI', 'JWT_SECRET'];
 
+const getDeploymentEnv = () => process.env.APP_ENV || process.env.NODE_ENV || 'development';
+
+const isProduction = () => getDeploymentEnv() === 'production';
+
 const validateEnv = () => {
   const missing = REQUIRED.filter((k) => !process.env[k]);
   if (missing.length) {
@@ -13,8 +17,18 @@ const validateEnv = () => {
     process.exit(1);
   }
 
-  if (process.env.NODE_ENV === 'production' && !process.env.CLIENT_URL) {
-    console.error('\n[env] CLIENT_URL is required in production for CORS.\n');
+  if (isProduction() && process.env.ALLOW_DEMO_ACCOUNTS === 'true') {
+    console.error('\n[env] Demo accounts must be disabled in production.\n');
+    process.exit(1);
+  }
+
+  if (isProduction() && process.env.SEED_MODE !== 'disabled') {
+    console.error('\n[env] Destructive seed must be disabled in production.\n');
+    process.exit(1);
+  }
+
+  if (isProduction() && /:\/\/127\.0\.0\.1|:\/\/localhost|(?:^|[_-])(test|demo)(?:[_-]|$|\?)/i.test(process.env.MONGO_URI)) {
+    console.error('\n[env] Production must use a dedicated production database.\n');
     process.exit(1);
   }
 
@@ -38,7 +52,7 @@ const validateEnv = () => {
 const getCorsOrigins = () => {
   const raw = process.env.CLIENT_URL || '';
   const list = raw.split(',').map((s) => s.trim()).filter(Boolean);
-  if (process.env.NODE_ENV !== 'production' && list.length === 0) {
+  if (!isProduction() && list.length === 0) {
     return ['http://localhost:5173', 'http://127.0.0.1:5173'];
   }
   return list;

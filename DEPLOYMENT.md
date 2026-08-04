@@ -68,11 +68,9 @@ api.klinik.com {
 sudo systemctl reload caddy   # Caddy auto-issue Let's Encrypt
 ```
 
-### 6. Seed data awal (sekali saja)
-```bash
-docker compose exec server npm run seed
-```
-Login admin default: `admin@dentalcare.id` / `admin123` → **WAJIB ganti password segera**.
+### 6. Bootstrap admin production
+
+Jangan menjalankan `seed` pada production. Seed bersifat destructive dan hanya untuk demo/local dengan database terpisah. Buat akun admin production melalui prosedur bootstrap non-destructive menggunakan password unik dari password manager, lalu verifikasi akun demo tidak ada di database production.
 
 ### 7. Backup berkala
 Lihat `scripts/backup-mongo.sh`. Tambahkan cron:
@@ -126,7 +124,7 @@ cd ../client && npm ci && npm run build
 ## Post-deploy Checklist
 
 - [ ] HTTPS aktif untuk app & API (cek di https://www.ssllabs.com — target grade A).
-- [ ] Password admin seed sudah diganti.
+- [ ] Admin production dibuat dengan password unik; tidak ada akun demo/default.
 - [ ] `JWT_SECRET` di production **berbeda** dari dev.
 - [ ] CORS allowlist (`CLIENT_URL`) hanya berisi domain produksi.
 - [ ] `MONGO_URI` user produksi punya akses read-write **hanya** ke DB `dentalcare`.
@@ -146,7 +144,7 @@ cd ../client && npm ci && npm run build
 cd /opt/dentalcare
 git pull
 docker compose up -d --build
-docker compose exec server npm run seed --if-needed   # jika ada migrasi
+# Jangan jalankan seed pada production; gunakan migration non-destructive bila diperlukan.
 ```
 
 Downtime <30 detik untuk single host. Untuk zero-downtime butuh load balancer (di luar scope template).

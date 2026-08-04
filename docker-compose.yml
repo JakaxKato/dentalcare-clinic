@@ -5,8 +5,8 @@
 #   1. Copy env templates:
 #        cp server/.env.production.example server/.env
 #        cp client/.env.production.example client/.env
-#   2. Edit both .env files with real values (Mongo URI can be left as the
-#      compose default if you want to use the bundled MongoDB).
+#   2. Edit both .env files with real production values. Do not use the
+#      bundled MongoDB as a substitute for a dedicated production database.
 #   3. docker compose up -d --build
 #
 # Exposes:
@@ -32,9 +32,8 @@ services:
     restart: unless-stopped
     env_file:
       - ./server/.env
-    environment:
-      # Override Mongo URI to point to the compose service.
-      MONGO_URI: mongodb://mongo:27017/dentalcare
+    # Configure MONGO_URI in server/.env. Use a dedicated demo URI when using
+    # the bundled MongoDB; production must use its dedicated production database.
     depends_on:
       mongo:
         condition: service_healthy

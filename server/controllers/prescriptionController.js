@@ -3,10 +3,13 @@ const Prescription = require('../models/Prescription');
 const Appointment = require('../models/Appointment');
 const ApiError = require('../utils/ApiError');
 
-const canViewForPatient = (req, patientIdStr) =>
+const idOf = (value) => (value?._id || value).toString();
+
+const canViewPrescription = (req, prescription) =>
   req.user.role === 'admin' ||
-  req.user.role === 'dentist' ||
-  req.user._id.toString() === patientIdStr;
+  idOf(prescription.patientId) === req.user._id.toString() ||
+  (req.user.role === 'dentist' &&
+    idOf(prescription.dentistId) === req.user._id.toString());
 
 // @desc    Create prescription (admin or assigned dentist)
 // @route   POST /api/prescriptions
@@ -76,7 +79,7 @@ const getPrescription = asyncHandler(async (req, res) => {
     .populate({ path: 'appointmentId', select: 'appointmentDate appointmentTime serviceId diagnosis', populate: { path: 'serviceId', select: 'title' } });
   if (!presc) throw new ApiError(404, 'Prescription not found');
 
-  if (!canViewForPatient(req, presc.patientId._id.toString())) {
+  if (!canViewPrescription(req, presc)) {
     throw new ApiError(403, 'Not authorized');
   }
   res.json({ success: true, data: presc });

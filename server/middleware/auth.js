@@ -7,7 +7,9 @@ const protect = asyncHandler(async (req, res, next) => {
   let token;
   const authHeader = req.headers.authorization;
 
-  if (authHeader && authHeader.startsWith('Bearer ')) {
+  if (req.cookies && req.cookies.dc_access) {
+    token = req.cookies.dc_access;
+  } else if (authHeader && authHeader.startsWith('Bearer ')) {
     token = authHeader.split(' ')[1];
   }
 

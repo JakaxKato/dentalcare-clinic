@@ -12,9 +12,11 @@ const router = express.Router();
 // Optional auth: attach req.user if token present (used for staff seeing unpublished)
 const optionalAuth = async (req, _res, next) => {
   const auth = req.headers.authorization;
-  if (auth && auth.startsWith('Bearer ')) {
+  const token = req.cookies?.dc_access ||
+    (auth && auth.startsWith('Bearer ') ? auth.split(' ')[1] : null);
+  if (token) {
     try {
-      const decoded = jwt.verify(auth.split(' ')[1], process.env.JWT_SECRET, {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET, {
         algorithms: ['HS256'],
         issuer: process.env.JWT_ISSUER || 'dentalcare',
       });

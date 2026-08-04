@@ -30,6 +30,7 @@ const idOf = (value) => (value?._id || value)?.toString();
 const canManageInvoice = (req, inv) =>
   req.user.role === 'admin' ||
   (req.user.role === 'dentist' && idOf(inv.dentistId) === req.user._id.toString());
+const canEditInvoicePricing = (req) => req.user.role === 'admin';
 const canViewInvoice = (req, inv) =>
   canManageInvoice(req, inv) || idOf(inv.patientId) === req.user._id.toString();
 
@@ -143,10 +144,16 @@ const updateInvoice = asyncHandler(async (req, res) => {
   const inv = await Invoice.findById(req.params.id);
   if (!inv) throw new ApiError(404, 'Invoice not found');
   if (!canManageInvoice(req, inv)) throw new ApiError(403, 'Not authorized');
+  if (!canEditInvoicePricing(req) &&
+      (req.body.items !== undefined || req.body.discount !== undefined || req.body.taxRate !== undefined)) {
+    throw new ApiError(403, 'Only admin can update invoice pricing');
+  }
 
-  if (Array.isArray(req.body.items)) inv.items = sanitizeItems(req.body.items);
-  if (req.body.discount !== undefined) inv.discount = req.body.discount;
-  if (req.body.taxRate !== undefined) inv.taxRate = req.body.taxRate;
+  if (req.user.role === 'admin') {
+    if (Array.isArray(req.body.items)) inv.items = sanitizeItems(req.body.items);
+    if (req.body.discount !== undefined) inv.discount = req.body.discount;
+    if (req.body.taxRate !== undefined) inv.taxRate = req.body.taxRate;
+  }
   if (req.body.notes !== undefined) inv.notes = req.body.notes;
 
   const t = recalc(inv.items, inv.discount, inv.taxRate);

@@ -125,9 +125,9 @@ Midtrans (sandbox):
   Server Key: SB-Mid-xxxxx
   Client Key: SB-Mid-xxxxx
 
-Admin Login (default — HARUS DIGANTI):
-  Email: admin@dentalcare.id
-  Password: admin123
+Admin production:
+  Buat melalui prosedur bootstrap non-destructive dengan password unik dari password manager.
+  Jangan gunakan akun atau password demo pada production.
 ```
 
 ---
@@ -520,14 +520,9 @@ pm2 list
 curl http://127.0.0.1:5000/api/health
 # Harusnya: {"success":true,"status":"ok","uptime":...,"database":"connected"}
 
-# Seed data awal
-cd /opt/dentalcare/server
-node seed/seed.js
-# Output: "Database seeded successfully!"
-```
-
-**Login admin default:** `admin@dentalcare.id` / `admin123`
-> ⚠️ **WAJIB GANTI PASSWORD** setelah login pertama!
+# Jangan jalankan seed pada production.
+# Buat admin melalui bootstrap non-destructive dengan password unik.
+# Seed hanya untuk instance demo dengan database terpisah.
 
 ---
 

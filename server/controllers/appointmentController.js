@@ -6,6 +6,7 @@ const DentistProfile = require("../models/DentistProfile");
 const ApiError = require("../utils/ApiError");
 const DentistLeave = require("../models/DentistLeave");
 const { runReminderJob } = require("../utils/reminderJob");
+const { dentistHasPatientRelation } = require("../utils/accessPolicy");
 const {
   toDateKey,
   dateRangeUtc,
@@ -341,10 +342,20 @@ const updateStatus = asyncHandler(async (req, res) => {
     }
   }
 
+  const hasClinicalUpdates =
+    diagnosis !== undefined ||
+    treatmentNotes !== undefined ||
+    recommendation !== undefined;
+  if (hasClinicalUpdates && !isAdmin && !isDentist) {
+    throw new ApiError(403, "Only admin or assigned dentist can update clinical notes");
+  }
+
   appt.status = status;
-  if (diagnosis !== undefined) appt.diagnosis = diagnosis;
-  if (treatmentNotes !== undefined) appt.treatmentNotes = treatmentNotes;
-  if (recommendation !== undefined) appt.recommendation = recommendation;
+  if (isAdmin || isDentist) {
+    if (diagnosis !== undefined) appt.diagnosis = diagnosis;
+    if (treatmentNotes !== undefined) appt.treatmentNotes = treatmentNotes;
+    if (recommendation !== undefined) appt.recommendation = recommendation;
+  }
 
   await appt.save();
   res.json({ success: true, data: appt });
@@ -540,8 +551,13 @@ const triggerReminderJob = asyncHandler(async (_req, res) => {
 // @route   GET /api/appointments/patient/:patientId/odontogram
 const getPatientOdontogram = asyncHandler(async (req, res) => {
   const isSelf = req.user._id.toString() === req.params.patientId;
-  const isStaff = req.user.role === "admin" || req.user.role === "dentist";
-  if (!isSelf && !isStaff) throw new ApiError(403, "Not authorized");
+  const isAdmin = req.user.role === "admin";
+  const hasRelation =
+    req.user.role === "dentist" &&
+    (await dentistHasPatientRelation(req.user._id, req.params.patientId));
+  if (!isSelf && !isAdmin && !hasRelation) {
+    throw new ApiError(403, "Not authorized");
+  }
 
   const latest = await Appointment.findOne({
     patientId: req.params.patientId,

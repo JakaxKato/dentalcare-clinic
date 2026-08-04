@@ -1,9 +1,10 @@
 const multer = require('multer');
+const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs');
 const { hasCloudinary } = require('../config/env');
 
-const ALLOWED_EXT = /jpeg|jpg|png|webp|gif/;
+const ALLOWED_EXT = /^\.(jpeg|jpg|png|webp|gif)$/;
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
 
 const fileFilter = (_req, file, cb) => {
@@ -25,7 +26,7 @@ if (isCloudinary) {
   storage = multer.diskStorage({
     destination: (_req, _file, cb) => cb(null, uploadDir),
     filename: (_req, file, cb) => {
-      const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+      const unique = crypto.randomBytes(16).toString('hex');
       cb(null, `${unique}${path.extname(file.originalname).toLowerCase()}`);
     },
   });

@@ -2,6 +2,7 @@ require("dotenv").config();
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const compression = require("compression");
@@ -59,6 +60,13 @@ app.use(
 
 app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
+app.use(cookieParser());
+app.use((req, res, next) => {
+  if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) return next();
+  const origin = req.headers.origin;
+  if (!origin || allowedOrigins.includes(origin)) return next();
+  return res.status(403).json({ success: false, message: 'Origin is not allowed' });
+});
 app.use(mongoSanitize({ replaceWith: "_" }));
 if (process.env.NODE_ENV !== "test") app.use(morgan("dev"));
 

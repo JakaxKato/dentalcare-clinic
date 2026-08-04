@@ -7,31 +7,95 @@ Spek: Ubuntu 22.04, 2CPU/2GB RAM/30GB SSD.
 
 ---
 
-## ⚠️ Langkah 0 — PERBAIKI SSH `0.0.0.0/0` SEKARANG (paling kritis)
+## ⚠️ Langkah 0 — Amankan akses SSH
 
-Banyak akun baru Tencent Cloud membuka port 22 ke `0.0.0.0/0` (seluruh internet) secara default. Ini **celah keamanan terbesar** — brute-force SSH terjadi tiap detik. Perbaiki **sebelum** lanjut ke step manapun.
+Gunakan Tailscale agar IP laptop yang berubah tidak memaksa Anda mengubah Security Group setiap hari. Selama setup, **jangan tutup sesi SSH lama** sampai koneksi melalui Tailscale berhasil.
 
-**A. Cari IP publik kamu** (dari laptop/kantor yang dipakai SSH):
+### 0.1 Pertahankan akses darurat sementara
+
+Untuk sementara, batasi TCP:22 ke IP publik laptop saat ini:
+
 ```bash
 curl ifconfig.me
 ```
-Catat IP, misal `203.142.88.10`.
 
-**B. Tencent Cloud Console → Security Group → edit Inbound rule port 22:**
-- Ubah Source dari `0.0.0.0/0` → `<IP-kamu>/32`
-- Hapus rule lama `0.0.0.0/0` untuk port 22
-- Simpan
+Di Tencent Cloud → Security Group, gunakan hasilnya sebagai `<IP-LAPTOP>/32`. Hapus rule `::/0 → TCP:22` dan jangan gunakan `0.0.0.0/0 → TCP:22`.
 
-> Jika IP rumah dinamis (berubah-ubah): gunakan DDNS, atau allow CIDR ISP kamu (misal `203.142.0.0/16`) — tetap lebih sempit dari `0.0.0.0/0`. **Jangan pernah** biarkan `0.0.0.0/0` di port 22.
+### 0.2 Install Tailscale di Ubuntu VPS
 
-**C. Jangan tutup terminal SSH aktif** sebelum test login baru dari terminal lain berhasil. Kalau terkunci, kamu bisa kembalikan rule via Console tanpa perlu SSH.
+Jalankan dari sesi SSH VPS yang masih aktif:
+
+```bash
+curl -fsSL https://tailscale.com/install.sh | sh
+```
+
+Aktifkan koneksi Tailscale:
+
+```bash
+sudo tailscale up
+```
+
+Terminal akan menampilkan URL login. Buka URL tersebut, login ke akun Tailscale, lalu izinkan perangkat VPS.
+
+Lihat alamat privat Tailscale VPS:
+
+```bash
+tailscale ip -4
+```
+
+Catat alamat `100.x.y.z` yang ditampilkan sebagai `<TAILSCALE-VPS-IP>`.
+
+### 0.3 Install Tailscale di laptop
+
+Install Tailscale dari aplikasi resmi sesuai sistem operasi laptop, login menggunakan akun Tailscale yang sama, lalu pastikan VPS terlihat sebagai perangkat online di dashboard Tailscale.
+
+Tes koneksi dari laptop:
+
+```bash
+ping <TAILSCALE-VPS-IP>
+```
+
+Jika ping diblokir oleh konfigurasi, lanjutkan dengan tes SSH.
+
+### 0.4 Tes SSH melalui Tailscale
+
+Buka terminal baru di laptop, jangan memakai sesi lama, lalu jalankan:
+
+```bash
+ssh deploy@<TAILSCALE-VPS-IP>
+```
+
+Jika memakai private key tertentu:
+
+```bash
+ssh -i ~/.ssh/dentalcare-vps deploy@<TAILSCALE-VPS-IP>
+```
+
+Pastikan login berhasil dan username tetap `deploy`.
+
+### 0.5 Pindahkan SSH ke Tailscale secara bertahap
+
+Setelah SSH melalui alamat Tailscale berhasil:
+
+1. Di Tencent Security Group, hapus `::/0 → TCP:22` jika belum dihapus.
+2. Hapus rule `<IP-LAPTOP>/32 → TCP:22` hanya setelah yakin tidak membutuhkan akses darurat publik.
+3. Pastikan port 22 tidak dibuka ke `0.0.0.0/0`.
+4. Di Ubuntu, biarkan SSH berjalan normal pada port 22; koneksi melalui interface Tailscale tetap menggunakan port tersebut.
+5. Simpan sesi SSH lama sampai seluruh tes selesai.
+
+Jika ingin memakai Tailscale SSH sebagai pengganti OpenSSH, fitur tersebut dapat diaktifkan dengan `sudo tailscale up --ssh`, tetapi saya menyarankan tetap memakai OpenSSH + SSH key terlebih dahulu karena lebih mudah di-debug.
+
+> **Rollback:** jika Tailscale bermasalah, gunakan sesi SSH lama atau kembalikan rule `<IP-LAPTOP>/32 → TCP:22` sementara dari Tencent Console. Jangan menghapus akses darurat sebelum koneksi baru terverifikasi.
+
+> Dokumentasi resmi: https://tailscale.com/download/linux
 
 ---
 
 ## Arsitektur Target
 
 ```
-Internet → Tencent Security Group (:22, :80, :443)
+Internet → Tencent Security Group (:80, :443)
+Laptop admin → Tailscale private network → VPS SSH (:22)
               │
          ┌────▼────┐
          │  Nginx   │  :80/:443
@@ -57,11 +121,13 @@ Internet → Tencent Security Group (:22, :80, :443)
          └──────────┘
 ```
 
-**Port yang TIDAK boleh terbuka ke publik** (di Security Group maupun UFW):
-- `22` → hanya IP kamu (`/32`)
+**Port yang boleh terbuka ke publik:**
+- `80/443` → website dan HTTPS
+
+**Port yang TIDAK boleh terbuka ke publik:**
+- `22` → akses melalui interface Tailscale (`tailscale0`), bukan internet umum
 - `27017` (MongoDB) → tidak ada, DB di Atlas
 - `5000` (Express) → tidak ada, hanya nginx proxy ke `127.0.0.1:5000` secara lokal
-
 ---
 
 ## Prasyarat
@@ -100,14 +166,18 @@ Sebelum mulai, siapkan:
 
 > **PENTING**: Security Group di Tencent Cloud itu firewall di level hypervisor. Nanti di dalam VPS ada UFW juga. **Dua-duanya harus allow port yang sama.** Jika kamu sudah membuka port 22 ke `0.0.0.0/0` saat create instance (default banyak template), **wajib dipersempit sekarang juga** — lihat **Langkah 0** di atas.
 
-Buka **Cloud Firewall** → **Security Group** → buat/edit rule:
+Buka **Cloud Firewall** → **Security Group** → buat/edit rule.
+
+**Mode transisi, sebelum Tailscale teruji:**
 
 | Direction | Protocol | Port | Source | Description |
 |-----------|----------|------|--------|-------------|
-| Inbound | TCP | 22 | `<IP rumah/kantor>/32` | SSH — **HANYA dari IP kamu**, jangan `0.0.0.0/0` |
+| Inbound | TCP | 22 | `<IP-LAPTOP>/32` | SSH sementara; hapus setelah Tailscale berhasil |
 | Inbound | TCP | 80 | `0.0.0.0/0` | HTTP (redirect ke HTTPS) |
 | Inbound | TCP | 443 | `0.0.0.0/0` | HTTPS — satu-satunya port publik aplikasi |
 | Outbound | ALL | ALL | `0.0.0.0/0` | Untuk Atlas, npm, certbot, API eksternal |
+
+**Mode final setelah Tailscale teruji:** hapus semua rule inbound TCP:22 dari internet, termasuk `0.0.0.0/0`, `::/0`, dan `<IP-LAPTOP>/32`. Akses SSH tetap berjalan melalui interface Tailscale dan rule UFW `tailscale0`.
 
 **Jangan tambahkan** port `27017` (MongoDB) atau `5000` (Express) — DB di Atlas, Express hanya diakses nginx secara lokal di `127.0.0.1:5000`.
 
@@ -119,9 +189,13 @@ Buka **Cloud Firewall** → **Security Group** → buat/edit rule:
 ### 1.5 Login Pertama
 
 ```bash
-ssh ubuntu@<VPS_IP>
+# Bootstrap awal melalui EIP/public IP saat rule transisi masih aktif.
+ssh ubuntu@<EIP-ATAU-PUBLIC-IP>
 # atau
-ssh -i ~/.ssh/id_ed25519 ubuntu@<VPS_IP>
+ssh -i ~/.ssh/id_ed25519 ubuntu@<EIP-ATAU-PUBLIC-IP>
+
+# Setelah Tailscale aktif, gunakan alamat Tailscale.
+ssh -i ~/.ssh/id_ed25519 deploy@<TAILSCALE-VPS-IP>
 ```
 
 ---
@@ -165,17 +239,20 @@ PubkeyAuthentication yes
 sudo systemctl restart sshd
 ```
 
-> **Test**: buka terminal baru, pastikan masih bisa login `ssh deploy@<VPS_IP>`. Jangan tutup terminal yang sekarang sebelum yakin!
+> **Test**: buka terminal baru, pastikan masih bisa login melalui `ssh deploy@<TAILSCALE-VPS-IP>`. Jangan tutup terminal yang sekarang sebelum yakin!
 
 ### 2.4 UFW Firewall (Inner ring)
 
 ```bash
-sudo ufw allow 22/tcp
+# Izinkan SSH hanya melalui interface Tailscale.
+sudo ufw allow in on tailscale0 to any port 22 proto tcp
 sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 sudo ufw enable
-sudo ufw status
+sudo ufw status verbose
 ```
+
+Selama migrasi, jangan hapus akses SSH publik sebelum SSH melalui Tailscale berhasil. Setelah berhasil dan rule Security Group `<IP-LAPTOP>/32 → TCP:22` sudah dihapus, pastikan UFW tidak lagi memiliki rule `22/tcp` umum; yang tersisa hanya rule melalui `tailscale0`.
 
 ### 2.5 Fail2ban + Auto update
 
@@ -441,15 +518,9 @@ curl http://127.0.0.1:5000/api/health
 pm2 logs dentalcare-api --lines 20
 ```
 
-### 7.5 Seed data awal
+### 7.5 Bootstrap admin production
 
-```bash
-cd /opt/dentalcare/server
-node seed/seed.js
-```
-
-Login admin default: `admin@dentalcare.id` / `admin123`
-> **WAJIB ganti password admin segera setelah login pertama!**
+Jangan jalankan seed pada production karena seed bersifat destructive. Buat admin melalui prosedur bootstrap non-destructive dengan password unik dari password manager. Seed hanya boleh digunakan pada instance demo dengan database demo terpisah.
 
 ---
 

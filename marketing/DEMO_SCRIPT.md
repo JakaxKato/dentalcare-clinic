@@ -4,11 +4,12 @@ Pakai script ini saat demo ke calon klien klinik gigi. Sediakan instance demo (`
 
 ## Persiapan (sebelum call)
 
-- [ ] Seed data sudah jalan (`npm run seed`)
-- [ ] Akun login siap:
-  - Admin: `admin@dentalcare.id` / `admin123`
-  - Dokter: `dentist1@dentalcare.id` / `dentist123`
-  - Pasien: `patient@dentalcare.id` / `patient123`
+- [ ] Seed data demo sudah jalan (`npm run seed:demo --prefix server`)
+- [ ] Akun login demo siap:
+  - Admin: `admin@dentalcare.id` / `password123`
+  - Dokter: `sarah@dentalcare.id` / `password123`
+  - Pasien: `patient@dentalcare.id` / `password123`
+- [ ] Pastikan instance demo memakai database terpisah dan tidak menyimpan data pasien nyata.
 - [ ] Browser jendela 1: tampilan publik (Home)
 - [ ] Browser jendela 2 (incognito): siap login sebagai role berbeda
 - [ ] HP siap (PWA install demo)

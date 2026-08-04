@@ -2,15 +2,7 @@ import axios from 'axios';
 
 const baseURL = import.meta.env.VITE_API_URL || '/api';
 
-const api = axios.create({ baseURL });
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('dc_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+const api = axios.create({ baseURL, withCredentials: true });
 
 api.interceptors.response.use(
   (res) => res,
@@ -18,8 +10,6 @@ api.interceptors.response.use(
     if (err.response && err.response.status === 401) {
       const path = window.location.pathname;
       if (!path.startsWith('/login') && !path.startsWith('/register')) {
-        localStorage.removeItem('dc_token');
-        localStorage.removeItem('dc_user');
         window.dispatchEvent(new CustomEvent('auth:unauthorized'));
       }
     }

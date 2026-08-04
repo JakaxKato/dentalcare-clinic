@@ -1,7 +1,16 @@
 require('dotenv').config();
 
-if (process.env.NODE_ENV === 'production') {
-  console.error('\n[seed] Refusing to run in production! This script deletes all data.\n');
+const isDemoSeed = process.env.SEED_MODE === 'demo' || process.argv.includes('--demo');
+const deploymentEnv = process.env.APP_ENV || process.env.NODE_ENV || 'development';
+const mongoUri = process.env.MONGO_URI || '';
+
+if (!isDemoSeed || deploymentEnv === 'production' || process.env.ALLOW_DEMO_ACCOUNTS === 'false') {
+  console.error('\n[seed] Demo seed requires --demo, a non-production environment, and a dedicated demo database.\n');
+  process.exit(1);
+}
+
+if (/(?:^|[_-])(production|prod|live|test)(?:[_-]|$|\?)/i.test(mongoUri)) {
+  console.error('\n[seed] Refusing to seed a protected database name. Use a dedicated demo database.\n');
   process.exit(1);
 }
 

@@ -118,20 +118,23 @@ VITE_WHATSAPP_NUMBER=6281234567890
 VITE_CLINIC_NAME=DentalCare Clinic
 ```
 
-### 3) Seed data dummy
+### 3) Seed data demo (local/demo saja)
+
+Seed ini **menghapus data pada database target**. Jalankan hanya dengan database demo terpisah:
+
 ```bash
-npm run seed
+npm run seed:demo --prefix server
 ```
 
 Akan membuat akun demo:
 
 | Role     | Email                       | Password    |
 |----------|-----------------------------|-------------|
-| Admin    | `admin@dentalcare.id`       | `password123` |
-| Dentist  | `sarah@dentalcare.id`       | `password123` |
-| Dentist  | `budi@dentalcare.id`        | `password123` |
-| Dentist  | `maya@dentalcare.id`        | `password123` |
-| Patient  | `patient@dentalcare.id`     | `password123` |
+| Admin    | `admin@dentalcare.id` | `password123` (demo only) |
+| Dentist  | `sarah@dentalcare.id` | `password123` (demo only) |
+| Dentist  | `budi@dentalcare.id` | `password123` (demo only) |
+| Dentist  | `maya@dentalcare.id` | `password123` (demo only) |
+| Patient  | `patient@dentalcare.id` | `password123` (demo only) |
 
 ### 4) Jalankan dev server
 Cara cepat (concurrent backend + frontend):
@@ -356,7 +359,7 @@ Semua endpoint berada di prefix `/api`. JSON request, respons format `{ success,
    NODE_ENV=production
    CLIENT_URL=https://<frontend-domain>
    ```
-5. (Opsional) Jalankan `npm run seed` lewat shell sekali untuk inisialisasi data
+5. Jangan jalankan seed pada production. Buat admin production melalui bootstrap non-destructive dengan password unik.
 6. Catat URL backend, mis. `https://dentalcare-api.onrender.com`
 
 ### Frontend — Vercel

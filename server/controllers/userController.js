@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 const ApiError = require('../utils/ApiError');
 const { escapeRegex } = require('../utils/sanitize');
+const { dentistHasPatientRelation } = require('../utils/accessPolicy');
 
 const ROLE_ENUM = ['patient', 'dentist', 'admin'];
 
@@ -83,8 +84,11 @@ const updateUser = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/:id/medical-history
 const updateMedicalHistory = asyncHandler(async (req, res) => {
   const isSelf = req.user._id.toString() === req.params.id;
-  const canEdit = req.user.role === 'admin' || req.user.role === 'dentist' || isSelf;
-  if (!canEdit) throw new ApiError(403, 'Not authorized');
+  const isAdmin = req.user.role === 'admin';
+  const hasRelation =
+    req.user.role === 'dentist' &&
+    (await dentistHasPatientRelation(req.user._id, req.params.id));
+  if (!isAdmin && !isSelf && !hasRelation) throw new ApiError(403, 'Not authorized');
 
   const user = await User.findById(req.params.id);
   if (!user) throw new ApiError(404, 'User not found');

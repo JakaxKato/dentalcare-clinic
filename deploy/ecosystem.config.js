@@ -7,6 +7,9 @@ module.exports = {
     exec_mode: 'cluster',
     env: {
       NODE_ENV: 'production',
+      APP_ENV: 'production',
+      ALLOW_DEMO_ACCOUNTS: 'false',
+      SEED_MODE: 'disabled',
       PORT: 5000,
     },
     log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
