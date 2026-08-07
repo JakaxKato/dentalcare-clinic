@@ -146,10 +146,9 @@
     @apply block text-sm font-medium text-stone-700 mb-1.5 dark:text-stone-300;
   }
 
-  /* Cards */
+  /* Solid card */
   .card {
-    @apply bg-white rounded-2xl border border-black/[0.07]
-           shadow-card
+    @apply bg-white rounded-2xl border border-black/[0.07] shadow-card
            dark:bg-stone-900 dark:border-white/[0.07];
     transition:
       box-shadow 0.25s ease,
@@ -157,6 +156,27 @@
   }
   .card-hover {
     @apply hover:shadow-card-hover hover:-translate-y-0.5;
+  }
+
+  /* Glass card — gunakan di section dengan decorative blob di belakang */
+  .card-glass {
+    @apply bg-white/30 backdrop-blur-md rounded-2xl border border-white/40 shadow-lg
+           dark:bg-stone-900/30 dark:border-white/10 dark:shadow-stone-950/30;
+    transition:
+      box-shadow 0.3s ease,
+      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .card-glass-hover {
+    @apply hover:bg-white/40 hover:shadow-xl hover:-translate-y-[3px]
+           dark:hover:bg-stone-900/50;
+  }
+
+  /* Grid helper — semua anak otomatis h-full */
+  .card-grid {
+    @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3;
+  }
+  .card-grid > * {
+    @apply h-full;
   }
 
   @media (hover: hover) {
@@ -244,6 +264,22 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     background-size: 128px;
   }
+
+  /* Decorative background blobs */
+  .bg-blob {
+    @apply absolute rounded-full blur-3xl pointer-events-none;
+    opacity: 0.18;
+  }
+  .bg-blob-amber {
+    background: radial-gradient(circle, #fbbf24 0%, #f59e0b 100%);
+  }
+  .bg-blob-warm {
+    background: radial-gradient(circle, #fde68a 0%, #fef3c7 100%);
+  }
+  .bg-blob-glow {
+    background: radial-gradient(circle, #fcd34d 0%, transparent 70%);
+  }
+  .dark .bg-blob { opacity: 0.08; }
 
   /* Dark mode text overrides — stone-* (warm neutrals) */
   .dark .text-stone-900,

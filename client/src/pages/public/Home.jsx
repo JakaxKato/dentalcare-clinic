@@ -103,6 +103,10 @@ const Hero = () => {
         </div>
 
         <div className="relative">
+          {/* Blobs behind hero image */}
+          <div className="bg-blob bg-blob-amber w-80 h-80 -top-10 -right-10" />
+          <div className="bg-blob bg-blob-warm w-56 h-56 -bottom-6 -left-6" />
+
           <div className="relative overflow-hidden rounded-[2rem] border border-white bg-brand-100 shadow-2xl shadow-stone-900/10">
             <div className="aspect-[4/5]">
               <img
@@ -114,7 +118,7 @@ const Hero = () => {
             </div>
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-900/18 via-transparent to-white/8" />
           </div>
-          <div className="absolute -bottom-5 left-4 z-10 flex max-w-[240px] items-center gap-3 bg-white dark:bg-stone-900 rounded-2xl border border-black/[0.06] shadow-lg shadow-stone-900/10 p-4 lg:-left-8">
+          <div className="absolute -bottom-5 left-4 z-10 flex max-w-[240px] items-center gap-3 rounded-2xl border border-white/40 bg-white/50 backdrop-blur-md shadow-lg shadow-stone-900/10 p-4 lg:-left-8 dark:bg-stone-900/50 dark:border-white/10">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-200 text-brand-800">
               <ShieldCheck className="h-5 w-5" />
             </div>
@@ -159,35 +163,37 @@ const FEATURES = [
 const Features = () => {
   const { settings } = useClinic();
   return (
-    <section className="container-app py-16">
-      <div className="mx-auto mb-12 max-w-2xl text-center">
-        <h2 className="section-heading">
-          Mengapa Memilih {settings.clinicName || CLINIC.shortName}?
-        </h2>
-        <p className="section-copy mt-3">
-          Perawatan gigi yang rapi, transparan, dan terasa lebih tenang sejak
-          pertama masuk.
-        </p>
-      </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {FEATURES.map(({ Icon, t, d }, index) => (
-          <div
-            key={t}
-            className={`card p-6 transition duration-300 hover:shadow-card-hover hover:-transtone-y-0.5 ${
-              index === 0 ? "lg:col-span-2" : ""
-            }`}
-          >
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-200 text-brand-800 dark:bg-brand-900/50 dark:text-brand-300">
-              <Icon className="h-6 w-6" />
+    <section className="relative overflow-hidden">
+      {/* Decorative blobs */}
+      <div className="bg-blob bg-blob-amber w-[600px] h-[600px] -top-40 -left-40" />
+      <div className="bg-blob bg-blob-warm w-[400px] h-[400px] -bottom-20 -right-20" />
+      <div className="bg-blob bg-blob-glow w-80 h-80 top-[60%] left-[30%]" />
+
+      <div className="relative z-10 container-app py-20">
+        <div className="mx-auto mb-12 max-w-2xl text-center">
+          <h2 className="section-heading">
+            Mengapa Memilih {settings.clinicName || CLINIC.shortName}?
+          </h2>
+          <p className="section-copy mt-3">
+            Perawatan gigi yang rapi, transparan, dan terasa lebih tenang sejak
+            pertama masuk.
+          </p>
+        </div>
+        <div className="card-grid">
+          {FEATURES.map(({ Icon, t, d }) => (
+            <div key={t} className="card-glass card-glass-hover h-full p-6 flex flex-col group">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-amber-200/60 backdrop-blur-sm text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+                <Icon className="h-6 w-6" />
+              </div>
+              <h3 className="font-semibold text-stone-900 dark:text-stone-100">
+                {t}
+              </h3>
+              <p className="mt-2 flex-grow text-sm leading-relaxed text-stone-600 dark:text-stone-300">
+                {d}
+              </p>
             </div>
-            <h3 className="font-semibold text-stone-900 dark:text-stone-100">
-              {t}
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-stone-500 dark:text-stone-400">
-              {d}
-            </p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -345,52 +351,58 @@ const Home = () => {
       </section>
 
       {testimonials.length > 0 && (
-        <section className="container-app py-16">
-          <div className="mx-auto mb-12 max-w-2xl text-center">
-            <h2 className="section-heading">Apa Kata Pasien Kami</h2>
-            <p className="section-copy mt-3">
-              Kepercayaan Anda adalah kebanggaan kami.
-            </p>
-          </div>
-          <Swiper
-            modules={[Autoplay, Pagination]}
-            spaceBetween={24}
-            slidesPerView={1}
-            breakpoints={{
-              640: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
-            }}
-            loop={testimonials.length > 3}
-            speed={800}
-            autoplay={{
-              delay: 5000,
-              disableOnInteraction: false,
-              pauseOnMouseEnter: true,
-            }}
-            pagination={{ clickable: true }}
-            className="!pb-12"
-          >
-            {testimonials.map((t) => (
-              <SwiperSlide key={t._id}>
-                <div className="card card-hover h-full p-5">
-                  <div className="mb-3 flex gap-0.5 text-brand-500">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-4 h-4 ${i < t.rating ? "fill-brand-500" : "text-stone-300"}`}
-                      />
-                    ))}
+        <section className="relative overflow-hidden py-20">
+          {/* Decorative blobs */}
+          <div className="bg-blob bg-blob-amber w-[500px] h-[500px] -top-20 right-0 translate-x-1/4" />
+          <div className="bg-blob bg-blob-warm w-[350px] h-[350px] -bottom-16 -left-32" />
+
+          <div className="relative z-10 container-app">
+            <div className="mx-auto mb-12 max-w-2xl text-center">
+              <h2 className="section-heading">Apa Kata Pasien Kami</h2>
+              <p className="section-copy mt-3">
+                Kepercayaan Anda adalah kebanggaan kami.
+              </p>
+            </div>
+            <Swiper
+              modules={[Autoplay, Pagination]}
+              spaceBetween={24}
+              slidesPerView={1}
+              breakpoints={{
+                640: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 },
+              }}
+              loop={testimonials.length > 3}
+              speed={800}
+              autoplay={{
+                delay: 5000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
+              pagination={{ clickable: true }}
+              className="!pb-12"
+            >
+              {testimonials.map((t) => (
+                <SwiperSlide key={t._id}>
+                  <div className="card-glass card-glass-hover h-full p-6 flex flex-col">
+                    <div className="mb-3 flex gap-0.5 text-brand-500">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${i < t.rating ? "fill-brand-500" : "text-stone-300"}`}
+                        />
+                      ))}
+                    </div>
+                    <p className="flex-grow text-sm italic leading-relaxed text-stone-600 dark:text-stone-300">
+                      "{t.message}"
+                    </p>
+                    <p className="mt-4 text-sm font-semibold text-stone-900 dark:text-stone-100">
+                      {t.patientName}
+                    </p>
                   </div>
-                  <p className="text-sm italic leading-relaxed text-stone-600 dark:text-stone-300">
-                    "{t.message}"
-                  </p>
-                  <p className="mt-4 text-sm font-semibold text-stone-900 dark:text-stone-100">
-                    {t.patientName}
-                  </p>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
         </section>
       )}
 
