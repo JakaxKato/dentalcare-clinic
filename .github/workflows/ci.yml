@@ -73,3 +73,23 @@ jobs:
           tags: dentalcare-client:ci
           build-args: |
             VITE_API_URL=http://localhost:5000
+
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    needs: [server-test, client-build]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: SSH into server and deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/dentalcare
+            git pull origin main
+            cd client && npm ci && npm run build && cd ..
+            sudo cp -r client/dist /var/www/dentalcare/client/dist
+            sudo chown -R www-data:www-data /var/www/dentalcare
+            sudo systemctl reload nginx
