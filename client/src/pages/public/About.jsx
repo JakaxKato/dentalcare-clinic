@@ -46,9 +46,9 @@ const About = () => {
 
       <section className="mt-16">
         <div className="grid gap-6 md:grid-cols-[1.4fr_1fr_1fr]">
-          <div className="card p-8 bg-stone-950 text-white dark:bg-stone-800">
-            <span className="inline-flex items-center rounded-full border border-brand-400/30 bg-brand-500/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-brand-400 mb-4">Visi</span>
-            <p className="text-lg font-semibold leading-relaxed text-stone-100">
+          <div className="card p-8 bg-brand-50/60 dark:bg-brand-950/20">
+            <span className="inline-flex items-center rounded-full border border-brand-300/70 bg-brand-100 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-brand-700 mb-4">Visi</span>
+            <p className="text-lg font-semibold leading-relaxed text-brand-900 dark:text-brand-200">
               Menjadi klinik gigi keluarga rujukan dengan layanan terintegrasi dan berbasis teknologi.
             </p>
           </div>
