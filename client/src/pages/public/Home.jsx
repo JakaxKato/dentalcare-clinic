@@ -177,7 +177,7 @@ const Features = () => {
               index === 0 ? "lg:col-span-2" : ""
             }`}
           >
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-100 text-brand-700 dark:bg-brand-950/40 dark:text-brand-400">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-200 text-brand-800 dark:bg-brand-900/50 dark:text-brand-300">
               <Icon className="h-6 w-6" />
             </div>
             <h3 className="font-semibold text-stone-900 dark:text-stone-100">

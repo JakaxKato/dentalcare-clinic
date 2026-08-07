@@ -44,29 +44,27 @@ const About = () => {
         </div>
       </div>
 
-      <section className="mt-16 grid gap-6 md:grid-cols-3">
-        {[
-          {
-            title: 'Visi',
-            description:
-              'Menjadi klinik gigi keluarga rujukan dengan layanan terintegrasi dan berbasis teknologi.',
-          },
-          {
-            title: 'Misi',
-            description:
-              'Memberikan perawatan terbaik dengan biaya transparan, pendekatan personal, dan ramah keluarga.',
-          },
-          {
-            title: 'Nilai Kami',
-            description:
-              'Integritas, profesionalisme, kepedulian, dan inovasi berkelanjutan untuk senyum Anda.',
-          },
-        ].map((item) => (
-          <div key={item.title} className="card p-6">
-            <h3 className="text-xl font-bold text-brand-800">{item.title}</h3>
-            <p className="mt-2 text-stone-600">{item.description}</p>
+      <section className="mt-16">
+        <div className="grid gap-6 md:grid-cols-[1.4fr_1fr_1fr]">
+          <div className="card p-8 bg-stone-950 text-white dark:bg-stone-800">
+            <span className="inline-flex items-center rounded-full border border-brand-400/30 bg-brand-500/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-brand-400 mb-4">Visi</span>
+            <p className="text-lg font-semibold leading-relaxed text-stone-100">
+              Menjadi klinik gigi keluarga rujukan dengan layanan terintegrasi dan berbasis teknologi.
+            </p>
           </div>
-        ))}
+          <div className="card p-6">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-400 mb-3">Misi</h3>
+            <p className="text-stone-700 leading-relaxed">
+              Memberikan perawatan terbaik dengan biaya transparan, pendekatan personal, dan ramah keluarga.
+            </p>
+          </div>
+          <div className="card p-6">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-400 mb-3">Nilai Kami</h3>
+            <p className="text-stone-700 leading-relaxed">
+              Integritas, profesionalisme, kepedulian, dan inovasi berkelanjutan untuk senyum Anda.
+            </p>
+          </div>
+        </div>
       </section>
 
       <section className="mt-16">
