@@ -90,6 +90,7 @@ jobs:
             cd /opt/dentalcare
             git pull origin ${{ github.ref_name }}
             cd client && npm ci && npm run build && cd ..
+            sudo rm -rf /var/www/dentalcare/client/dist
             sudo cp -r client/dist /var/www/dentalcare/client/dist
             sudo chown -R www-data:www-data /var/www/dentalcare
             sudo systemctl reload nginx
