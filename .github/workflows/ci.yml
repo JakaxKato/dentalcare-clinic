@@ -78,7 +78,7 @@ jobs:
     name: Deploy to production
     runs-on: ubuntu-latest
     needs: [server-test, client-build]
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/setup-main'
     steps:
       - name: SSH into server and deploy
         uses: appleboy/ssh-action@v1
@@ -88,7 +88,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /opt/dentalcare
-            git pull origin main
+            git pull origin ${{ github.ref_name }}
             cd client && npm ci && npm run build && cd ..
             sudo cp -r client/dist /var/www/dentalcare/client/dist
             sudo chown -R www-data:www-data /var/www/dentalcare

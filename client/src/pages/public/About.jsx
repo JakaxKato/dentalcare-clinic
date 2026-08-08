@@ -52,15 +52,15 @@ const About = () => {
               Menjadi klinik gigi keluarga rujukan dengan layanan terintegrasi dan berbasis teknologi.
             </p>
           </div>
-          <div className="card p-6">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-400 mb-3">Misi</h3>
-            <p className="text-stone-700 leading-relaxed">
+          <div className="card p-6 bg-brand-50/60 dark:bg-brand-950/20">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-brand-700 mb-3">Misi</h3>
+            <p className="text-brand-900 leading-relaxed dark:text-brand-200">
               Memberikan perawatan terbaik dengan biaya transparan, pendekatan personal, dan ramah keluarga.
             </p>
           </div>
-          <div className="card p-6">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-400 mb-3">Nilai Kami</h3>
-            <p className="text-stone-700 leading-relaxed">
+          <div className="card p-6 bg-brand-50/60 dark:bg-brand-950/20">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-brand-700 mb-3">Nilai Kami</h3>
+            <p className="text-brand-900 leading-relaxed dark:text-brand-200">
               Integritas, profesionalisme, kepedulian, dan inovasi berkelanjutan untuk senyum Anda.
             </p>
           </div>
