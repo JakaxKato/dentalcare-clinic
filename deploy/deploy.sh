@@ -69,8 +69,11 @@ if [[ ! -d "$PROJECT_DIR/client/dist" ]]; then
 fi
 
 # ---- 4. Copy dist to nginx root ----
+# The parent dir is created during initial provisioning; we only recreate the
+# dist folder. We avoid `sudo mkdir` because it is NOT in the NOPASSWD
+# sudoers allowlist (/bin/cp, /bin/chown, /bin/systemctl, /bin/rm), and a
+# password prompt fails under non-interactive SSH.
 log "Copying dist/ → $NGINX_ROOT/dist/"
-sudo mkdir -p "$NGINX_ROOT"
 sudo rm -rf "$NGINX_ROOT/dist"
 sudo cp -r "$PROJECT_DIR/client/dist" "$NGINX_ROOT/dist"
 sudo chown -R www-data:www-data "$NGINX_ROOT"
