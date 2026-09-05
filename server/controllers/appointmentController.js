@@ -7,6 +7,7 @@ const ApiError = require("../utils/ApiError");
 const DentistLeave = require("../models/DentistLeave");
 const { runReminderJob } = require("../utils/reminderJob");
 const { dentistHasPatientRelation } = require("../utils/accessPolicy");
+const { canTransition, getTransitionPermissions } = require("../utils/appointmentStatus");
 const {
   toDateKey,
   dateRangeUtc,
@@ -17,13 +18,6 @@ const {
   intervalsOverlap,
   buildAvailableSlots,
 } = require("../utils/appointmentSchedule");
-
-const ALLOWED_TRANSITIONS = {
-  pending: ["confirmed", "cancelled"],
-  confirmed: ["completed", "cancelled"],
-  completed: [],
-  cancelled: [],
-};
 
 const loadScheduleContext = async ({
   dentistId,
@@ -304,40 +298,28 @@ const updateStatus = asyncHandler(async (req, res) => {
   const appt = await Appointment.findById(req.params.id);
   if (!appt) throw new ApiError(404, "Appointment not found");
 
-  const allowedNext = ALLOWED_TRANSITIONS[appt.status] || [];
-  if (!allowedNext.includes(status)) {
+  if (!canTransition(appt.status, status)) {
     throw new ApiError(
       400,
       `Cannot transition from ${appt.status} to ${status}`,
     );
   }
 
-  // Authorization rules per transition
-  const isAdmin = req.user.role === "admin";
-  const isDentist =
-    req.user.role === "dentist" &&
-    appt.dentistId.toString() === req.user._id.toString();
-  const isPatient =
-    req.user.role === "patient" &&
-    appt.patientId.toString() === req.user._id.toString();
+  const perms = getTransitionPermissions({
+    role: req.user.role,
+    appt,
+    currentUserId: req.user._id,
+  });
 
-  if (status === "confirmed" && !isAdmin && !isDentist) {
-    throw new ApiError(
-      403,
-      "Only admin or assigned dentist can confirm appointments",
-    );
+  if (status === "confirmed" && !perms.canConfirm) {
+    throw new ApiError(403, "Only admin or assigned dentist can confirm appointments");
   }
-  if (status === "completed" && !isAdmin && !isDentist) {
-    throw new ApiError(
-      403,
-      "Only admin or assigned dentist can complete appointments",
-    );
+  if (status === "completed" && !perms.canComplete) {
+    throw new ApiError(403, "Only admin or assigned dentist can complete appointments");
   }
   if (status === "cancelled") {
-    if (!isAdmin && !isDentist && !isPatient) {
-      throw new ApiError(403, "Not authorized to cancel this appointment");
-    }
-    if (isPatient && appt.status !== "pending") {
+    if (!perms.canCancel) throw new ApiError(403, "Not authorized to cancel this appointment");
+    if (perms.isOwningPatient && appt.status !== "pending") {
       throw new ApiError(400, "Patients can only cancel pending appointments");
     }
   }
@@ -346,12 +328,12 @@ const updateStatus = asyncHandler(async (req, res) => {
     diagnosis !== undefined ||
     treatmentNotes !== undefined ||
     recommendation !== undefined;
-  if (hasClinicalUpdates && !isAdmin && !isDentist) {
+  if (hasClinicalUpdates && !perms.canEditClinicalNotes) {
     throw new ApiError(403, "Only admin or assigned dentist can update clinical notes");
   }
 
   appt.status = status;
-  if (isAdmin || isDentist) {
+  if (perms.isAdmin || perms.isAssignedDentist) {
     if (diagnosis !== undefined) appt.diagnosis = diagnosis;
     if (treatmentNotes !== undefined) appt.treatmentNotes = treatmentNotes;
     if (recommendation !== undefined) appt.recommendation = recommendation;

@@ -51,7 +51,8 @@ app.use(
     origin: (origin, cb) => {
       if (!origin) return cb(null, true);
       if (allowedOrigins.includes(origin)) return cb(null, true);
-      // Soft-fail: don't surface origin in error response/logs.
+      // cors() controls headers/preflight only; enforcement is centralized in
+      // the middleware below so rejected origins get a clear 403 on all methods.
       return cb(null, false);
     },
     credentials: true,
@@ -62,7 +63,6 @@ app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(cookieParser());
 app.use((req, res, next) => {
-  if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) return next();
   const origin = req.headers.origin;
   if (!origin || allowedOrigins.includes(origin)) return next();
   return res.status(403).json({ success: false, message: 'Origin is not allowed' });
@@ -171,9 +171,10 @@ if (swaggerEnabled) {
 app.get("/api/health", (req, res) => {
   const dbStates = ["disconnected", "connected", "connecting", "disconnecting"];
   const dbState = mongoose.connection.readyState;
+  const ok = dbState === 1;
   res.json({
-    success: true,
-    status: dbState === 1 ? "ok" : "degraded",
+    success: ok,
+    status: ok ? "ok" : "degraded",
     uptime: process.uptime(),
     database: dbStates[dbState] || "unknown",
   });
