@@ -85,9 +85,13 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          # deploy.sh applies backend deps (npm ci --omit=dev), builds the
-          # frontend, copies dist, reloads PM2, and runs an API health check.
-          # Branch is passed explicitly so CI deploys the branch it built.
+          # Bootstrap first: fetch the target branch and hard-reset the local
+          # working tree, so the LATEST deploy.sh is present before we run it.
+          # (Without this, the server's stale deploy.sh pulls `main`, which
+          # does not exist, and the deploy fails.)
           script: |
             cd /opt/dentalcare
+            git fetch origin ${{ github.ref_name }}
+            git checkout -f ${{ github.ref_name }}
+            git reset --hard origin/${{ github.ref_name }}
             bash deploy/deploy.sh ${{ github.ref_name }}
