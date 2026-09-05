@@ -7,7 +7,10 @@ const { getDateKeyInTimeZone } = require('./appointmentSchedule');
 const TIME_ZONE = 'Asia/Jakarta';
 const CLINIC_NAME = process.env.CLINIC_NAME || 'DentalCare Clinic';
 const CLINIC_PHONE = process.env.CLINIC_PHONE_DISPLAY || '';
-let jobRunning = false;
+// A short claim window (long enough to deliver a reminder without a second
+// instance taking over the same appointment, short enough not to strand it
+// if a worker crashes mid-delivery).
+const CLAIM_TIMEOUT_MS = 10 * 60 * 1000;
 
 const formatTanggal = (date) =>
   new Date(date).toLocaleDateString('id-ID', {
@@ -95,53 +98,84 @@ const deliverReminder = async (appt) => {
   return { delivered, previewed, error: errors.join('; ') };
 };
 
-const runReminderJob = async () => {
-  if (jobRunning) return { skipped: true, reason: 'Reminder job is already running' };
-  jobRunning = true;
-
-  try {
-    const { start, end } = getTomorrowRange();
-    const appts = await Appointment.find({
+// Atomically claim an appointment for delivery. Returns the populated
+// appointment, or null when this job is not the winner. The atomic
+// `findOneAndUpdate` guarantees exactly one PM2 cluster instance can claim a
+// given appointment, so reminders are never double-sent.
+const claimAppointment = async ({ start, end }) => {
+  const now = new Date();
+  const claimedUntil = new Date(now.getTime() + CLAIM_TIMEOUT_MS);
+  const appt = await Appointment.findOneAndUpdate(
+    {
       appointmentDate: { $gte: start, $lte: end },
       status: { $in: ['confirmed', 'pending'] },
       reminderSentAt: null,
-    })
-      .populate('patientId', 'name phone email')
-      .populate('dentistId', 'name')
-      .populate('serviceId', 'title');
+      $or: [
+        { reminderClaimedUntil: null },
+        { reminderClaimedUntil: { $lte: now } },
+      ],
+    },
+    { $set: { reminderClaimedUntil: claimedUntil } },
+    { new: true, sort: { appointmentDate: 1, appointmentTime: 1 } }
+  )
+    .populate('patientId', 'name phone email')
+    .populate('dentistId', 'name')
+    .populate('serviceId', 'title');
 
-    const results = { total: appts.length, sent: 0, previewed: 0, failed: 0 };
-    for (const appt of appts) {
-      try {
-        const delivery = await deliverReminder(appt);
-        appt.reminderLastAttemptAt = new Date();
-        appt.reminderError = delivery.delivered ? '' : delivery.error || 'No delivery provider configured';
-        if (delivery.delivered) {
-          appt.reminderSentAt = new Date();
-          results.sent += 1;
-        } else if (delivery.previewed) {
-          results.previewed += 1;
-        } else {
-          results.failed += 1;
-        }
-        await appt.save();
-      } catch (err) {
+  return appt;
+};
+
+const runReminderJob = async () => {
+  const { start, end } = getTomorrowRange();
+  const results = { total: 0, sent: 0, previewed: 0, failed: 0 };
+
+  // Keep claiming and delivering until there is nothing left for the window.
+  // Each claim moves the claimedUntil cursor forward, so a concurrent cluster
+  // instance picking up the same query would skip the already-claimed rows.
+  while (true) {
+    const appt = await claimAppointment({ start, end });
+    if (!appt) break;
+    results.total += 1;
+
+    try {
+      const delivery = await deliverReminder(appt);
+      const lastAttemptAt = new Date();
+      const updates = {
+        reminderLastAttemptAt: lastAttemptAt,
+        reminderError: delivery.delivered ? '' : delivery.error || 'No delivery provider configured',
+      };
+      if (delivery.delivered) {
+        updates.reminderSentAt = lastAttemptAt;
+        results.sent += 1;
+      } else if (delivery.previewed) {
+        results.previewed += 1;
+      } else {
         results.failed += 1;
-        appt.reminderLastAttemptAt = new Date();
-        appt.reminderError = err.message;
-        await appt.save().catch(() => {});
-        console.error('[reminder] appointment error:', err.message);
       }
+      await Appointment.updateOne(
+        { _id: appt._id, reminderSentAt: null },
+        { $set: updates }
+      );
+    } catch (err) {
+      results.failed += 1;
+      console.error('[reminder] appointment error:', err.message);
+      await Appointment.updateOne(
+        { _id: appt._id, reminderSentAt: null },
+        {
+          $set: {
+            reminderLastAttemptAt: new Date(),
+            reminderError: err.message,
+          },
+        }
+      ).catch(() => {});
     }
-
-    console.log(
-      `[reminder] ${new Date().toISOString()} - processed ${results.total} appointment(s) ` +
-        `| sent=${results.sent} previewed=${results.previewed} failed=${results.failed}`
-    );
-    return results;
-  } finally {
-    jobRunning = false;
   }
+
+  console.log(
+    `[reminder] ${new Date().toISOString()} - processed ${results.total} appointment(s) ` +
+      `| sent=${results.sent} previewed=${results.previewed} failed=${results.failed}`
+  );
+  return results;
 };
 
 const startReminderScheduler = () => {
@@ -163,6 +197,7 @@ module.exports = {
   buildMessage,
   getTomorrowRange,
   deliverReminder,
+  claimAppointment,
   runReminderJob,
   startReminderScheduler,
 };

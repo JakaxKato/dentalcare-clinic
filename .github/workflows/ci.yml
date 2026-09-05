@@ -45,7 +45,6 @@ jobs:
       - run: npm ci
       - name: Lint
         run: npm run lint
-        continue-on-error: true
       - name: Build
         env:
           VITE_API_URL: http://localhost:5000
@@ -86,11 +85,9 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # deploy.sh applies backend deps (npm ci --omit=dev), builds the
+          # frontend, copies dist, reloads PM2, and runs an API health check.
+          # Branch is passed explicitly so CI deploys the branch it built.
           script: |
             cd /opt/dentalcare
-            git pull origin ${{ github.ref_name }}
-            cd client && npm ci && npm run build && cd ..
-            sudo rm -rf /var/www/dentalcare/client/dist
-            sudo cp -r client/dist /var/www/dentalcare/client/dist
-            sudo chown -R www-data:www-data /var/www/dentalcare
-            sudo systemctl reload nginx
+            bash deploy/deploy.sh ${{ github.ref_name }}

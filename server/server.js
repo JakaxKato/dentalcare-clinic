@@ -104,7 +104,45 @@ app.use("/api/auth/register", authLimiter);
 app.use("/api/auth/forgot-password", authLimiter);
 app.use("/api/auth/reset-password", authLimiter);
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Serve uploaded images. In local-disk (non-Cloudinary) mode these files may
+// contain patient-adjacent data, so they must not be publicly reachable. We
+// serve them behind authentication and sanitize the path to prevent traversal.
+const uploadsDir = path.join(__dirname, "uploads");
+const verifyToken = (req) => {
+  const token =
+    (req.cookies && req.cookies.dc_access) ||
+    (req.headers.authorization && req.headers.authorization.split(" ")[1]);
+  if (!token) return false;
+  try {
+    require("jsonwebtoken").verify(token, process.env.JWT_SECRET, {
+      algorithms: ["HS256"],
+      issuer: process.env.JWT_ISSUER || "dentalcare",
+    });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+app.use(
+  "/uploads",
+  (req, res, next) => {
+    if (!verifyToken(req)) {
+      return res.status(401).json({ success: false, message: "Not authorized" });
+    }
+    const relPath = (req.path || "").replace(/^\/+/, "");
+    const filePath = path.join(uploadsDir, relPath);
+    // Resolve and reject any traversal outside the uploads directory.
+    if (!filePath.startsWith(uploadsDir + path.sep)) {
+      return res.status(403).json({ success: false, message: "Forbidden" });
+    }
+    res.sendFile(filePath, (err) => {
+      if (err && (err.code === "ENOENT" || err.code === "EISDIR")) {
+        return res.status(404).json({ success: false, message: "File not found" });
+      }
+    });
+  },
+);
 
 // API documentation (Swagger UI). Default ON in dev, OFF in production unless
 // ENABLE_SWAGGER=true is explicitly set, to avoid leaking the API surface.

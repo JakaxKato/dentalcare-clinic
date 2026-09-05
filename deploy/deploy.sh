@@ -2,10 +2,10 @@
 # ============================================================
 # DentalCare — Deploy / Update script
 # ============================================================
-# Usage:  bash deploy/deploy.sh
+# Usage:  bash deploy/deploy.sh [branch]
 #
 # Jalankan dari project root (/opt/dentalcare).
-# - git pull latest
+# - git pull latest (branch default: main)
 # - install server deps (production only)
 # - build client (with VITE env from client/.env)
 # - copy dist/ to nginx serve path
@@ -16,6 +16,7 @@
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+BRANCH="${1:-main}"
 NGINX_ROOT="/var/www/dentalcare/client"
 TIMESTAMP="$(date +'%Y-%m-%d %H:%M:%S')"
 
@@ -32,9 +33,15 @@ cd "$PROJECT_DIR"
 
 log "=== DentalCare deploy started at $TIMESTAMP ==="
 
-# ---- 1. Pull latest ----
-log "Pulling latest code..."
-git pull origin main 2>&1 | sed 's/^/  /'
+# ---- 1. Checkout & pull latest ----
+# Always switch to the target branch and reset local changes so the deploy is
+# reproducible and never pulled from a stale/diverged branch.
+log "Switching to branch '$BRANCH'..."
+git checkout "$BRANCH" 2>&1 | sed 's/^/  /' || true
+git reset --hard origin/"$BRANCH" 2>&1 | sed 's/^/  /'
+
+log "Pulling latest code from branch '$BRANCH'..."
+git pull origin "$BRANCH" 2>&1 | sed 's/^/  /'
 
 # ---- 2. Install server deps ----
 log "Installing server dependencies (production)..."

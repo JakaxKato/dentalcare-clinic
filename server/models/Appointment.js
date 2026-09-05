@@ -48,6 +48,10 @@ const appointmentSchema = new mongoose.Schema(
     reminderSentAt: { type: Date, default: null },
     reminderLastAttemptAt: { type: Date, default: null },
     reminderError: { type: String, default: '' },
+    // Timestamp until which this appointment is claimed by a running reminder
+    // job. Used as an atomic cross-process lock so multiple PM2 cluster
+    // instances never deliver the same reminder twice.
+    reminderClaimedUntil: { type: Date, default: null },
     downPayment: {
       amount: { type: Number, default: 0, min: 0 },
       status: {
