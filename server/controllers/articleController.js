@@ -17,10 +17,18 @@ const listArticles = asyncHandler(async (req, res) => {
     filter.title = { $regex: safe, $options: 'i' };
   }
 
+  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+  const skip = (page - 1) * limit;
+  const total = await Article.countDocuments(filter);
+
   const articles = await Article.find(filter)
+    .select('title slug excerpt coverImage tags published createdAt')
     .populate('authorId', 'name avatar')
-    .sort({ createdAt: -1 });
-  res.json({ success: true, count: articles.length, data: articles });
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+  res.json({ success: true, count: total, page, totalPages: Math.ceil(total / limit), limit, data: articles });
 });
 
 // @desc    Get article by slug

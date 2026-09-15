@@ -7,8 +7,12 @@ const ApiError = require('../utils/ApiError');
 const listTestimonials = asyncHandler(async (req, res) => {
   const isAdmin = req.user && req.user.role === 'admin';
   const filter = isAdmin ? {} : { isApproved: true };
-  const items = await Testimonial.find(filter).sort({ createdAt: -1 });
-  res.json({ success: true, count: items.length, data: items });
+  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+  const skip = (page - 1) * limit;
+  const total = await Testimonial.countDocuments(filter);
+  const items = await Testimonial.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
+  res.json({ success: true, count: total, page, totalPages: Math.ceil(total / limit), limit, data: items });
 });
 
 // @desc    List testimonials owned by the logged-in user

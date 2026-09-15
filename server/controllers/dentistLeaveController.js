@@ -98,11 +98,17 @@ const listLeaves = asyncHandler(async (req, res) => {
     if (to) filter.startDate = { ...filter.startDate, $lte: to };
   }
 
+  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const limit = Math.min(500, Math.max(1, parseInt(req.query.limit, 10) || 100));
+  const skip = (page - 1) * limit;
+  const total = await DentistLeave.countDocuments(filter);
   const leaves = await DentistLeave.find(filter)
     .populate('dentistId', 'name email avatar')
-    .sort({ startDate: 1 });
+    .sort({ startDate: 1 })
+    .skip(skip)
+    .limit(limit);
 
-  res.json({ success: true, count: leaves.length, data: leaves });
+  res.json({ success: true, count: total, page, totalPages: Math.ceil(total / limit), limit, data: leaves });
 });
 
 // @desc  Delete (cancel) a leave
