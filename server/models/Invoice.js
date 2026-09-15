@@ -63,5 +63,7 @@ invoiceSchema.statics.generateInvoiceNumber = async function () {
   return `INV-${ym}-${String(counter.seq).padStart(4, '0')}`;
 };
 
+invoiceSchema.index({ dentistId: 1, createdAt: -1 });
+
 module.exports = mongoose.model('Invoice', invoiceSchema);
 module.exports.PAYMENT_STATUSES = PAYMENT_STATUSES;

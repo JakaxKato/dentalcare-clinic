@@ -15,6 +15,8 @@ const articleSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+articleSchema.index({ published: 1, createdAt: -1 });
+
 articleSchema.pre('validate', function (next) {
   if (this.title && (this.isModified('title') || !this.slug)) {
     this.slug = slugify(this.title, { lower: true, strict: true });
