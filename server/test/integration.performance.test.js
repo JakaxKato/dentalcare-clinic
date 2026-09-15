@@ -12,7 +12,13 @@ let server;
 let baseUrl;
 let dbReady = false;
 
-const skipIfNoDb = (t) => !dbReady && t.skip('MongoDB unavailable');
+const skipIfNoDb = (t) => {
+  if (!dbReady) {
+    t.skip('MongoDB unavailable');
+    return true;
+  }
+  return false;
+};
 
 test.before(async () => {
   try {
@@ -48,7 +54,7 @@ async function createAuthor() {
 }
 
 test('GET /api/articles respects pagination and omits content from list', async (t) => {
-  skipIfNoDb(t);
+  if (skipIfNoDb(t)) return;
   const author = await createAuthor();
   await Article.create([
     { title: 'Artikel Satu', content: 'Isi panjang satu', authorId: author._id, published: true },
@@ -74,7 +80,7 @@ test('GET /api/articles respects pagination and omits content from list', async 
 });
 
 test('GET /api/testimonials respects limit and returns total count', async (t) => {
-  skipIfNoDb(t);
+  if (skipIfNoDb(t)) return;
   await Testimonial.create([
     { patientName: 'A', rating: 5, message: 'Bagus', isApproved: true },
     { patientName: 'B', rating: 4, message: 'Oke', isApproved: true },
@@ -90,7 +96,7 @@ test('GET /api/testimonials respects limit and returns total count', async (t) =
 });
 
 test('GET /api/dentist-leaves is bounded and paginated for dentists', async (t) => {
-  skipIfNoDb(t);
+  if (skipIfNoDb(t)) return;
   const dentist = await User.create({
     name: 'Dokter Test',
     email: `dent_${Date.now()}@test.com`,

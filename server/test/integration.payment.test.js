@@ -38,6 +38,14 @@ test.beforeEach(async () => {
   await dropTestDB();
 });
 
+const skipIfNoDb = (t) => {
+  if (!dbReady) {
+    t.skip('MongoDB unavailable');
+    return true;
+  }
+  return false;
+};
+
 // Helper: seed a patient, dentist, service, and a pending appointment with an
 // order id, matching the shape the webhook expects.
 async function seedAppointmentWithDp(orderId) {
@@ -97,7 +105,8 @@ function buildNotification(appt, overrides = {}) {
   return { ...payload, ...overrides };
 }
 
-test('webhook marks a settlement as paid', { skip: !dbReady }, async () => {
+test('webhook marks a settlement as paid', async (t) => {
+  if (skipIfNoDb(t)) return;
   const appt = await seedAppointmentWithDp(`DP-${Date.now()}`);
   const payload = buildNotification(appt);
 
@@ -116,7 +125,8 @@ test('webhook marks a settlement as paid', { skip: !dbReady }, async () => {
   assert.ok(updated.downPayment.paidAt);
 });
 
-test('webhook rejects an invalid signature', { skip: !dbReady }, async () => {
+test('webhook rejects an invalid signature', async (t) => {
+  if (skipIfNoDb(t)) return;
   const appt = await seedAppointmentWithDp(`DP-${Date.now()}-bad`);
   const payload = buildNotification(appt, { signature_key: 'invalid' });
 
@@ -129,7 +139,8 @@ test('webhook rejects an invalid signature', { skip: !dbReady }, async () => {
   assert.equal(res.status, 401);
 });
 
-test('webhook rejects an unknown order id', { skip: !dbReady }, async () => {
+test('webhook rejects an unknown order id', async (t) => {
+  if (skipIfNoDb(t)) return;
   const payload = buildNotification(
     { downPayment: { orderId: `DP-unknown-${Date.now()}`, amount: 30000 } },
     { status_code: '200' }

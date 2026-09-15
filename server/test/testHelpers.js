@@ -1,4 +1,14 @@
+const path = require('path');
 const mongoose = require('mongoose');
+
+// Isolate the database per test file. `node --test` runs test files in
+// parallel processes; sharing one database would let `dropTestDB` in one file
+// wipe collections mid-flight in another. Derive a suffix from the test file
+// path so each file gets its own database.
+const testFile = process.argv.find((arg) => arg.endsWith('.test.js'));
+const dbSuffix = testFile
+  ? `-${path.basename(testFile).replace(/\.test\.js$/, '').replace(/\./g, '-')}`
+  : '';
 
 // Force a safe test environment BEFORE anything (dotenv, server.js) reads it.
 // dotenv only fills vars that are not already set, so we must pin these here.
@@ -8,8 +18,13 @@ process.env.SEED_MODE = 'disabled';
 process.env.ALLOW_DEMO_ACCOUNTS = 'false';
 process.env.JWT_SECRET = process.env.JWT_SECRET || 'testtesttesttesttesttesttesttest';
 process.env.CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+
+const baseUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/dentalcare-test';
+const queryIdx = baseUri.indexOf('?');
 process.env.MONGO_URI =
-  process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/dentalcare-test';
+  queryIdx === -1
+    ? `${baseUri}${dbSuffix}`
+    : `${baseUri.slice(0, queryIdx)}${dbSuffix}${baseUri.slice(queryIdx)}`;
 
 // Connect to the test database. `MONGO_URI` is expected to be set by the test
 // environment (e.g. the MongoDB service container in CI).

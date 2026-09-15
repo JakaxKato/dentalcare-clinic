@@ -34,7 +34,16 @@ test.beforeEach(async () => {
   await dropTestDB();
 });
 
-test('register creates a patient and sets an auth cookie', { skip: !dbReady }, async () => {
+const skipIfNoDb = (t) => {
+  if (!dbReady) {
+    t.skip('MongoDB unavailable');
+    return true;
+  }
+  return false;
+};
+
+test('register creates a patient and sets an auth cookie', async (t) => {
+  if (skipIfNoDb(t)) return;
   const res = await fetch(`${baseUrl}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -54,7 +63,8 @@ test('register creates a patient and sets an auth cookie', { skip: !dbReady }, a
   assert.match(setCookie, /dc_access=/);
 });
 
-test('login returns the user and a cookie', { skip: !dbReady }, async () => {
+test('login returns the user and a cookie', async (t) => {
+  if (skipIfNoDb(t)) return;
   const { email, password } = await createUser();
 
   const res = await fetch(`${baseUrl}/api/auth/login`, {
@@ -75,7 +85,8 @@ test('me requires authentication', async () => {
   assert.equal(res.status, 401);
 });
 
-test('me returns the current user when authenticated', { skip: !dbReady }, async () => {
+test('me returns the current user when authenticated', async (t) => {
+  if (skipIfNoDb(t)) return;
   const cookie = await loginCookie();
 
   const res = await fetch(`${baseUrl}/api/auth/me`, {
