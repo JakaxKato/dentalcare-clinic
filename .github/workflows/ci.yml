@@ -19,8 +19,10 @@ jobs:
         ports:
           - '27017:27017'
         options: >-
-          --health-cmd mongosh --quiet --eval "db.runCommand({ ping: 1 }).ok"
-          --health-interval 10s --health-timeout 5s --health-retries 5
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ ping: 1 }).ok'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
