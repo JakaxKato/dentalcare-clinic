@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Stethoscope, Plus } from 'lucide-react';
+import { Stethoscope, Plus, ImagePlus, Trash2, User } from 'lucide-react';
 import Modal from '../../components/common/Modal';
 import { Input, Textarea } from '../../components/common/Input';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
-import { dentistService } from '../../services';
+import { dentistService, uploadService } from '../../services';
 import { useToast } from '../../context/ToastContext';
 import { extractMessage } from '../../services/api';
 
@@ -21,6 +21,7 @@ const AdminDentists = () => {
   const [modal, setModal] = useState(null); // {mode: 'create'|'edit', data}
   const [form, setForm] = useState(empty);
   const [saving, setSaving] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   const load = () => {
     setLoading(true);
@@ -64,6 +65,22 @@ const AdminDentists = () => {
       toast.error(extractMessage(err));
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingAvatar(true);
+    try {
+      const data = await uploadService.uploadImage(file);
+      setForm((f) => ({ ...f, avatar: data.url }));
+      toast.success('Foto berhasil diunggah');
+    } catch (err) {
+      toast.error(extractMessage(err));
+    } finally {
+      setUploadingAvatar(false);
+      e.target.value = '';
     }
   };
 
@@ -156,7 +173,32 @@ const AdminDentists = () => {
             />
             <Input label="No. Telepon" name="phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
           </div>
-          <Input label="URL Avatar" name="avatar" value={form.avatar} onChange={(e) => setForm({ ...form, avatar: e.target.value })} />
+          <div className="flex items-center gap-4">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800">
+              {form.avatar ? (
+                <img src={form.avatar} alt="Foto dokter" className="h-full w-full object-cover" />
+              ) : (
+                <User className="h-8 w-8 text-stone-400" />
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className={`btn-secondary cursor-pointer text-xs inline-flex items-center gap-1.5 ${uploadingAvatar ? 'opacity-60 pointer-events-none' : ''}`}>
+                <ImagePlus className="h-4 w-4" />
+                {uploadingAvatar ? 'Mengunggah...' : 'Upload Foto'}
+                <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} disabled={uploadingAvatar} />
+              </label>
+              {form.avatar && (
+                <button
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, avatar: '' }))}
+                  className="btn-ghost text-red-500 hover:bg-red-50 hover:text-red-600 text-xs inline-flex items-center gap-1.5"
+                >
+                  <Trash2 className="h-4 w-4" /> Hapus Foto
+                </button>
+              )}
+            </div>
+          </div>
+          <Input label="atau pakai URL foto" name="avatar" value={form.avatar} onChange={(e) => setForm({ ...form, avatar: e.target.value })} />
           <div className="grid sm:grid-cols-2 gap-3">
             <Input label="Spesialisasi" name="specialization" value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })} />
             <Input label="Tahun Pengalaman" type="number" name="experienceYears" value={form.experienceYears} onChange={(e) => setForm({ ...form, experienceYears: Number(e.target.value) })} />

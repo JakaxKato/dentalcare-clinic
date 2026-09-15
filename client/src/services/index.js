@@ -93,6 +93,14 @@ export const odontogramService = {
       .then((r) => r.data.data),
 };
 
+export const uploadService = {
+  uploadImage: (file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    return api.post("/upload", formData).then((r) => r.data.data);
+  },
+};
+
 export const prescriptionService = {
   create: (data) => api.post("/prescriptions", data).then((r) => r.data.data),
   list: (params = {}) =>
