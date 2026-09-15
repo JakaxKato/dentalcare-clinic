@@ -56,7 +56,7 @@ const DentistSchedule = () => {
   const load = useCallback(() => {
     setLoading(true);
     dentistLeaveService
-      .list()
+      .list({ limit: 500 })
       .then((r) => setLeaves(r.data || []))
       .catch((err) => toast.error(extractMessage(err)))
       .finally(() => setLoading(false));

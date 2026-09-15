@@ -29,7 +29,7 @@ const AdminLeaves = () => {
 
   const load = useCallback(() => {
     setLoading(true);
-    const params = {};
+    const params = { limit: 500 };
     if (filterDentist) params.dentistId = filterDentist;
     Promise.all([
       dentistLeaveService.list(params).then((r) => r.data || []),

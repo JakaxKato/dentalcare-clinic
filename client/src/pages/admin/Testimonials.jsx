@@ -24,7 +24,7 @@ const AdminTestimonials = () => {
 
   const load = () => {
     setLoading(true);
-    testimonialService.list().then(setItems).finally(() => setLoading(false));
+    testimonialService.list({ limit: 100 }).then(setItems).finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, []);

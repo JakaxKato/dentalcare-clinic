@@ -51,6 +51,7 @@ export const appointmentService = {
 export const articleService = {
   list: (params = {}) =>
     api.get("/articles", { params }).then((r) => r.data.data),
+  listPaged: (params = {}) => api.get("/articles", { params }).then((r) => r.data),
   getBySlug: (slug) => api.get(`/articles/${slug}`).then((r) => r.data.data),
   create: (data) => api.post("/articles", data).then((r) => r.data.data),
   update: (id, data) =>
@@ -59,7 +60,8 @@ export const articleService = {
 };
 
 export const testimonialService = {
-  list: () => api.get("/testimonials").then((r) => r.data.data),
+  list: (params = {}) =>
+    api.get("/testimonials", { params }).then((r) => r.data.data),
   mine: () => api.get("/testimonials/my-testimonials").then((r) => r.data.data),
   create: (data) => api.post("/testimonials", data).then((r) => r.data.data),
   approve: (id, isApproved = true) =>

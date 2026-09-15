@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AlertTriangle, Newspaper } from 'lucide-react';
+import { AlertTriangle, Newspaper, ChevronLeft, ChevronRight } from 'lucide-react';
 import ArticleCard from '../../components/cards/ArticleCard';
 import { CardGridSkeleton } from '../../components/common/Skeleton';
 import EmptyState from '../../components/common/EmptyState';
@@ -11,19 +11,32 @@ const Blog = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
+    setLoading(true);
+    const params = { page, limit: 9 };
+    if (debouncedSearch.trim()) params.search = debouncedSearch.trim();
     articleService
-      .list()
-      .then(setArticles)
+      .listPaged(params)
+      .then((res) => {
+        setArticles(res.data);
+        setTotalPages(res.totalPages || 1);
+        if (page > (res.totalPages || 1)) setPage(res.totalPages || 1);
+      })
       .catch((err) => setError(extractMessage(err)))
       .finally(() => setLoading(false));
-  }, []);
+  }, [page, debouncedSearch]);
 
-  const filtered = articles.filter((a) =>
-    a.title.toLowerCase().includes(search.toLowerCase()) ||
-    (a.tags || []).some((t) => t.toLowerCase().includes(search.toLowerCase()))
-  );
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [search]);
 
   return (
     <div className="container-app py-12">
@@ -45,12 +58,35 @@ const Blog = () => {
         <CardGridSkeleton />
       ) : error ? (
         <EmptyState icon={AlertTriangle} title="Gagal memuat" description={error} />
-      ) : filtered.length === 0 ? (
+      ) : articles.length === 0 ? (
         <EmptyState icon={Newspaper} title="Belum ada artikel" />
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((a) => <ArticleCard key={a._id} article={a} />)}
-        </div>
+        <>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {articles.map((a) => <ArticleCard key={a._id} article={a} />)}
+          </div>
+          {totalPages > 1 && (
+            <div className="mt-10 flex items-center justify-center gap-4">
+              <button
+                className="btn-secondary text-sm"
+                disabled={page <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+              >
+                <ChevronLeft className="h-4 w-4" /> Sebelumnya
+              </button>
+              <span className="text-sm text-stone-500">
+                Halaman {page} dari {totalPages}
+              </span>
+              <button
+                className="btn-secondary text-sm"
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              >
+                Berikutnya <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

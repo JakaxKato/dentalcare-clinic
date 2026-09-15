@@ -257,8 +257,8 @@ const Home = () => {
     Promise.all([
       serviceService.list(true).catch(() => []),
       dentistService.list().catch(() => []),
-      articleService.list().catch(() => []),
-      testimonialService.list().catch(() => []),
+      articleService.list({ limit: 6 }).catch(() => []),
+      testimonialService.list({ limit: 12 }).catch(() => []),
     ])
       .then(([s, d, a, t]) => {
         setServices(s.slice(0, 6));

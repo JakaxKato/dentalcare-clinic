@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Newspaper, Plus } from 'lucide-react';
+import { Newspaper, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import Modal from '../../components/common/Modal';
 import { Input, Textarea } from '../../components/common/Input';
 import Loader from '../../components/common/Loader';
@@ -15,27 +15,43 @@ const AdminArticles = () => {
   const toast = useToast();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState(empty);
 
   const load = () => {
     setLoading(true);
-    articleService.list().then(setItems).finally(() => setLoading(false));
+    articleService
+      .listPaged({ page, limit: 10 })
+      .then((res) => {
+        setItems(res.data);
+        setTotalPages(res.totalPages || 1);
+      })
+      .finally(() => setLoading(false));
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
 
   const openCreate = () => { setForm(empty); setModal({ mode: 'create' }); };
-  const openEdit = (a) => {
-    setForm({
-      title: a.title,
-      content: a.content,
-      excerpt: a.excerpt || '',
-      coverImage: a.coverImage || '',
-      tags: (a.tags || []).join(', '),
-      published: a.published,
-    });
-    setModal({ mode: 'edit', data: a });
+  const openEdit = async (a) => {
+    try {
+      const full = await articleService.getBySlug(a.slug);
+      setForm({
+        title: full.title,
+        content: full.content,
+        excerpt: full.excerpt || '',
+        coverImage: full.coverImage || '',
+        tags: (full.tags || []).join(', '),
+        published: full.published,
+      });
+      setModal({ mode: 'edit', data: full });
+    } catch (err) {
+      toast.error(extractMessage(err));
+    }
   };
 
   const submit = async (e) => {
@@ -117,6 +133,28 @@ const AdminArticles = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-4">
+          <button
+            className="btn-secondary text-sm"
+            disabled={page <= 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            <ChevronLeft className="h-4 w-4" /> Sebelumnya
+          </button>
+          <span className="text-sm text-stone-500">
+            Halaman {page} dari {totalPages}
+          </span>
+          <button
+            className="btn-secondary text-sm"
+            disabled={page >= totalPages}
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          >
+            Berikutnya <ChevronRight className="h-4 w-4" />
+          </button>
         </div>
       )}
 
