@@ -5,10 +5,11 @@
 # Usage:  bash deploy/deploy.sh [branch]
 #
 # Jalankan dari project root (/opt/dentalcare).
+# VPS hanya melayani API (api.smiledental.my.id → PM2).
+# Frontend SPA di-deploy terpisah oleh Vercel dari GitHub.
+#
 # - git pull latest (branch default: main)
 # - install server deps (production only)
-# - build client (with VITE env from client/.env)
-# - copy dist/ to nginx serve path
 # - reload PM2
 # - verify health endpoint
 # ============================================================
@@ -17,7 +18,6 @@ set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BRANCH="${1:-main}"
-NGINX_ROOT="/var/www/dentalcare/client"
 TIMESTAMP="$(date +'%Y-%m-%d %H:%M:%S')"
 
 RED='\033[0;31m'
@@ -48,37 +48,7 @@ log "Installing server dependencies (production)..."
 cd "$PROJECT_DIR/server"
 npm ci --omit=dev 2>&1 | sed 's/^/  /'
 
-# ---- 3. Install & build client ----
-log "Building client..."
-cd "$PROJECT_DIR/client"
-npm ci 2>&1 | sed 's/^/  /'
-
-# Source .env for VITE_ vars
-if [[ -f "$PROJECT_DIR/client/.env" ]]; then
-  set -a
-  # shellcheck disable=SC1090
-  source "$PROJECT_DIR/client/.env"
-  set +a
-fi
-
-npm run build 2>&1 | sed 's/^/  /'
-
-if [[ ! -d "$PROJECT_DIR/client/dist" ]]; then
-  err "Build failed — client/dist/ not found."
-  exit 1
-fi
-
-# ---- 4. Copy dist to nginx root ----
-# The parent dir is created during initial provisioning; we only recreate the
-# dist folder. We avoid `sudo mkdir` because it is NOT in the NOPASSWD
-# sudoers allowlist (/bin/cp, /bin/chown, /bin/systemctl, /bin/rm), and a
-# password prompt fails under non-interactive SSH.
-log "Copying dist/ → $NGINX_ROOT/dist/"
-sudo rm -rf "$NGINX_ROOT/dist"
-sudo cp -r "$PROJECT_DIR/client/dist" "$NGINX_ROOT/dist"
-sudo chown -R www-data:www-data "$NGINX_ROOT"
-
-# ---- 5. Reload PM2 ----
+# ---- 3. Reload PM2 ----
 log "Reloading PM2..."
 cd "$PROJECT_DIR"
 if pm2 list | grep -q dentalcare-api; then
@@ -89,7 +59,7 @@ else
   pm2 save
 fi
 
-# ---- 6. Health check ----
+# ---- 4. Health check ----
 log "Waiting 3s for server to settle..."
 sleep 3
 

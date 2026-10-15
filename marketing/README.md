@@ -6,6 +6,7 @@ Semua materi untuk **menjual** produk DentalCare ke klinik. Bukan untuk end-user
 
 | File | Untuk |
 |---|---|
+| [PROPOSAL.md](PROPOSAL.md) | Dokumen penawaran formal ke client (siap convert PDF) |
 | [SALES.md](SALES.md) | Sales playbook: positioning, diferensiasi, handling objection |
 | [PRICING.md](PRICING.md) | Detail paket Basic / Pro / Enterprise + add-on |
 | [DEMO_SCRIPT.md](DEMO_SCRIPT.md) | Script demo 15 menit ke prospek |
